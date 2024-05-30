@@ -37,27 +37,27 @@ jobs:
         env:
             GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
         steps:
-            - name: Checkout repo
+          - name: Checkout repo
             uses: actions/checkout@v4
             with:
                 fetch-depth: 0
     
-            - name: Setup R
+          - name: Setup R
             uses: r-lib/actions/setup-r@v2
             with:
                 use-public-rspm: true
     
-            - name: Install dependencies
+          - name: Install dependencies
             uses: r-lib/actions/setup-r-dependencies@v2
             with:
                 extra-packages: any::styler, any::roxygen2
                 needs: styler
     
-            - name: Enable styler cache
+          - name: Enable styler cache
             run: styler::cache_activate()
             shell: Rscript {0}
     
-            - name: Determine cache location
+          - name: Determine cache location
             id: styler-location
             run: |
                 cat(
@@ -70,20 +70,20 @@ jobs:
                 )
             shell: Rscript {0}
     
-            - name: Cache styler
+          - name: Cache styler
             uses: actions/cache@v4
             with:
                 path: ${{ steps.styler-location.outputs.location }}
                 key: ${{ runner.os }}-styler-${{ github.sha }}
                 restore-keys: |
-                ${{ runner.os }}-styler-
-                ${{ runner.os }}-
+                  ${{ runner.os }}-styler-
+                  ${{ runner.os }}-
     
-            - name: Style
+          - name: Style
             run: styler::style_pkg()
             shell: Rscript {0}
     
-            - name: Commit and push changes
+          - name: Commit and push changes
             run: |
                 if FILES_TO_COMMIT=($(git diff-index --name-only ${{ github.sha }} \
                     | egrep --ignore-case '\.(R|[qR]md|Rmarkdown|Rnw|Rprofile)$'))
