@@ -2,7 +2,7 @@
 
 And R package for basic DLP+ data manipulation and plotting. Basically just a collection of the various functions we have been using to handle DLP data.
 
-## Main Functions
+## Setup
 
 A lot of the import functions are based on the idea that you have downloaded your dlp something like this:
 
@@ -63,6 +63,24 @@ wget https://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/gap.txt.gz
 ```
 
 
+You'll also want a local copy of the masking file found in `meta_data/blacklist_2023.07.17.txt`, or your own version of regions to mask. This file was build by Daniel Lai, and has been used for many DLP analyses. It is masking rough approximations of centromeres and telomeres that are generally bad for DLP analyses. Other functions (*coming soon*) will add the explicit coordinates of centromeres and telomeres to dataframes of reads and segs.
+
+
+
+## Main functions
+
+File imports:
+
+```R
+library(dlptools)
+
+# assuming you have the dlp files saved above, there are convenience functions 
+# to load data:
+my_dlp_dir <- "/projects/molonc/scratch/bfurman/projects/osteosarcoma/dlp/"
+segs <- import_dlp_files(my_dlp_dir, 'segs')
+metrics <- import_dlp_files(my_dlp_dir, 'metrics')
+reads <- import_dlp_files(my_dlp_dir, 'reads')
+```
 
 ## Development
 
@@ -108,6 +126,10 @@ vim R/my_new_module.R
 my_cool_func <- function(x) {
     return(x)
 }
+
+# also, try and use namespaces for functions that come from other packages, 
+# e.g., purrr::map() instead of just map(), or dplyr::select() instead of just select()
+# leads to fewer mixups as code bases grow and encounter redundantly named functions.
 ```
 
 3. Then in your R instance, we can build the needed meta data for the new function.
@@ -117,6 +139,15 @@ my_cool_func <- function(x) {
 # also creates .Rd files based on your function docstring.
 devtools::document()
 ```
+
+If your function includes code from another R package (even base R), you need to declare that and add it to the package metadata (unless it's already listed in the `Imports: ` section of the `DESCRIPTION` file).
+
+From the R instance:
+
+```R
+usethis::use_package("purrr") # or whatever package your function needs
+```
+
 
 4. From the R instance, run a check that the package is still good
 

@@ -2,4 +2,4 @@
 
 export(CNV_COLOURS)
 export(factor_column_mixedsort)
-export(tempfunc)
+export(import_dlp_files)
