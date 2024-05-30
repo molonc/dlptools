@@ -62,9 +62,7 @@ wget https://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/chromInfo.txt.gz
 wget https://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/gap.txt.gz
 ```
 
-
 You'll also want a local copy of the masking file found in `meta_data/blacklist_2023.07.17.txt`, or your own version of regions to mask. This file was build by Daniel Lai, and has been used for many DLP analyses. It is masking rough approximations of centromeres and telomeres that are generally bad for DLP analyses. Other functions (*coming soon*) will add the explicit coordinates of centromeres and telomeres to dataframes of reads and segs.
-
 
 
 ## Main functions
@@ -77,9 +75,20 @@ library(dlptools)
 # assuming you have the dlp files saved above, there are convenience functions 
 # to load data:
 my_dlp_dir <- "/projects/molonc/scratch/bfurman/projects/osteosarcoma/dlp/"
-segs <- import_dlp_files(my_dlp_dir, 'segs')
-metrics <- import_dlp_files(my_dlp_dir, 'metrics')
-reads <- import_dlp_files(my_dlp_dir, 'reads')
+segs <- dlptools::import_dlp_files(my_dlp_dir, 'segs')
+metrics <- dlptools::import_dlp_files(my_dlp_dir, 'metrics')
+reads <- dlptools::import_dlp_files(my_dlp_dir, 'reads')
+```
+
+
+Adding features to reads/segs dataframes:
+
+```R
+# add a column called 'mask' to indicate that the reads or segs overlap with
+# regions we want to exclude:
+segs <- dlptools::mark_mask_regions(segs, "meta_data/blacklist_2023.07.17.txt")
+
+reads <- dlptools::mark_mask_regions(reads, "meta_data/blacklist_2023.07.17.txt")
 ```
 
 ## Development
