@@ -91,6 +91,27 @@ segs <- dlptools::mark_mask_regions(segs, "meta_data/blacklist_2023.07.17.txt")
 reads <- dlptools::mark_mask_regions(reads, "meta_data/blacklist_2023.07.17.txt")
 ```
 
+Converting reads to segments is a common task, as segments files from the DLP pipeline are built with a bunch of filters and assumptions that you probably don't want. So you can filter your own reads, and then convert to segments like so:
+
+```R
+dlptools::reads_to_segs_with_filters(reads)
+
+# or with removing mask=True read bins
+dlptools::reads_to_segs_with_filters(reads, with_mask=TRUE)
+
+# and for convenience, if you didn't run the mark_mask_regions(), you can do that here so it happens on the fly
+dlptools::reads_to_segs_with_filters(
+    reads,
+    with_mask=TRUE,
+    mask_f="meta_data/blacklist_2023.07.17.txt"
+)
+
+# other filters to consider:
+new_segs <- reads %>%
+  dplyr::filter(gc != -1 & map > 0 & !mask) %>%
+  dlptools::reads_to_segs_with_filters()
+```
+
 
 Plotting:
 
