@@ -11,7 +11,7 @@
 #' @param reads_df a table with standard reads data (e.g., created with
 #' [import_dlp_files(file_type='reads')])
 #' @param with_mask boolean on whether to filter mask==True read bins.
-#' @para mask_f the blacklist file to do the masking with.
+#' @param mask_f the blacklist file to do the masking with.
 #' @return tibble/dataframe with read bins organized into segment blocks.
 #' @export
 #' @importFrom rlang .data

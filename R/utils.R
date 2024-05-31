@@ -42,7 +42,7 @@ chr_name_check <- function(df, exp_chr_name) {
 #'
 #' minimal required columns for input are: chr,start,end,cell_id,state
 #'
-#' @params states_df is the reads table to convert.
+#' @param states_df is the reads table to convert.
 #' @return wide format table
 #' @export
 convert_long_reads_to_wide <- function(reads_df) {
