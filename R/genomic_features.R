@@ -11,6 +11,7 @@
 #' Default is "seqnames", which is the name in the provided file.
 #' @param subject_chr_name name of the chromosome column in the reads/segs
 #' table. Default is 'chr' which is what the import scripts call the column.
+#' @export
 mark_mask_regions <- function(
     subject_df, mask_f = NULL,
     mask_chr_name = "seqnames", subject_chr_name = "chr") {

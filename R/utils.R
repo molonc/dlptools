@@ -32,3 +32,35 @@ chr_name_check <- function(df, exp_chr_name) {
   }
   return(TRUE)
 }
+
+
+#' convert long format reads to wide format
+#'
+#' A common manipulation with reads files for various analyses is to reshape
+#' long format reads data (each row is a 500kb bin with state values for each
+#' cell) to wide format, with chr_start_end rows and cell_id columns.
+#'
+#' minimal required columns for input are: chr,start,end,cell_id,state
+#'
+#' @params states_df is the reads table to convert.
+#' @return wide format table
+#' @export
+convert_long_reads_to_wide <- function(reads_df) {
+  # takes a csv of: chr,start,end,cell_id,state
+  # and coverts it to: chrom_start_end,state,state
+  # with an index column of location and columns of states for each cell
+
+  wide_states <- reads_df %>%
+    dplyr::mutate(
+      bin = paste(
+        .data$chr, as.integer(.data$start), as.integer(.data$end),
+        sep = "_"
+      )
+    ) %>%
+    dplyr::select("bin", "cell_id", "state") %>%
+    tidyr::pivot_wider(names_from = bin, values_from = state)
+
+  return(wide_states)
+}
+
+# no, I need this to go the other way
