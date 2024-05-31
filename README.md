@@ -96,6 +96,28 @@ Converting reads to segments is a common task, as segments files from the DLP pi
 ```R
 dlptools::reads_to_segs_with_filters(reads)
 
+# basically go from this:
+#      start     end state
+#      <dbl>   <dbl> <dbl>
+#  1       1  500000     2
+#  2  500001 1000000     2
+#  3 1000001 1500000     2
+#  4 1500001 2000000     2
+#  5 2000001 2500000     6
+#  6 2500001 3000000     6
+#  7 3000001 3500000     6
+#  8 3500001 4000000     6
+#  9 4000001 4500000     2
+# 10 4500001 5000000     4
+#
+# To this:
+#    start      end state
+#     <dbl>    <dbl> <dbl> 
+#  1 1  2000000     2    
+#  2 2000001  4000000     6
+#  3 4000001  4500000     2
+#  4 4500001  5000000     4
+
 # or with removing mask=True read bins
 dlptools::reads_to_segs_with_filters(reads, with_mask=TRUE)
 
