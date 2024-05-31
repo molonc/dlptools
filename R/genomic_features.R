@@ -15,12 +15,12 @@ mark_mask_regions <- function(
     subject_df, mask_f = NULL,
     mask_chr_name = "seqnames", subject_chr_name = "chr") {
   # in importing.R
-  masks <- dlptools:::load_mask_file(mask_f = mask_f)
+  masks <- load_mask_file(mask_f = mask_f)
 
   # error checking of passed params
   # in utils.R
-  c1 <- dlptools:::chr_name_check(masks, mask_chr_name)
-  c2 <- dlptools:::chr_name_check(subject_df, subject_chr_name)
+  c1 <- chr_name_check(masks, mask_chr_name)
+  c2 <- chr_name_check(subject_df, subject_chr_name)
   if (!c1 || !c2) {
     return()
   }

@@ -8,6 +8,7 @@
 #' @param file_type options are: "metrics", "segs", "reads"
 #' @return a tibble of the information from all dlp outputs combined
 #' @export
+#' @importFrom rlang .data
 import_dlp_files <- function(
     dlp_sc_dir,
     file_type = c("metrics", "segs", "reads")) {
@@ -27,11 +28,11 @@ import_dlp_files <- function(
 
   dlp_dat <- dplyr::mutate(
     dlp_dat,
-    SCID = stringr::str_extract(file_path, "SC-[0-9]+")
+    SCID = stringr::str_extract(.data$file_path, "SC-[0-9]+")
   )
 
   if ("chr" %in% names(dlp_dat)) {
-    dlp_dat$chr <- dlptools::factor_column_mixedsort(dlp_dat, "chr")
+    dlp_dat$chr <- factor_column_mixedsort(dlp_dat, "chr")
   }
 
   return(dlp_dat)

@@ -91,6 +91,14 @@ segs <- dlptools::mark_mask_regions(segs, "meta_data/blacklist_2023.07.17.txt")
 reads <- dlptools::mark_mask_regions(reads, "meta_data/blacklist_2023.07.17.txt")
 ```
 
+
+Plotting:
+
+```R
+# will create a simple plot with geom_tile of read states facetted by chromosome
+dlptools::basic_tile_plot(reads)
+```
+
 ## Development
 
 ```bash

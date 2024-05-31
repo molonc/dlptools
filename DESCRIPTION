@@ -18,5 +18,7 @@ Imports:
     gtools,
     IRanges,
     purrr,
+    rlang,
+    stringr,
     tidyr,
     vroom
