@@ -72,83 +72,9 @@ library(devtools)
 devtools::install_github("molonc/dlptools")
 ```
 
-
 ## Main functions
 
-File imports:
-
-```R
-library(dlptools)
-
-# assuming you have the dlp files saved above, there are convenience functions 
-# to load data:
-my_dlp_dir <- "/projects/molonc/scratch/bfurman/projects/osteosarcoma/dlp/"
-segs <- dlptools::import_dlp_files(my_dlp_dir, 'segs')
-metrics <- dlptools::import_dlp_files(my_dlp_dir, 'metrics')
-reads <- dlptools::import_dlp_files(my_dlp_dir, 'reads')
-```
-
-
-Adding features to reads/segs dataframes:
-
-```R
-# add a column called 'mask' to indicate that the reads or segs overlap with
-# regions we want to exclude:
-segs <- dlptools::mark_mask_regions(segs, "meta_data/blacklist_2023.07.17.txt")
-
-reads <- dlptools::mark_mask_regions(reads, "meta_data/blacklist_2023.07.17.txt")
-```
-
-Converting reads to segments is a common task, as segments files from the DLP pipeline are built with a bunch of filters and assumptions that you probably don't want. So you can filter your own reads, and then convert to segments like so:
-
-```R
-dlptools::reads_to_segs_with_filters(reads)
-
-# basically go from this:
-#      start     end state
-#      <dbl>   <dbl> <dbl>
-#  1       1  500000     2
-#  2  500001 1000000     2
-#  3 1000001 1500000     2
-#  4 1500001 2000000     2
-#  5 2000001 2500000     6
-#  6 2500001 3000000     6
-#  7 3000001 3500000     6
-#  8 3500001 4000000     6
-#  9 4000001 4500000     2
-# 10 4500001 5000000     4
-#
-# To this:
-#    start      end state
-#     <dbl>    <dbl> <dbl> 
-#  1 1  2000000     2    
-#  2 2000001  4000000     6
-#  3 4000001  4500000     2
-#  4 4500001  5000000     4
-
-# or with removing mask=True read bins
-dlptools::reads_to_segs_with_filters(reads, with_mask=TRUE)
-
-# and for convenience, if you didn't run the mark_mask_regions(), you can do that here so it happens on the fly
-dlptools::reads_to_segs_with_filters(
-    reads,
-    with_mask=TRUE,
-    mask_f="meta_data/blacklist_2023.07.17.txt"
-)
-
-# other filters to consider:
-new_segs <- reads %>%
-  dplyr::filter(gc != -1 & map > 0 & !mask) %>%
-  dlptools::reads_to_segs_with_filters()
-```
-
-
-Plotting:
-
-```R
-# will create a simple plot with geom_tile of read states facetted by chromosome
-dlptools::basic_tile_plot(reads)
-```
+See `vignettes/basic_analyses_and_heatmaps.Rmd` or the corresponding html.
 
 ## Development
 
