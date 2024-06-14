@@ -391,10 +391,10 @@ these in relation to your project and sequence data at hand.</p>
 <span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
 <span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>    <span class="at">good_cell =</span> dplyr<span class="sc">::</span><span class="fu">if_else</span>(</span>
 <span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>      quality <span class="sc">&gt;=</span> <span class="fl">0.75</span> <span class="sc">&amp;</span> <span class="co"># cells of high RF quality</span></span>
-<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>      <span class="sc">!</span>is_control <span class="sc">&amp;</span> <span class="co"># non-control cells</span></span>
-<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a>      cell_call <span class="sc">==</span> <span class="st">&quot;C1&quot;</span> <span class="sc">&amp;</span> <span class="co"># live cells</span></span>
-<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a>      <span class="sc">!</span>is_s_phase <span class="sc">&amp;</span> <span class="co"># that are not estimated to be in S-phase</span></span>
-<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a>      total_mapped_reads <span class="sc">&gt;=</span> <span class="dv">250000</span>, <span class="co"># and have a reasonable amount of reads</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>        <span class="sc">!</span>is_control <span class="sc">&amp;</span> <span class="co"># non-control cells</span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a>        cell_call <span class="sc">==</span> <span class="st">&quot;C1&quot;</span> <span class="sc">&amp;</span> <span class="co"># live cells</span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a>        <span class="sc">!</span>is_s_phase <span class="sc">&amp;</span> <span class="co"># that are not estimated to be in S-phase</span></span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a>        total_mapped_reads <span class="sc">&gt;=</span> <span class="dv">250000</span>, <span class="co"># and have a reasonable amount of reads</span></span>
 <span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a>      <span class="cn">TRUE</span>,</span>
 <span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a>      <span class="cn">FALSE</span></span>
 <span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a>    )</span>
@@ -419,28 +419,29 @@ for analyses with a few thresholds:</p>
 <span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co"># first, let&#39;s mark the ones that fall into regions we want to mask</span></span>
 <span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co"># see README.md for accessing this file.</span></span>
 <span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>reads <span class="ot">&lt;-</span> dlptools<span class="sc">::</span><span class="fu">mark_mask_regions</span>(</span>
-<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a>  reads, <span class="at">mask_f =</span> <span class="st">&quot;../meta_data/blacklist_2023.07.17.txt&quot;</span></span>
-<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a>)</span>
-<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a><span class="co">#&gt; Rows: 26 Columns: 4</span></span>
-<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a><span class="co">#&gt; ── Column specification ────────────────────────────────────────────────────────</span></span>
-<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a><span class="co">#&gt; Delimiter: &quot;\t&quot;</span></span>
-<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a><span class="co">#&gt; chr (1): seqnames</span></span>
-<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a><span class="co">#&gt; dbl (3): start, end, width</span></span>
-<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a><span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
-<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a><span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
-<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a></span>
-<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a><span class="co"># then, we can add a column for which count as &quot;good&quot; bins</span></span>
-<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a>reads <span class="ot">&lt;-</span> reads <span class="sc">|&gt;</span></span>
-<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a>    <span class="at">good_bin =</span> dplyr<span class="sc">::</span><span class="fu">if_else</span>(</span>
-<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a>      <span class="sc">!</span>mask <span class="sc">&amp;</span> <span class="co"># does not fall into mask region</span></span>
-<span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a>      gc <span class="sc">&gt;</span> <span class="sc">-</span><span class="dv">1</span> <span class="sc">&amp;</span> <span class="co"># bin went through GC correciton</span></span>
-<span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a>      map <span class="sc">&gt;</span> <span class="fl">0.99</span>, <span class="co"># read bin is in a high mappability region</span></span>
-<span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a>      <span class="cn">TRUE</span>,</span>
-<span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a>      <span class="cn">FALSE</span></span>
-<span id="cb4-36"><a href="#cb4-36" tabindex="-1"></a>    )</span>
-<span id="cb4-37"><a href="#cb4-37" tabindex="-1"></a>  )</span></code></pre></div>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a>  reads,</span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a>  <span class="at">mask_f =</span> <span class="st">&quot;../meta_data/blacklist_2023.07.17.txt&quot;</span></span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a>)</span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a><span class="co">#&gt; Rows: 26 Columns: 4</span></span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a><span class="co">#&gt; ── Column specification ────────────────────────────────────────────────────────</span></span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a><span class="co">#&gt; Delimiter: &quot;\t&quot;</span></span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a><span class="co">#&gt; chr (1): seqnames</span></span>
+<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a><span class="co">#&gt; dbl (3): start, end, width</span></span>
+<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a><span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a><span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a></span>
+<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a><span class="co"># then, we can add a column for which count as &quot;good&quot; bins</span></span>
+<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a>reads <span class="ot">&lt;-</span> reads <span class="sc">|&gt;</span></span>
+<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a>    <span class="at">good_bin =</span> dplyr<span class="sc">::</span><span class="fu">if_else</span>(</span>
+<span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a>      <span class="sc">!</span>mask <span class="sc">&amp;</span> <span class="co"># does not fall into mask region</span></span>
+<span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a>        gc <span class="sc">&gt;</span> <span class="sc">-</span><span class="dv">1</span> <span class="sc">&amp;</span> <span class="co"># bin went through GC correciton</span></span>
+<span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a>        map <span class="sc">&gt;</span> <span class="fl">0.99</span>, <span class="co"># read bin is in a high mappability region</span></span>
+<span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a>      <span class="cn">TRUE</span>,</span>
+<span id="cb4-36"><a href="#cb4-36" tabindex="-1"></a>      <span class="cn">FALSE</span></span>
+<span id="cb4-37"><a href="#cb4-37" tabindex="-1"></a>    )</span>
+<span id="cb4-38"><a href="#cb4-38" tabindex="-1"></a>  )</span></code></pre></div>
 <p>Now we can combine the reads state calls with the metrics, i.e.,
 contextualizing the state calls with the cell level metrics:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>reads <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">left_join</span>(</span>
@@ -535,7 +536,7 @@ of filtered reads.</p>
 <span id="cb7-31"><a href="#cb7-31" tabindex="-1"></a>  <span class="at">clones_df =</span> clusters<span class="sc">$</span>clustering,</span>
 <span id="cb7-32"><a href="#cb7-32" tabindex="-1"></a>  <span class="co"># can save direct to file by adding:</span></span>
 <span id="cb7-33"><a href="#cb7-33" tabindex="-1"></a>  <span class="co"># remove to print to screen (but plots are typically large)</span></span>
-<span id="cb7-34"><a href="#cb7-34" tabindex="-1"></a>  <span class="at">file_name=</span><span class="st">&quot;../example_heatmaps/example_hdbscan.png&quot;</span></span>
+<span id="cb7-34"><a href="#cb7-34" tabindex="-1"></a>  <span class="at">file_name =</span> <span class="st">&quot;../example_heatmaps/example_hdbscan.png&quot;</span></span>
 <span id="cb7-35"><a href="#cb7-35" tabindex="-1"></a>)</span>
 <span id="cb7-36"><a href="#cb7-36" tabindex="-1"></a><span class="co">#&gt; Registered S3 methods overwritten by &#39;treeio&#39;:</span></span>
 <span id="cb7-37"><a href="#cb7-37" tabindex="-1"></a><span class="co">#&gt;   method              from    </span></span>
@@ -591,68 +592,71 @@ of filtered reads.</p>
 <span id="cb7-87"><a href="#cb7-87" tabindex="-1"></a><span class="co">#&gt; &#39;magick&#39; package is suggested to install to give better rasterization.</span></span>
 <span id="cb7-88"><a href="#cb7-88" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb7-89"><a href="#cb7-89" tabindex="-1"></a><span class="co">#&gt; Set `ht_opt$message = FALSE` to turn off this message.</span></span></code></pre></div>
-<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="co"># this plot will look bad in the vignette, see the example ouputs in the</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co"># example_heatmaps/ folder.</span></span></code></pre></div>
 <p>If you’ve run sitka (perhaps using the <a href="https://github.com/molonc/sitka_wrapper">sitka_wrapper</a>), you
 can read in the newick tree file created and do much the same plot.
 Presumably you would have also used the leiden_cut method for clone
 labelling, and will need that file too.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># here, pulled from the example files in the tree_cutting/ section of the</span></span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="co"># sitka_wrapper repo linked above</span></span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>sitka_files <span class="ot">&lt;-</span> <span class="st">&quot;/projects/molonc/aparicio_lab/bfurman/code/sitka_wrapper/tree_cutting/example_inputs/&quot;</span></span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>clones_f <span class="ot">&lt;-</span> fs<span class="sc">::</span><span class="fu">path_join</span>(<span class="fu">c</span>(sitka_files, <span class="st">&quot;leiden_clones_reso010_nb10.csv&quot;</span>))</span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>sitka_reads_f <span class="ot">&lt;-</span> fs<span class="sc">::</span><span class="fu">path_join</span>(<span class="fu">c</span>(sitka_files, <span class="st">&quot;filtered_cell_state_calls.csv.gz&quot;</span>))</span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>sitka_tree_f <span class="ot">&lt;-</span> fs<span class="sc">::</span><span class="fu">path_join</span>(<span class="fu">c</span>(sitka_files, <span class="st">&quot;tree.newick&quot;</span>))</span>
-<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a></span>
-<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co"># sitka trees need a little cleaning, so run through the tree formatting</span></span>
-<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co"># function to drop &#39;locus_&#39; values at tips, and clean off &#39;cell_&#39; names from</span></span>
-<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="co"># tree leafs</span></span>
-<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>sitka_tree <span class="ot">&lt;-</span> dlptools<span class="sc">::</span><span class="fu">import_tree</span>(sitka_tree_f) <span class="sc">|&gt;</span></span>
-<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>  dlptools<span class="sc">::</span><span class="fu">format_sitka_tree</span>()</span>
-<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a></span>
-<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a><span class="co"># expects a file with columns of: cell_id, clone_id</span></span>
-<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a>clones <span class="ot">&lt;-</span> dlptools<span class="sc">::</span><span class="fu">import_clones</span>(clones_f)</span>
-<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="co">#&gt; Rows: 875 Columns: 3</span></span>
-<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="co">#&gt; ── Column specification ────────────────────────────────────────────────────────</span></span>
-<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a><span class="co">#&gt; Delimiter: &quot;,&quot;</span></span>
-<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a><span class="co">#&gt; chr (2): cell_id, clone_id</span></span>
-<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a><span class="co">#&gt; dbl (1): clone_label</span></span>
-<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb8-22"><a href="#cb8-22" tabindex="-1"></a><span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
-<span id="cb8-23"><a href="#cb8-23" tabindex="-1"></a><span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
-<span id="cb8-24"><a href="#cb8-24" tabindex="-1"></a></span>
-<span id="cb8-25"><a href="#cb8-25" tabindex="-1"></a><span class="co"># standard sitka input format</span></span>
-<span id="cb8-26"><a href="#cb8-26" tabindex="-1"></a>sitka_reads <span class="ot">&lt;-</span> dlptools<span class="sc">::</span><span class="fu">import_wideformat_states_file</span>(sitka_reads_f)</span>
-<span id="cb8-27"><a href="#cb8-27" tabindex="-1"></a><span class="co">#&gt; New names:</span></span>
-<span id="cb8-28"><a href="#cb8-28" tabindex="-1"></a><span class="co">#&gt; Rows: 4338 Columns: 876</span></span>
-<span id="cb8-29"><a href="#cb8-29" tabindex="-1"></a><span class="co">#&gt; ── Column specification</span></span>
-<span id="cb8-30"><a href="#cb8-30" tabindex="-1"></a><span class="co">#&gt; ──────────────────────────────────────────────────────── Delimiter: &quot;,&quot; chr</span></span>
-<span id="cb8-31"><a href="#cb8-31" tabindex="-1"></a><span class="co">#&gt; (1): ...1 dbl (875): AT21552-A138971A-R03-C09, AT21552-A138971A-R03-C10,</span></span>
-<span id="cb8-32"><a href="#cb8-32" tabindex="-1"></a><span class="co">#&gt; AT21552-A1389...</span></span>
-<span id="cb8-33"><a href="#cb8-33" tabindex="-1"></a><span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data. ℹ</span></span>
-<span id="cb8-34"><a href="#cb8-34" tabindex="-1"></a><span class="co">#&gt; Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
-<span id="cb8-35"><a href="#cb8-35" tabindex="-1"></a><span class="co">#&gt; • `` -&gt; `...1`</span></span>
-<span id="cb8-36"><a href="#cb8-36" tabindex="-1"></a></span>
-<span id="cb8-37"><a href="#cb8-37" tabindex="-1"></a><span class="co"># set up or read external annotations file with: </span></span>
-<span id="cb8-38"><a href="#cb8-38" tabindex="-1"></a><span class="co"># dlptools::import_annotations_df(anno_file)</span></span>
-<span id="cb8-39"><a href="#cb8-39" tabindex="-1"></a>anno_df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb8-40"><a href="#cb8-40" tabindex="-1"></a>  <span class="co"># bit of a boring example, because we only have one sample and one library</span></span>
-<span id="cb8-41"><a href="#cb8-41" tabindex="-1"></a>  <span class="at">sample_id =</span> <span class="fu">c</span>(<span class="st">&quot;AT21552&quot;</span>, <span class="st">&quot;AT21350&quot;</span>),</span>
-<span id="cb8-42"><a href="#cb8-42" tabindex="-1"></a>  <span class="at">passage =</span> <span class="fu">c</span>(<span class="st">&quot;p3&quot;</span>, <span class="st">&quot;p23&quot;</span>),</span>
-<span id="cb8-43"><a href="#cb8-43" tabindex="-1"></a>  <span class="at">somthing_else =</span> <span class="fu">c</span>(<span class="st">&quot;featureA&quot;</span>, <span class="st">&quot;featureB&quot;</span>)</span>
-<span id="cb8-44"><a href="#cb8-44" tabindex="-1"></a>)</span>
-<span id="cb8-45"><a href="#cb8-45" tabindex="-1"></a></span>
-<span id="cb8-46"><a href="#cb8-46" tabindex="-1"></a>dlptools<span class="sc">::</span><span class="fu">create_tree_copynumber_heatmap</span>(</span>
-<span id="cb8-47"><a href="#cb8-47" tabindex="-1"></a>  <span class="at">phylo_tree =</span> sitka_tree,</span>
-<span id="cb8-48"><a href="#cb8-48" tabindex="-1"></a>  <span class="at">states_df =</span> sitka_reads,</span>
-<span id="cb8-49"><a href="#cb8-49" tabindex="-1"></a>  <span class="at">clones_df =</span> clones,</span>
-<span id="cb8-50"><a href="#cb8-50" tabindex="-1"></a>  <span class="at">annos_df =</span> anno_df,</span>
-<span id="cb8-51"><a href="#cb8-51" tabindex="-1"></a>  <span class="at">file_name=</span><span class="st">&quot;../example_heatmaps/example_sitka.png&quot;</span></span>
-<span id="cb8-52"><a href="#cb8-52" tabindex="-1"></a>)</span>
-<span id="cb8-53"><a href="#cb8-53" tabindex="-1"></a><span class="co">#&gt; &#39;magick&#39; package is suggested to install to give better rasterization.</span></span>
-<span id="cb8-54"><a href="#cb8-54" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb8-55"><a href="#cb8-55" tabindex="-1"></a><span class="co">#&gt; Set `ht_opt$message = FALSE` to turn off this message.</span></span>
-<span id="cb8-56"><a href="#cb8-56" tabindex="-1"></a><span class="co">#&gt; PNG </span></span>
-<span id="cb8-57"><a href="#cb8-57" tabindex="-1"></a><span class="co">#&gt;   2</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># here, pulled from the example files in the tree_cutting/ section of the</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="co"># sitka_wrapper repo linked above</span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>sitka_files <span class="ot">&lt;-</span> <span class="st">&quot;/projects/molonc/aparicio_lab/bfurman/code/sitka_wrapper/tree_cutting/example_inputs/&quot;</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>clones_f <span class="ot">&lt;-</span> fs<span class="sc">::</span><span class="fu">path_join</span>(<span class="fu">c</span>(sitka_files, <span class="st">&quot;leiden_clones_reso010_nb10.csv&quot;</span>))</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>sitka_reads_f <span class="ot">&lt;-</span> fs<span class="sc">::</span><span class="fu">path_join</span>(<span class="fu">c</span>(sitka_files, <span class="st">&quot;filtered_cell_state_calls.csv.gz&quot;</span>))</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>sitka_tree_f <span class="ot">&lt;-</span> fs<span class="sc">::</span><span class="fu">path_join</span>(<span class="fu">c</span>(sitka_files, <span class="st">&quot;tree.newick&quot;</span>))</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="co"># sitka trees need a little cleaning, so run through the tree formatting</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co"># function to drop &#39;locus_&#39; values at tips, and clean off &#39;cell_&#39; names from</span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co"># tree leafs</span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a>sitka_tree <span class="ot">&lt;-</span> dlptools<span class="sc">::</span><span class="fu">import_tree</span>(sitka_tree_f) <span class="sc">|&gt;</span></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a>  dlptools<span class="sc">::</span><span class="fu">format_sitka_tree</span>()</span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a></span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a><span class="co"># expects a file with columns of: cell_id, clone_id</span></span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a>clones <span class="ot">&lt;-</span> dlptools<span class="sc">::</span><span class="fu">import_clones</span>(clones_f)</span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a><span class="co">#&gt; Rows: 875 Columns: 3</span></span>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a><span class="co">#&gt; ── Column specification ────────────────────────────────────────────────────────</span></span>
+<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a><span class="co">#&gt; Delimiter: &quot;,&quot;</span></span>
+<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a><span class="co">#&gt; chr (2): cell_id, clone_id</span></span>
+<span id="cb9-20"><a href="#cb9-20" tabindex="-1"></a><span class="co">#&gt; dbl (1): clone_label</span></span>
+<span id="cb9-21"><a href="#cb9-21" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-22"><a href="#cb9-22" tabindex="-1"></a><span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span id="cb9-23"><a href="#cb9-23" tabindex="-1"></a><span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span id="cb9-24"><a href="#cb9-24" tabindex="-1"></a></span>
+<span id="cb9-25"><a href="#cb9-25" tabindex="-1"></a><span class="co"># standard sitka input format</span></span>
+<span id="cb9-26"><a href="#cb9-26" tabindex="-1"></a>sitka_reads <span class="ot">&lt;-</span> dlptools<span class="sc">::</span><span class="fu">import_wideformat_states_file</span>(sitka_reads_f)</span>
+<span id="cb9-27"><a href="#cb9-27" tabindex="-1"></a><span class="co">#&gt; New names:</span></span>
+<span id="cb9-28"><a href="#cb9-28" tabindex="-1"></a><span class="co">#&gt; Rows: 4338 Columns: 876</span></span>
+<span id="cb9-29"><a href="#cb9-29" tabindex="-1"></a><span class="co">#&gt; ── Column specification</span></span>
+<span id="cb9-30"><a href="#cb9-30" tabindex="-1"></a><span class="co">#&gt; ──────────────────────────────────────────────────────── Delimiter: &quot;,&quot; chr</span></span>
+<span id="cb9-31"><a href="#cb9-31" tabindex="-1"></a><span class="co">#&gt; (1): ...1 dbl (875): AT21552-A138971A-R03-C09, AT21552-A138971A-R03-C10,</span></span>
+<span id="cb9-32"><a href="#cb9-32" tabindex="-1"></a><span class="co">#&gt; AT21552-A1389...</span></span>
+<span id="cb9-33"><a href="#cb9-33" tabindex="-1"></a><span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data. ℹ</span></span>
+<span id="cb9-34"><a href="#cb9-34" tabindex="-1"></a><span class="co">#&gt; Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span id="cb9-35"><a href="#cb9-35" tabindex="-1"></a><span class="co">#&gt; • `` -&gt; `...1`</span></span>
+<span id="cb9-36"><a href="#cb9-36" tabindex="-1"></a></span>
+<span id="cb9-37"><a href="#cb9-37" tabindex="-1"></a><span class="co"># set up or read external annotations file with:</span></span>
+<span id="cb9-38"><a href="#cb9-38" tabindex="-1"></a><span class="co"># dlptools::import_annotations_df(anno_file)</span></span>
+<span id="cb9-39"><a href="#cb9-39" tabindex="-1"></a>anno_df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb9-40"><a href="#cb9-40" tabindex="-1"></a>  <span class="co"># bit of a boring example, because we only have one sample and one library</span></span>
+<span id="cb9-41"><a href="#cb9-41" tabindex="-1"></a>  <span class="at">sample_id =</span> <span class="fu">c</span>(<span class="st">&quot;AT21552&quot;</span>, <span class="st">&quot;AT21350&quot;</span>),</span>
+<span id="cb9-42"><a href="#cb9-42" tabindex="-1"></a>  <span class="at">passage =</span> <span class="fu">c</span>(<span class="st">&quot;p3&quot;</span>, <span class="st">&quot;p23&quot;</span>),</span>
+<span id="cb9-43"><a href="#cb9-43" tabindex="-1"></a>  <span class="at">somthing_else =</span> <span class="fu">c</span>(<span class="st">&quot;featureA&quot;</span>, <span class="st">&quot;featureB&quot;</span>)</span>
+<span id="cb9-44"><a href="#cb9-44" tabindex="-1"></a>)</span>
+<span id="cb9-45"><a href="#cb9-45" tabindex="-1"></a></span>
+<span id="cb9-46"><a href="#cb9-46" tabindex="-1"></a>dlptools<span class="sc">::</span><span class="fu">create_tree_copynumber_heatmap</span>(</span>
+<span id="cb9-47"><a href="#cb9-47" tabindex="-1"></a>  <span class="at">phylo_tree =</span> sitka_tree,</span>
+<span id="cb9-48"><a href="#cb9-48" tabindex="-1"></a>  <span class="at">states_df =</span> sitka_reads,</span>
+<span id="cb9-49"><a href="#cb9-49" tabindex="-1"></a>  <span class="at">clones_df =</span> clones,</span>
+<span id="cb9-50"><a href="#cb9-50" tabindex="-1"></a>  <span class="at">annos_df =</span> anno_df,</span>
+<span id="cb9-51"><a href="#cb9-51" tabindex="-1"></a>  <span class="at">file_name =</span> <span class="st">&quot;../example_heatmaps/example_sitka.png&quot;</span></span>
+<span id="cb9-52"><a href="#cb9-52" tabindex="-1"></a>)</span>
+<span id="cb9-53"><a href="#cb9-53" tabindex="-1"></a><span class="co">#&gt; &#39;magick&#39; package is suggested to install to give better rasterization.</span></span>
+<span id="cb9-54"><a href="#cb9-54" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-55"><a href="#cb9-55" tabindex="-1"></a><span class="co">#&gt; Set `ht_opt$message = FALSE` to turn off this message.</span></span>
+<span id="cb9-56"><a href="#cb9-56" tabindex="-1"></a><span class="co">#&gt; PNG </span></span>
+<span id="cb9-57"><a href="#cb9-57" tabindex="-1"></a><span class="co">#&gt;   2</span></span></code></pre></div>
 </div>
 </div>
 
