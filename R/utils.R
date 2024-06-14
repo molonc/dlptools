@@ -42,9 +42,10 @@ chr_name_check <- function(df, exp_chr_name) {
 #'
 #' minimal required columns for input are: chr,start,end,cell_id,state
 #'
-#' @param states_df is the reads table to convert.
+#' @param reads_df is the reads table to convert.
 #' @return wide format table
 #' @export
+#' @importFrom rlang .data
 convert_long_reads_to_wide <- function(reads_df) {
   # takes a csv of: chr,start,end,cell_id,state
   # and coverts it to: chrom_start_end,state,state
@@ -52,8 +53,10 @@ convert_long_reads_to_wide <- function(reads_df) {
 
   wide_states <- reads_df %>%
     dplyr::mutate(
-      bin = paste(
-        .data$chr, as.integer(.data$start), as.integer(.data$end),
+      bin = base::paste(
+        .data$chr,
+        base::as.integer(.data$start),
+        base::as.integer(.data$end),
         sep = "_"
       )
     ) %>%

@@ -59,7 +59,10 @@ import_wideformat_states_file <- function(states_f) {
   states <- vroom::vroom(states_f)
 
   # reset column names to account for index column
-  colnames(states) <- c("bin", colnames(states)[2:length(colnames(states))])
+  base::colnames(states) <- c(
+    "bin",
+    base::colnames(states)[2:base::length(base::colnames(states))]
+  )
 
   states_bin_wide <- convert_bins_to_columns_cells_to_rows(states)
 
@@ -71,11 +74,12 @@ import_wideformat_states_file <- function(states_f) {
 #' @param states_df tibble/dataframe with bins and rows and cell ids as columns
 #' @return tibble of the inverse frame.
 #' @export
+#' @importFrom rlang .data
 convert_bins_to_columns_cells_to_rows <- function(states_df) {
-  cell_rows <- states_df %>%
-    tidyr::pivot_longer(cols = -c(bin), values_to = "state") %>%
-    tidyr::pivot_wider(names_from = bin, values_from = state) %>%
-    dplyr::rename(cell_id = name)
+  cell_rows <- states_df |>
+    tidyr::pivot_longer(cols = -c(.data$bin), values_to = "state") |>
+    tidyr::pivot_wider(names_from = .data$bin, values_from = .data$state) |>
+    dplyr::rename(cell_id = .data$name)
 
   return(cell_rows)
 }
@@ -90,10 +94,10 @@ convert_bins_to_columns_cells_to_rows <- function(states_df) {
 #' @return phylo object cleaned of "cell_" notation
 #' @export
 format_tree <- function(tree) {
-  locus_tips <- grep("locus", tree$tip.label, value = TRUE)
+  locus_tips <- base::grep("locus", tree$tip.label, value = TRUE)
   tree <- ape::drop.tip(tree, locus_tips)
 
-  tree$tip.label <- gsub("cell_", "", tree$tip.label)
+  tree$tip.label <- base::gsub("cell_", "", tree$tip.label)
 
   return(tree)
 }
@@ -109,7 +113,7 @@ format_tree <- function(tree) {
 #' @return ggplot object
 #' @export
 make_tree_plot_obj <- function(phylo_tree, clones = NULL) {
-  if (!is.null(clones)) {
+  if (!base::is.null(clones)) {
     cell_clone_groups <- get_clone_members(clones)
     # puts tip labels into named groups, with clone id as the name of the list
     phylo_tree <- ggtree::groupOTU(phylo_tree, cell_clone_groups)
@@ -139,21 +143,21 @@ make_corrupt_tree_heatmap <- function(phylo_tree, clones = NULL) {
 
   tree_annot_func <- ComplexHeatmap::AnnotationFunction(
     fun = function(index) {
-      grid::pushViewport(viewport(height = 1))
+      grid::pushViewport(grid::viewport(height = 1))
       grid::grid.draw(ggplot2::ggplotGrob(tree_ggplot)$grobs[[5]])
       grid::popViewport()
     },
     var_import = list(tree_ggplot = tree_ggplot),
-    width = ggplot2::unit(4, "cm"),
+    width = grid::unit(4, "cm"),
     which = "row"
   )
   tree_annot <- ComplexHeatmap::HeatmapAnnotation(
     tree = tree_annot_func, which = "row", show_annotation_name = FALSE
   )
 
-  n_cells <- sum(tree_ggplot$data$isTip)
+  n_cells <- base::sum(tree_ggplot$data$isTip)
   tree_hm <- ComplexHeatmap::Heatmap(
-    matrix(nc = 0, nr = n_cells),
+    base::matrix(nc = 0, nr = n_cells),
     left_annotation = tree_annot
   )
 
@@ -165,11 +169,12 @@ make_corrupt_tree_heatmap <- function(phylo_tree, clones = NULL) {
 #' @param clones_df a tibble/df with cell_id, clone_id columns
 #' @return named list of lists, with clone_id as names
 #' @export
+#' @importFrom rlang .data
 get_clone_members <- function(clones_df) {
-  clone_members <- clones_df %>%
-    dplyr::select(cell_id, clone_id) %>%
-    split(f = as.factor(.$clone_id)) %>%
-    purrr::map(dplyr::select, cell_id)
+  clone_members <- clones_df |>
+    dplyr::select(.data$cell_id, .data$clone_id) |>
+    base::split(f = base::as.factor(dplyr::pull(clones_df, .data$clone_id))) |>
+    purrr::map(dplyr::select, .data$cell_id)
 
   return(clone_members)
 }
@@ -185,9 +190,10 @@ get_clone_members <- function(clones_df) {
 #' a ggplot of a tree)
 #' @return table that has been sorted
 #' @export
+#' @importFrom rlang .data
 sort_df_by_tip_order <- function(targ_df, tip_order) {
-  sorted_df <- targ_df %>%
-    dplyr::arrange(match(cell_id, tip_order))
+  sorted_df <- targ_df |>
+    dplyr::arrange(base::match(.data$cell_id, tip_order))
 
   return(sorted_df)
 }
@@ -202,14 +208,15 @@ sort_df_by_tip_order <- function(targ_df, tip_order) {
 #' @param phylo_tree a phylo object of the tree being used in the heatmap
 #' @return vector of cell_ids (or really, whatever are the tip labels)
 #' @export
+#' @importFrom rlang .data
 cell_id_order_as_plotted <- function(phylo_tree) {
   tree_ggplot <- make_tree_plot_obj(phylo_tree)
-  ggplot_tree_tip_order <- tree_ggplot$data %>%
-    dplyr::tibble() %>%
-    dplyr::filter(isTip) %>%
-    dplyr::arrange(y) %>%
-    dplyr::pull(label) %>%
-    rev() # bottom up assignment
+  ggplot_tree_tip_order <- tree_ggplot$data |>
+    dplyr::tibble() |>
+    dplyr::filter(.data$isTip) |>
+    dplyr::arrange(.data$y) |>
+    dplyr::pull(.data$label) |>
+    base::rev() # bottom up assignment
 
   return(ggplot_tree_tip_order)
 }
@@ -226,17 +233,18 @@ cell_id_order_as_plotted <- function(phylo_tree) {
 #' pulled from a ggplot tree object)
 #' @return matrix of state calls.
 #' @export
+#' @importFrom rlang .data
 format_states_for_hm <- function(states, tree_tips) {
   # order the states matrix same as the tree
   states <- sort_df_by_tip_order(states, tree_tips)
 
   # convert to matrix with cell_id rownames for ComplexHeatmap
-  states_mat <- as.matrix(dplyr::select(states, -cell_id))
-  rownames(states_mat) <- states$cell_id
+  states_mat <- base::as.matrix(dplyr::select(.data$states, -c(.data$cell_id)))
+  base::rownames(states_mat) <- states$cell_id
 
   # sort columns by chromosome and bin start_end
-  states_mat <- states_mat[, gtools::mixedsort(colnames(states_mat))]
-  class(states_mat) <- "character"
+  states_mat <- states_mat[, gtools::mixedsort(base::colnames(states_mat))]
+  base::class(states_mat) <- "character"
   states_mat[states_mat == "11"] <- "11+"
   return(states_mat)
 }
@@ -264,9 +272,12 @@ pull_chr_from_col_name <- function(col_name) {
 #' columns
 #' @return factor of chromosomes with sorted levels
 create_chromosome_column_fct <- function(states_mat) {
-  chr_cols <- colnames(states_mat)
+  chr_cols <- base::colnames(states_mat)
   chroms <- purrr::map_chr(chr_cols, pull_chr_from_col_name)
-  chroms <- factor(chroms, levels = unique(gtools::mixedsort(chroms)))
+  chroms <- base::factor(
+    chroms,
+    levels = base::unique(gtools::mixedsort(chroms))
+  )
   return(chroms)
 }
 
@@ -287,25 +298,26 @@ create_chromosome_column_fct <- function(states_mat) {
 #' ComplexHeatmap understands as the position to place the label on the left
 #' side annotation.
 #' @export
+#' @importFrom rlang .data
 get_clone_id_label_positions <- function(
     clones, only_largest_clone_group = TRUE) {
   # make a running number of identifying which clade groups for each clone ID
   # based on plotted row adjacency.
-  clone_groups <- clones %>%
-    dplyr::mutate(row_num = dplyr::row_number()) %>%
-    dplyr::group_by(clone_id) %>%
+  clone_groups <- clones |>
+    dplyr::mutate(row_num = dplyr::row_number()) |>
+    dplyr::group_by(.data$clone_id) |>
     dplyr::mutate(
-      con_group = cumsum(c(1, diff(row_num) != 1))
+      con_group = base::cumsum(c(1, diff(.data$row_num) != 1))
     )
 
   if (only_largest_clone_group) {
     # get the largest group for each clone ID
-    largest_clone_groups <- clone_groups %>%
-      dplyr::count(con_group, name = "group_size") %>%
-      dplyr::slice_max(group_size)
+    largest_clone_groups <- clone_groups |>
+      dplyr::count(.data$con_group, name = "group_size") |>
+      dplyr::slice_max(.data$group_size)
 
     clone_groups <- dplyr::inner_join(
-      dplyr::ungroup(clone_groups),
+      dplyr::ungroup(.data$clone_groups),
       largest_clone_groups,
       by = c("clone_id", "con_group")
     )
@@ -313,11 +325,11 @@ get_clone_id_label_positions <- function(
 
   # find the middle of each clone group, which is where were will drop the
   # clone_id label in the heatmap
-  clone_positions <- clone_groups %>%
-    dplyr::group_by(clone_id, con_group) %>%
+  clone_positions <- clone_groups |>
+    dplyr::group_by(.data$clone_id, .data$con_group) |>
     dplyr::summarise(
-      row_num = round(mean(row_num))
-    ) %>%
+      row_num = base::round(base::mean(.data$row_num))
+    ) |>
     dplyr::ungroup()
 
   return(dplyr::select(clone_positions, clone_id, row_num))
@@ -348,7 +360,7 @@ pull_sample_id_from_cell_id <- function(cell_id) {
 #' @return tibble of annotations for each cell_id.
 #' @export
 make_ordered_cell_id_annos <- function(annos_df, cell_id_order) {
-  if (is.null(annos_df)) {
+  if (base::is.null(annos_df)) {
     return(NULL)
   }
   # matching of annos to cells will all be based on sample_ids
@@ -363,7 +375,7 @@ make_ordered_cell_id_annos <- function(annos_df, cell_id_order) {
   ordered_cell_annos <- dplyr::left_join(
     cell_sample_df, annos_df,
     by = "sample_id"
-  ) %>%
+  ) |>
     dplyr::select(-c("cell_id", "sample_id"))
 
   return(ordered_cell_annos)
@@ -493,7 +505,7 @@ plot_combined_heatmap <- function(
     png_height = 1600, png_width = 2800, png_res = 144) {
   if (!is.null(file_name)) {
     # open a file to dump it to
-    png(
+    grDevices::png(
       # strip any ext the user tries to give
       paste0(fs::path_ext_remove(file_name), ".png"),
       height = png_height, width = png_width,

@@ -11,6 +11,8 @@ reads_to_segs_with_filters(reads_df, with_mask = FALSE, mask_f = NULL)
 \link{import_dlp_files(file_type='reads')})}
 
 \item{with_mask}{boolean on whether to filter mask==True read bins.}
+
+\item{mask_f}{the blacklist file to do the masking with.}
 }
 \value{
 tibble/dataframe with read bins organized into segment blocks.

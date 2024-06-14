@@ -67,6 +67,9 @@ reads <- dplyr::left_join(
   by = "cell_id",
 )
 
+# BEN! the filtering I do below needs to be corrected, it's a mix of read_bin and
+# cell level filtering, and that should be teased apart, though it probably leads
+# to the same answer.
 
 # many columns of data available. Here is a subset
 reads[1:4, 2:10]
