@@ -24,7 +24,10 @@ import_dlp_files <- function(
     recurse = TRUE
   )
 
-  dlp_dat <- purrr::map_dfr(dlp_fs, vroom::vroom, id = "file_path")
+  dlp_dat <- purrr::map_dfr(
+    dlp_fs, vroom::vroom,
+    id = "file_path", show_col_types = FALSE
+  )
 
   dlp_dat <- dplyr::mutate(
     dlp_dat,
@@ -42,7 +45,7 @@ import_dlp_files <- function(
 #' internal to control mask file loading.
 #' @param mask_f path to the mask file to load.
 load_mask_file <- function(mask_f) {
-  masks <- vroom::vroom(mask_f)
+  masks <- vroom::vroom(mask_f, show_col_types = FALSE)
 
   return(masks)
 }

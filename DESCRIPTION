@@ -27,3 +27,7 @@ Imports:
     stringr,
     tidyr,
     vroom
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

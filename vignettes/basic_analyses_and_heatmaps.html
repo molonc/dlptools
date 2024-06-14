@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Basic analyses and heatmaps with dlptools</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Basic analyses and heatmaps with
+dlptools</h1>
+
+
+
+<div id="dlptools" class="section level1">
+<h1>dlptools</h1>
+<p>dlptools will help with basic file manipulation of DLP pipeline out
+and adding of genomic features to read bins for filtering and
+classification of changes. Also included are a few standard plots that
+are commonly made.</p>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<p>You can install the development version of dlptools from <a href="https://github.com/">GitHub</a> with:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># install.packages(&quot;devtools&quot;)</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;molonc/dlptools&quot;</span>)</span></code></pre></div>
+</div>
+<div id="common-analysis-tasks" class="section level2">
+<h2>Common Analysis Tasks</h2>
+<p>These are a few steps that are often taken to start a DLP
+analysis.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(fs)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="fu">library</span>(dlptools)</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co"># a file path to where some directories with DLP data lives. Expected structure</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co"># discussed in README.md</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>dlp_dir <span class="ot">&lt;-</span> <span class="st">&quot;/projects/molonc/scratch/bfurman/dlp_testdata/&quot;</span></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co"># looks something like this</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>fs<span class="sc">::</span><span class="fu">dir_tree</span>(dlp_dir, <span class="at">recurse =</span> <span class="dv">1</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co">#&gt; /projects/molonc/scratch/bfurman/dlp_testdata/</span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="co">#&gt; └── SC-8408</span></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="co">#&gt;     ├── annotation</span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co">#&gt;     └── hmmcopy</span></span></code></pre></div>
+<p>First step is usually to import the cell specific metrics and mark
+which cells are good ones to use for downstream analyses.</p>
+<p>This example uses some typical thresholds, but you should think about
+these in relation to your project and sequence data at hand.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>metrics <span class="ot">&lt;-</span> dlptools<span class="sc">::</span><span class="fu">import_dlp_files</span>(dlp_dir, <span class="st">&quot;metrics&quot;</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co">#&gt; Rows: 1261 Columns: 76</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#&gt; ── Column specification ────────────────────────────────────────────────────────</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt; Delimiter: &quot;,&quot;</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; chr (11): cell_id, index_i5, index_i7, library_id, primer_i5, primer_i7, sam...</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; dbl (61): multiplier, MSRSI_non_integerness, MBRSI_dispersion_non_integernes...</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt; lgl  (3): is_control, is_s_phase, is_contaminated</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co"># This example is of some commonly used thresholds and things</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>metrics <span class="ot">&lt;-</span> metrics <span class="sc">|&gt;</span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>    <span class="at">good_cell =</span> dplyr<span class="sc">::</span><span class="fu">if_else</span>(</span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>      quality <span class="sc">&gt;=</span> <span class="fl">0.75</span> <span class="sc">&amp;</span> <span class="co"># cells of high RF quality</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>      <span class="sc">!</span>is_control <span class="sc">&amp;</span> <span class="co"># non-control cells</span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a>      cell_call <span class="sc">==</span> <span class="st">&quot;C1&quot;</span> <span class="sc">&amp;</span> <span class="co"># live cells</span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a>      <span class="sc">!</span>is_s_phase <span class="sc">&amp;</span> <span class="co"># that are not estimated to be in S-phase</span></span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a>      total_mapped_reads <span class="sc">&gt;=</span> <span class="dv">250000</span>, <span class="co"># and have a reasonable amount of reads</span></span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a>      <span class="cn">TRUE</span>,</span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a>      <span class="cn">FALSE</span></span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a>    )</span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a>  )</span></code></pre></div>
+<p>Loading the reads data would be the next step. These are 500 Kb bins
+where copy number estimates are converted into integer state calls by
+HMMCopy.</p>
+<p>Similar to the metrics, we want to mark which bins are good to use
+for analyses with a few thresholds:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>reads <span class="ot">&lt;-</span> dlptools<span class="sc">::</span><span class="fu">import_dlp_files</span>(dlp_dir, <span class="st">&quot;reads&quot;</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co">#&gt; Rows: 7825766 Columns: 18</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt; ── Column specification ────────────────────────────────────────────────────────</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt; Delimiter: &quot;,&quot;</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt; chr  (2): chr, cell_id</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; dbl (12): start, end, reads, gc, map, cor_gc, copy, modal_curve, modal_quant...</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; lgl  (3): valid, ideal, is_low_mappability</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co"># first, let&#39;s mark the ones that fall into regions we want to mask</span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co"># see README.md for accessing this file.</span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>reads <span class="ot">&lt;-</span> dlptools<span class="sc">::</span><span class="fu">mark_mask_regions</span>(</span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a>  reads, <span class="at">mask_f =</span> <span class="st">&quot;../meta_data/blacklist_2023.07.17.txt&quot;</span></span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a>)</span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a><span class="co">#&gt; Rows: 26 Columns: 4</span></span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a><span class="co">#&gt; ── Column specification ────────────────────────────────────────────────────────</span></span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a><span class="co">#&gt; Delimiter: &quot;\t&quot;</span></span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a><span class="co">#&gt; chr (1): seqnames</span></span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a><span class="co">#&gt; dbl (3): start, end, width</span></span>
+<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a><span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a><span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a></span>
+<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a><span class="co"># then, we can add a column for which count as &quot;good&quot; bins</span></span>
+<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a>reads <span class="ot">&lt;-</span> reads <span class="sc">|&gt;</span></span>
+<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a>    <span class="at">good_bin =</span> dplyr<span class="sc">::</span><span class="fu">if_else</span>(</span>
+<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a>      <span class="sc">!</span>mask <span class="sc">&amp;</span> <span class="co"># does not fall into mask region</span></span>
+<span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a>      gc <span class="sc">&gt;</span> <span class="sc">-</span><span class="dv">1</span> <span class="sc">&amp;</span> <span class="co"># bin went through GC correciton</span></span>
+<span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a>      map <span class="sc">&gt;</span> <span class="fl">0.99</span>, <span class="co"># read bin is in a high mappability region</span></span>
+<span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a>      <span class="cn">TRUE</span>,</span>
+<span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a>      <span class="cn">FALSE</span></span>
+<span id="cb4-36"><a href="#cb4-36" tabindex="-1"></a>    )</span>
+<span id="cb4-37"><a href="#cb4-37" tabindex="-1"></a>  )</span></code></pre></div>
+<p>Now we can combine the reads state calls with the metrics, i.e.,
+contextualizing the state calls with the cell level metrics:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>reads <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">left_join</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  reads, metrics,</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="at">by =</span> <span class="st">&quot;cell_id&quot;</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>)</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co"># and then create a filtered set of reads for analysis</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>reads_filt <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(reads, good_cell <span class="sc">&amp;</span> good_bin)</span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co"># many columns of data available. Here is a subset</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>reads_filt[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="dv">2</span><span class="sc">:</span><span class="dv">10</span>]</span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 9</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co">#&gt;     start     end chr   reads    gc   map cor_gc  copy valid</span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co">#&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;lgl&gt;</span></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co">#&gt; 1 2000001 2500000 1       680 0.595 0.997   1.36  5.37 TRUE </span></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="co">#&gt; 2 3000001 3500000 1       642 0.585 0.997   1.27  5.02 TRUE </span></span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="co">#&gt; 3 4000001 4500000 1       615 0.483 0.996   1.25  4.93 TRUE </span></span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a><span class="co">#&gt; 4 4500001 5000000 1       608 0.482 0.999   1.23  4.88 TRUE</span></span></code></pre></div>
+<p>You might also want reads summarized into segments, which are
+collapsed blocks of read bins that have been assigned the same
+state.</p>
+<p>The DLP pipeline does produce a segments file, which you can import
+with:</p>
+<p><code>dlptools::import_dlp_files(dlp_dir, &quot;segs&quot;)</code></p>
+<p>but that file was made with internal filters and settings that you
+probably don’t know or want.</p>
+<p>So we can create one from our filtered reads:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co">#  This can take a bit to run if you have a lot of runs combined.</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>segs_filt <span class="ot">&lt;-</span> dlptools<span class="sc">::</span><span class="fu">reads_to_segs_with_filters</span>(reads_filt)</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co"># this is now runs of adjacent read bins with identical states collapesed</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co"># into a single bin. Of course, bins are no longer of equal size.</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>segs_filt[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, ]</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 6</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="co">#&gt; # Groups:   cell_id, chr [1]</span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="co">#&gt;   cell_id                  chr      start      end state median_copy</span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;                    &lt;fct&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;</span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="co">#&gt; 1 AT21614-A138971B-R45-C37 1      2000001  8000000     5        4.96</span></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="co">#&gt; 2 AT21614-A138971B-R45-C37 1      8000001 10000000     7        6.71</span></span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="co">#&gt; 3 AT21614-A138971B-R45-C37 1     10000001 18500000     5        5.13</span></span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="co">#&gt; 4 AT21614-A138971B-R45-C37 1     18500001 23000000     7        6.57</span></span></code></pre></div>
+</div>
+<div id="plotting-trees-and-heatmaps" class="section level2">
+<h2>Plotting Trees and Heatmaps</h2>
+<p>A common plot from a DLP analysis is to build a tree with some method
+(<a href="https://github.com/molonc/sitka_wrapper/tree/main">sitka</a>,
+or hdbscan) and then plot it next to a heatmap of read state calls. The
+function <code>dlptools::create_tree_copynumber_heatmap()</code> is
+designed to do just that. It is a wrapper around several independent
+steps and the full code with individual functions is available in the
+repo at <code>R/plot_tree_heatmap.R</code>.</p>
+<p>The point of the plot is to bring together a tree, with clone labels,
+and state calls. If you have other annotations, those can be added
+too.</p>
+<p>Here we’ll walk through plot creation with HDBScan. This requires
+installing <a href="https://github.com/shahcompbio/signals">signals</a>
+in addition to this package.</p>
+<p>This example is assuming you followed the steps above to create a set
+of filtered reads.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">library</span>(signals)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>clusters <span class="ot">&lt;-</span> signals<span class="sc">::</span><span class="fu">umap_clustering</span>(</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>  reads_filt,</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>  <span class="at">minPts =</span> <span class="dv">50</span>, <span class="at">field =</span> <span class="st">&quot;state&quot;</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>)</span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt; Creating CN matrix...</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt; Calculating UMAP dimensionality reduction...</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co">#&gt; Clustering cells using hdbscan...</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="co">#&gt; Identified 1 clusters</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="co">#&gt; Distribution of clusters:</span></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="co">#&gt;   Cluster 0: 194</span></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="co"># if you see an error like:</span></span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="co">#     An error occurred in umap calculation: function &#39;as_cholmod_sparse&#39; not</span></span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="co">#     provided by package &#39;Matrix&#39;</span></span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a><span class="co"># you might need to install some older package versions</span></span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="co"># remotes::install_version(&quot;Matrix&quot;, version = &quot;1.6-1&quot;)</span></span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a><span class="co"># install.packages(&quot;irlba&quot;, type = &quot;source&quot;)</span></span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a><span class="co"># https://github.com/bwlewis/irlba/issues/70</span></span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a></span>
+<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a></span>
+<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a><span class="co"># need to prep the reads data</span></span>
+<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a>reads_f_wide <span class="ot">&lt;-</span> dlptools<span class="sc">::</span><span class="fu">convert_long_reads_to_wide</span>(reads_filt)</span>
+<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a></span>
+<span id="cb7-27"><a href="#cb7-27" tabindex="-1"></a><span class="co"># now we can make the plot</span></span>
+<span id="cb7-28"><a href="#cb7-28" tabindex="-1"></a>dlptools<span class="sc">::</span><span class="fu">create_tree_copynumber_heatmap</span>(</span>
+<span id="cb7-29"><a href="#cb7-29" tabindex="-1"></a>  <span class="at">phylo_tree =</span> clusters<span class="sc">$</span>tree,</span>
+<span id="cb7-30"><a href="#cb7-30" tabindex="-1"></a>  <span class="at">states_df =</span> reads_f_wide,</span>
+<span id="cb7-31"><a href="#cb7-31" tabindex="-1"></a>  <span class="at">clones_df =</span> clusters<span class="sc">$</span>clustering,</span>
+<span id="cb7-32"><a href="#cb7-32" tabindex="-1"></a>  <span class="co"># can save direct to file by adding:</span></span>
+<span id="cb7-33"><a href="#cb7-33" tabindex="-1"></a>  <span class="co"># remove to print to screen (but plots are typically large)</span></span>
+<span id="cb7-34"><a href="#cb7-34" tabindex="-1"></a>  <span class="at">file_name=</span><span class="st">&quot;../example_heatmaps/example_hdbscan.png&quot;</span></span>
+<span id="cb7-35"><a href="#cb7-35" tabindex="-1"></a>)</span>
+<span id="cb7-36"><a href="#cb7-36" tabindex="-1"></a><span class="co">#&gt; Registered S3 methods overwritten by &#39;treeio&#39;:</span></span>
+<span id="cb7-37"><a href="#cb7-37" tabindex="-1"></a><span class="co">#&gt;   method              from    </span></span>
+<span id="cb7-38"><a href="#cb7-38" tabindex="-1"></a><span class="co">#&gt;   MRCA.phylo          tidytree</span></span>
+<span id="cb7-39"><a href="#cb7-39" tabindex="-1"></a><span class="co">#&gt;   MRCA.treedata       tidytree</span></span>
+<span id="cb7-40"><a href="#cb7-40" tabindex="-1"></a><span class="co">#&gt;   Nnode.treedata      tidytree</span></span>
+<span id="cb7-41"><a href="#cb7-41" tabindex="-1"></a><span class="co">#&gt;   Ntip.treedata       tidytree</span></span>
+<span id="cb7-42"><a href="#cb7-42" tabindex="-1"></a><span class="co">#&gt;   ancestor.phylo      tidytree</span></span>
+<span id="cb7-43"><a href="#cb7-43" tabindex="-1"></a><span class="co">#&gt;   ancestor.treedata   tidytree</span></span>
+<span id="cb7-44"><a href="#cb7-44" tabindex="-1"></a><span class="co">#&gt;   child.phylo         tidytree</span></span>
+<span id="cb7-45"><a href="#cb7-45" tabindex="-1"></a><span class="co">#&gt;   child.treedata      tidytree</span></span>
+<span id="cb7-46"><a href="#cb7-46" tabindex="-1"></a><span class="co">#&gt;   full_join.phylo     tidytree</span></span>
+<span id="cb7-47"><a href="#cb7-47" tabindex="-1"></a><span class="co">#&gt;   full_join.treedata  tidytree</span></span>
+<span id="cb7-48"><a href="#cb7-48" tabindex="-1"></a><span class="co">#&gt;   groupClade.phylo    tidytree</span></span>
+<span id="cb7-49"><a href="#cb7-49" tabindex="-1"></a><span class="co">#&gt;   groupClade.treedata tidytree</span></span>
+<span id="cb7-50"><a href="#cb7-50" tabindex="-1"></a><span class="co">#&gt;   groupOTU.phylo      tidytree</span></span>
+<span id="cb7-51"><a href="#cb7-51" tabindex="-1"></a><span class="co">#&gt;   groupOTU.treedata   tidytree</span></span>
+<span id="cb7-52"><a href="#cb7-52" tabindex="-1"></a><span class="co">#&gt;   is.rooted.treedata  tidytree</span></span>
+<span id="cb7-53"><a href="#cb7-53" tabindex="-1"></a><span class="co">#&gt;   nodeid.phylo        tidytree</span></span>
+<span id="cb7-54"><a href="#cb7-54" tabindex="-1"></a><span class="co">#&gt;   nodeid.treedata     tidytree</span></span>
+<span id="cb7-55"><a href="#cb7-55" tabindex="-1"></a><span class="co">#&gt;   nodelab.phylo       tidytree</span></span>
+<span id="cb7-56"><a href="#cb7-56" tabindex="-1"></a><span class="co">#&gt;   nodelab.treedata    tidytree</span></span>
+<span id="cb7-57"><a href="#cb7-57" tabindex="-1"></a><span class="co">#&gt;   offspring.phylo     tidytree</span></span>
+<span id="cb7-58"><a href="#cb7-58" tabindex="-1"></a><span class="co">#&gt;   offspring.treedata  tidytree</span></span>
+<span id="cb7-59"><a href="#cb7-59" tabindex="-1"></a><span class="co">#&gt;   parent.phylo        tidytree</span></span>
+<span id="cb7-60"><a href="#cb7-60" tabindex="-1"></a><span class="co">#&gt;   parent.treedata     tidytree</span></span>
+<span id="cb7-61"><a href="#cb7-61" tabindex="-1"></a><span class="co">#&gt;   root.treedata       tidytree</span></span>
+<span id="cb7-62"><a href="#cb7-62" tabindex="-1"></a><span class="co">#&gt;   rootnode.phylo      tidytree</span></span>
+<span id="cb7-63"><a href="#cb7-63" tabindex="-1"></a><span class="co">#&gt;   sibling.phylo       tidytree</span></span>
+<span id="cb7-64"><a href="#cb7-64" tabindex="-1"></a><span class="co">#&gt; &#39;magick&#39; package is suggested to install to give better rasterization.</span></span>
+<span id="cb7-65"><a href="#cb7-65" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-66"><a href="#cb7-66" tabindex="-1"></a><span class="co">#&gt; Set `ht_opt$message = FALSE` to turn off this message.</span></span>
+<span id="cb7-67"><a href="#cb7-67" tabindex="-1"></a><span class="co">#&gt; PNG </span></span>
+<span id="cb7-68"><a href="#cb7-68" tabindex="-1"></a><span class="co">#&gt;   2</span></span>
+<span id="cb7-69"><a href="#cb7-69" tabindex="-1"></a></span>
+<span id="cb7-70"><a href="#cb7-70" tabindex="-1"></a><span class="co"># lets say we had some annotation we wanted to add too, these are done by</span></span>
+<span id="cb7-71"><a href="#cb7-71" tabindex="-1"></a><span class="co"># matching sample IDs in cell_id names.</span></span>
+<span id="cb7-72"><a href="#cb7-72" tabindex="-1"></a><span class="co"># this could be read froma file with dlptools::import_annotations_df()</span></span>
+<span id="cb7-73"><a href="#cb7-73" tabindex="-1"></a><span class="co"># but will just prep this example by hand</span></span>
+<span id="cb7-74"><a href="#cb7-74" tabindex="-1"></a>anno_df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb7-75"><a href="#cb7-75" tabindex="-1"></a>  <span class="co"># bit of a boring example, because we only have one sample and one library</span></span>
+<span id="cb7-76"><a href="#cb7-76" tabindex="-1"></a>  <span class="at">sample_id =</span> <span class="fu">c</span>(<span class="st">&quot;AT21614&quot;</span>),</span>
+<span id="cb7-77"><a href="#cb7-77" tabindex="-1"></a>  <span class="at">passage =</span> <span class="fu">c</span>(<span class="st">&quot;p10&quot;</span>),</span>
+<span id="cb7-78"><a href="#cb7-78" tabindex="-1"></a>  <span class="at">somthing_else =</span> <span class="fu">c</span>(<span class="st">&quot;featureA&quot;</span>)</span>
+<span id="cb7-79"><a href="#cb7-79" tabindex="-1"></a>)</span>
+<span id="cb7-80"><a href="#cb7-80" tabindex="-1"></a></span>
+<span id="cb7-81"><a href="#cb7-81" tabindex="-1"></a>dlptools<span class="sc">::</span><span class="fu">create_tree_copynumber_heatmap</span>(</span>
+<span id="cb7-82"><a href="#cb7-82" tabindex="-1"></a>  <span class="at">phylo_tree =</span> clusters<span class="sc">$</span>tree,</span>
+<span id="cb7-83"><a href="#cb7-83" tabindex="-1"></a>  <span class="at">states_df =</span> reads_f_wide,</span>
+<span id="cb7-84"><a href="#cb7-84" tabindex="-1"></a>  <span class="at">clones_df =</span> clusters<span class="sc">$</span>clustering,</span>
+<span id="cb7-85"><a href="#cb7-85" tabindex="-1"></a>  <span class="at">annos_df =</span> anno_df</span>
+<span id="cb7-86"><a href="#cb7-86" tabindex="-1"></a>)</span>
+<span id="cb7-87"><a href="#cb7-87" tabindex="-1"></a><span class="co">#&gt; &#39;magick&#39; package is suggested to install to give better rasterization.</span></span>
+<span id="cb7-88"><a href="#cb7-88" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-89"><a href="#cb7-89" tabindex="-1"></a><span class="co">#&gt; Set `ht_opt$message = FALSE` to turn off this message.</span></span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>If you’ve run sitka (perhaps using the <a href="https://github.com/molonc/sitka_wrapper">sitka_wrapper</a>), you
+can read in the newick tree file created and do much the same plot.
+Presumably you would have also used the leiden_cut method for clone
+labelling, and will need that file too.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># here, pulled from the example files in the tree_cutting/ section of the</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="co"># sitka_wrapper repo linked above</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>sitka_files <span class="ot">&lt;-</span> <span class="st">&quot;/projects/molonc/aparicio_lab/bfurman/code/sitka_wrapper/tree_cutting/example_inputs/&quot;</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>clones_f <span class="ot">&lt;-</span> fs<span class="sc">::</span><span class="fu">path_join</span>(<span class="fu">c</span>(sitka_files, <span class="st">&quot;leiden_clones_reso010_nb10.csv&quot;</span>))</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>sitka_reads_f <span class="ot">&lt;-</span> fs<span class="sc">::</span><span class="fu">path_join</span>(<span class="fu">c</span>(sitka_files, <span class="st">&quot;filtered_cell_state_calls.csv.gz&quot;</span>))</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>sitka_tree_f <span class="ot">&lt;-</span> fs<span class="sc">::</span><span class="fu">path_join</span>(<span class="fu">c</span>(sitka_files, <span class="st">&quot;tree.newick&quot;</span>))</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co"># sitka trees need a little cleaning, so run through the tree formatting</span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co"># function to drop &#39;locus_&#39; values at tips, and clean off &#39;cell_&#39; names from</span></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="co"># tree leafs</span></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>sitka_tree <span class="ot">&lt;-</span> dlptools<span class="sc">::</span><span class="fu">import_tree</span>(sitka_tree_f) <span class="sc">|&gt;</span></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>  dlptools<span class="sc">::</span><span class="fu">format_sitka_tree</span>()</span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a><span class="co"># expects a file with columns of: cell_id, clone_id</span></span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a>clones <span class="ot">&lt;-</span> dlptools<span class="sc">::</span><span class="fu">import_clones</span>(clones_f)</span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="co">#&gt; Rows: 875 Columns: 3</span></span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="co">#&gt; ── Column specification ────────────────────────────────────────────────────────</span></span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a><span class="co">#&gt; Delimiter: &quot;,&quot;</span></span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a><span class="co">#&gt; chr (2): cell_id, clone_id</span></span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a><span class="co">#&gt; dbl (1): clone_label</span></span>
+<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-22"><a href="#cb8-22" tabindex="-1"></a><span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span id="cb8-23"><a href="#cb8-23" tabindex="-1"></a><span class="co">#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span id="cb8-24"><a href="#cb8-24" tabindex="-1"></a></span>
+<span id="cb8-25"><a href="#cb8-25" tabindex="-1"></a><span class="co"># standard sitka input format</span></span>
+<span id="cb8-26"><a href="#cb8-26" tabindex="-1"></a>sitka_reads <span class="ot">&lt;-</span> dlptools<span class="sc">::</span><span class="fu">import_wideformat_states_file</span>(sitka_reads_f)</span>
+<span id="cb8-27"><a href="#cb8-27" tabindex="-1"></a><span class="co">#&gt; New names:</span></span>
+<span id="cb8-28"><a href="#cb8-28" tabindex="-1"></a><span class="co">#&gt; Rows: 4338 Columns: 876</span></span>
+<span id="cb8-29"><a href="#cb8-29" tabindex="-1"></a><span class="co">#&gt; ── Column specification</span></span>
+<span id="cb8-30"><a href="#cb8-30" tabindex="-1"></a><span class="co">#&gt; ──────────────────────────────────────────────────────── Delimiter: &quot;,&quot; chr</span></span>
+<span id="cb8-31"><a href="#cb8-31" tabindex="-1"></a><span class="co">#&gt; (1): ...1 dbl (875): AT21552-A138971A-R03-C09, AT21552-A138971A-R03-C10,</span></span>
+<span id="cb8-32"><a href="#cb8-32" tabindex="-1"></a><span class="co">#&gt; AT21552-A1389...</span></span>
+<span id="cb8-33"><a href="#cb8-33" tabindex="-1"></a><span class="co">#&gt; ℹ Use `spec()` to retrieve the full column specification for this data. ℹ</span></span>
+<span id="cb8-34"><a href="#cb8-34" tabindex="-1"></a><span class="co">#&gt; Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span id="cb8-35"><a href="#cb8-35" tabindex="-1"></a><span class="co">#&gt; • `` -&gt; `...1`</span></span>
+<span id="cb8-36"><a href="#cb8-36" tabindex="-1"></a></span>
+<span id="cb8-37"><a href="#cb8-37" tabindex="-1"></a><span class="co"># set up or read external annotations file with: </span></span>
+<span id="cb8-38"><a href="#cb8-38" tabindex="-1"></a><span class="co"># dlptools::import_annotations_df(anno_file)</span></span>
+<span id="cb8-39"><a href="#cb8-39" tabindex="-1"></a>anno_df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb8-40"><a href="#cb8-40" tabindex="-1"></a>  <span class="co"># bit of a boring example, because we only have one sample and one library</span></span>
+<span id="cb8-41"><a href="#cb8-41" tabindex="-1"></a>  <span class="at">sample_id =</span> <span class="fu">c</span>(<span class="st">&quot;AT21552&quot;</span>, <span class="st">&quot;AT21350&quot;</span>),</span>
+<span id="cb8-42"><a href="#cb8-42" tabindex="-1"></a>  <span class="at">passage =</span> <span class="fu">c</span>(<span class="st">&quot;p3&quot;</span>, <span class="st">&quot;p23&quot;</span>),</span>
+<span id="cb8-43"><a href="#cb8-43" tabindex="-1"></a>  <span class="at">somthing_else =</span> <span class="fu">c</span>(<span class="st">&quot;featureA&quot;</span>, <span class="st">&quot;featureB&quot;</span>)</span>
+<span id="cb8-44"><a href="#cb8-44" tabindex="-1"></a>)</span>
+<span id="cb8-45"><a href="#cb8-45" tabindex="-1"></a></span>
+<span id="cb8-46"><a href="#cb8-46" tabindex="-1"></a>dlptools<span class="sc">::</span><span class="fu">create_tree_copynumber_heatmap</span>(</span>
+<span id="cb8-47"><a href="#cb8-47" tabindex="-1"></a>  <span class="at">phylo_tree =</span> sitka_tree,</span>
+<span id="cb8-48"><a href="#cb8-48" tabindex="-1"></a>  <span class="at">states_df =</span> sitka_reads,</span>
+<span id="cb8-49"><a href="#cb8-49" tabindex="-1"></a>  <span class="at">clones_df =</span> clones,</span>
+<span id="cb8-50"><a href="#cb8-50" tabindex="-1"></a>  <span class="at">annos_df =</span> anno_df,</span>
+<span id="cb8-51"><a href="#cb8-51" tabindex="-1"></a>  <span class="at">file_name=</span><span class="st">&quot;../example_heatmaps/example_sitka.png&quot;</span></span>
+<span id="cb8-52"><a href="#cb8-52" tabindex="-1"></a>)</span>
+<span id="cb8-53"><a href="#cb8-53" tabindex="-1"></a><span class="co">#&gt; &#39;magick&#39; package is suggested to install to give better rasterization.</span></span>
+<span id="cb8-54"><a href="#cb8-54" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-55"><a href="#cb8-55" tabindex="-1"></a><span class="co">#&gt; Set `ht_opt$message = FALSE` to turn off this message.</span></span>
+<span id="cb8-56"><a href="#cb8-56" tabindex="-1"></a><span class="co">#&gt; PNG </span></span>
+<span id="cb8-57"><a href="#cb8-57" tabindex="-1"></a><span class="co">#&gt;   2</span></span></code></pre></div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

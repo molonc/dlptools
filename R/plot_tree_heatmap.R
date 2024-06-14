@@ -10,6 +10,7 @@
 #'
 #' @param tree_f a path to a tree file
 #' @return phylo object
+#' @export
 import_tree <- function(tree_f) {
   s_tree <- ape::read.tree(tree_f)
   return(s_tree)
@@ -84,7 +85,7 @@ convert_bins_to_columns_cells_to_rows <- function(states_df) {
   return(cell_rows)
 }
 
-#' clean tree tip labels and drop any locus tips
+#' clean tree tip labels and drop any locus tips from sitka trees
 #'
 #' 'Locus tips' are from sitka and are locus values that end up on the
 #' tip of trees. Also removes the "cell_" prefix from tip labels, which is
@@ -93,7 +94,7 @@ convert_bins_to_columns_cells_to_rows <- function(states_df) {
 #' @param tree phylo object as read by ape::read.tree
 #' @return phylo object cleaned of "cell_" notation
 #' @export
-format_tree <- function(tree) {
+format_sitka_tree <- function(tree) {
   locus_tips <- base::grep("locus", tree$tip.label, value = TRUE)
   tree <- ape::drop.tip(tree, locus_tips)
 
@@ -239,7 +240,7 @@ format_states_for_hm <- function(states, tree_tips) {
   states <- sort_df_by_tip_order(states, tree_tips)
 
   # convert to matrix with cell_id rownames for ComplexHeatmap
-  states_mat <- base::as.matrix(dplyr::select(.data$states, -c(.data$cell_id)))
+  states_mat <- base::as.matrix(dplyr::select(states, -.data$cell_id))
   base::rownames(states_mat) <- states$cell_id
 
   # sort columns by chromosome and bin start_end
