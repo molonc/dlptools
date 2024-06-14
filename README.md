@@ -65,6 +65,14 @@ wget https://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/gap.txt.gz
 You'll also want a local copy of the masking file found in `meta_data/blacklist_2023.07.17.txt`, or your own version of regions to mask. This file was build by Daniel Lai, and has been used for many DLP analyses. It is masking rough approximations of centromeres and telomeres that are generally bad for DLP analyses. Other functions (*coming soon*) will add the explicit coordinates of centromeres and telomeres to dataframes of reads and segs.
 
 
+## Installing DLPtools
+
+```r
+library(devtools)
+devtools::install_github("molonc/dlptools")
+```
+
+
 ## Main functions
 
 File imports:
@@ -192,7 +200,16 @@ my_cool_func <- function(x) {
 # leads to fewer mixups as code bases grow and encounter redundantly named functions.
 ```
 
-3. Then in your R instance, we can build the needed meta data for the new function.
+3. To test your function, in the R instance you can load it and check it out
+
+```R
+# will load the whole package including your new function
+devtools::load_all()
+
+my_cool_func(x)
+```
+
+4. Then in your R instance, we can build the needed meta data for the new function.
 
 ```R
 # searches the R/ directory for new functions and updates the NAMESPACE file.
@@ -209,17 +226,17 @@ usethis::use_package("purrr") # or whatever package your function needs
 ```
 
 
-4. From the R instance, run a check that the package is still good
+5. From the R instance, run a check that the package is still good
 
 ```R
 devtools::check()
 ```
 
-5. ideally we write unit tests 😬
+6. ideally we write unit tests 😬
 
 https://r-pkgs.org/whole-game.html#use_testthat
 
-6. commit your changes to the repo
+7. commit your changes to the repo
 
 ```bash
 git status # to see what is all changed
