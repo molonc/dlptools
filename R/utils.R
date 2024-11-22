@@ -46,7 +46,7 @@ chr_name_check <- function(df, exp_chr_name) {
 #' @return wide format table
 #' @export
 #' @importFrom rlang .data
-convert_long_reads_to_wide <- function(reads_df) {
+convert_long_reads_to_wide <- function(reads_df, state_col = "state") {
   # takes a csv of: chr,start,end,cell_id,state
   # and coverts it to: chrom_start_end,state,state
   # with an index column of location and columns of states for each cell
@@ -60,8 +60,8 @@ convert_long_reads_to_wide <- function(reads_df) {
         sep = "_"
       )
     ) %>%
-    dplyr::select("bin", "cell_id", "state") %>%
-    tidyr::pivot_wider(names_from = bin, values_from = state)
+    dplyr::select("bin", "cell_id", {{ state_col }}) %>%
+    tidyr::pivot_wider(names_from = bin, values_from = {{ state_col }})
 
   return(wide_states)
 }
