@@ -45,7 +45,7 @@ import_annotations_df <- function(annotations_file) {
   return(anno_df)
 }
 
-#' format statess for plotting in a heatmap
+#' format states for plotting in a heatmap
 #'
 #' @param states_df long format states information
 #' @param state_col the column being plotted in the heatmap
@@ -63,7 +63,9 @@ format_states_for_hm <- function(states_df, state_col) {
 
   # sort columns by chromosome and bin start_end
   states_mat <- states_mat[, gtools::mixedsort(base::colnames(states_mat))]
-  base::class(states_mat) <- "character"
+  if (state_col != "BAF") {
+    base::class(states_mat) <- "character"
+  }
 
   if (state_col == "state") {
     states_mat[states_mat == "11"] <- "11+"
@@ -104,14 +106,18 @@ create_chromosome_column_fct <- function(states_mat) {
   return(chroms)
 }
 
-
-generate_state_hm <- function(states_mat, labels_fontsize = 8) {
+#' creates a complex heatmap of a given matrix of states.
+generate_state_hm <- function(
+    states_mat, labels_fontsize = 8, plot_cols = STATE_COLORS) {
   # set up a chromosome factor for column splits in the heatmap
   chroms <- create_chromosome_column_fct(states_mat)
 
+  print(states_mat[1, 1:4])
+  print(plot_cols)
+
   states_hm <- ComplexHeatmap::Heatmap(
     states_mat,
-    col = CNV_COLOURS,
+    col = plot_cols,
     cluster_rows = FALSE,
     cluster_columns = FALSE,
     show_row_names = FALSE,
@@ -122,7 +128,8 @@ generate_state_hm <- function(states_mat, labels_fontsize = 8) {
     column_title_side = "bottom",
     # might need to revisit when I size img
     column_title_gp = grid::gpar(fontsize = labels_fontsize),
-    heatmap_legend_param = list(nrow = 4)
+    heatmap_legend_param = list(nrow = 4),
+    na_col = "white"
   )
 
   return(states_hm)
@@ -161,8 +168,45 @@ generate_hm_image <- function(
   }
 }
 
+#' grab colors for various hm possibilities.
+#'
+#' Standard colors used by Signals and other people from the DLP world.
+#' @export
+fetch_heatmap_color_palette <- function(state_col, states_df) {
+  color_choices <- list(
+    "state" = STATE_COLORS,
+    "A" = STATE_COLORS,
+    "B" = STATE_COLORS,
+    "BAF" = BAF_COLORS,
+    "state_phase" = ASCN_PHASE_COLORS,
+    "state_AS_phased" = ASCN_COLORS,
+    "state_AS" = ASCN_COLORS
+  )
+
+  color_chosen <- purrr::pluck(
+    color_choices, state_col,
+    .default = STATE_COLORS
+  )
+
+  # check if the choice was ok
+  plot_col_elements <- unique(states_df[[state_col]])
+
+  if (state_col != "BAF" && length(plot_col_elements) > length(color_chosen)) {
+    warning(
+      paste0(
+        "more elements that colors for ", state_col, " can plot them all.",
+        " Defaulting to rainbow, but maybe don't plot this?"
+      )
+    )
+    color_chosen <- grDevices::rainbow(length(plot_col_elements))
+    names(color_chosen) <- gtools::mixedsort(plot_col_elements)
+  }
+
+  return(color_chosen)
+}
 
 
+#' @export
 plot_state_hm <- function(
     states_df, # long format data
     state_col, # column of data to plot
@@ -176,8 +220,15 @@ plot_state_hm <- function(
   # first, format the states for plotting
   states_mat <- format_states_for_hm(states_df, state_col)
 
+  # determine plot colors
+  hm_colors <- fetch_heatmap_color_palette(state_col, states_df)
+
   # plot
-  state_hm <- generate_state_hm(states_mat, labels_fontsize = labels_fontsize)
+  state_hm <- generate_state_hm(
+    states_mat,
+    plot_cols = hm_colors,
+    labels_fontsize = labels_fontsize
+  )
 
   generate_hm_image(state_hm, file_name = file_name, ...)
 }
