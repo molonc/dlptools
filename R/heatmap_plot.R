@@ -203,18 +203,118 @@ fetch_heatmap_color_palette <- function(state_col, states_df) {
   return(color_chosen)
 }
 
+#' get a row number of where to place each clone label.
+#'
+#' A single clone can appear on multiple clades of the tree or in one
+#' monophyletic group. On the heatmap, we need to determine were to put a clone
+#' ID label (e.g., A, B, C, etc), as we don't want a label for each cell id.
+#' Typically, we label the largest clade with the clone ID, and then provide a
+#' legend mapping clone colors to IDs. This function will find the "middle" cell
+#' ID of the clade being labelled as the position to place the clone ID.
+#'
+#' @param clones table of cell_id, clone_id
+#' @param only_largest_clone_group boolean. TRUE means only largest clone clade
+#' will receive the clone ID label. FALSE means all clades wil get the clone
+#' label.
+#' @return tibble of clone_id, and a row_number to place it, which
+#' ComplexHeatmap understands as the position to place the label on the left
+#' side annotation.
+#' @export
+#' @importFrom rlang .data
+get_clone_id_label_positions <- function(
+    clones, only_largest_clone_group = TRUE) {
+  # make a running number of identifying which clade groups for each clone ID
+  # based on plotted row adjacency.
+  clone_groups <- clones |>
+    dplyr::mutate(row_num = dplyr::row_number()) |>
+    dplyr::group_by(.data$clone_id) |>
+    dplyr::mutate(
+      con_group = base::cumsum(c(1, diff(.data$row_num) != 1))
+    )
+
+  if (only_largest_clone_group) {
+    # get the largest group for each clone ID
+    largest_clone_groups <- clone_groups |>
+      dplyr::count(.data$con_group, name = "group_size") |>
+      dplyr::slice_max(.data$group_size)
+
+    clone_groups <- dplyr::inner_join(
+      dplyr::ungroup(clone_groups),
+      largest_clone_groups,
+      by = c("clone_id", "con_group")
+    )
+  }
+
+  # find the middle of each clone group, which is where were will drop the
+  # clone_id label in the heatmap
+  clone_positions <- clone_groups |>
+    dplyr::group_by(.data$clone_id, .data$con_group) |>
+    dplyr::summarise(
+      row_num = base::round(base::mean(.data$row_num))
+    ) |>
+    dplyr::ungroup()
+
+  return(dplyr::select(clone_positions, clone_id, row_num))
+}
+
 #' builds the left-side annotations of the cells
-build_left_annot <- function(anno_df = NULL, anno_cols_list = list()) {
-  # and probably clones too
+build_left_annot <- function(
+    anno_df = NULL,
+    anno_cols_list = list(),
+    clones_df = NULL,
+    only_largest_clone_group = FALSE,
+    labels_fontsize = 8) {
+  left_annot <- NULL
+  if (!is.null(clones_df)) {
+    clone_label_pos <- get_clone_id_label_positions(
+      clones_df,
+      only_largest_clone_group = only_largest_clone_group
+    )
+  }
   if (!is.null(anno_df)) {
+    anno_df <- as.data.frame(dplyr::select(anno_df, -c(cell_id)))
+  }
+
+  # must be a cleaner way, with adding annotations together or something.
+  if (!is.null(clones_df) && !is.null(anno_df)) {
     left_annot <- ComplexHeatmap::HeatmapAnnotation(
-      df = as.data.frame(dplyr::select(anno_df, -c(cell_id))),
+      clones = clones_df$clone_id,
+      clone_label = ComplexHeatmap::anno_mark(
+        labels = clone_label_pos$clone_id,
+        at = clone_label_pos$row_num,
+        link_width = grid::unit(2, "mm"),
+        labels_gp = grid::gpar(fontsize = labels_fontsize),
+      ),
+      na_col = "black",
+      which = "row",
+      annotation_legend_param = list(
+        clones = list(nrow = 4)
+      ),
+      df = anno_df,
+      col = anno_cols_list
+    )
+  } else if (!is.null(clones_df) && is.null(anno_df)) {
+    left_annot <- ComplexHeatmap::HeatmapAnnotation(
+      clones = clones_df$clone_id,
+      clone_label = ComplexHeatmap::anno_mark(
+        labels = clone_label_pos$clone_id,
+        at = clone_label_pos$row_num,
+        link_width = grid::unit(2, "mm"),
+        labels_gp = grid::gpar(fontsize = labels_fontsize),
+      ),
+      na_col = "black",
+      which = "row",
+      annotation_legend_param = list(
+        clones = list(nrow = 4)
+      )
+    )
+  } else if (is.null(clones_df) && !is.null(anno_df)) {
+    left_annot <- ComplexHeatmap::HeatmapAnnotation(
+      df = anno_df,
       na_col = "black",
       which = "row",
       col = anno_cols_list
     )
-  } else {
-    left_annot <- NULL
   }
 
   return(left_annot)
@@ -232,6 +332,8 @@ plot_state_hm <- function(
     anno_colors_list = list(), # for custom colors of annotations
     clones_df = NULL, # optional, can also specify columns in the dataframe
     anno_columns = NULL,
+    clone_col = NULL,
+    only_largest_clone_group = FALSE,
     file_name = NULL, # for direct saving to a file
     labels_fontsize = 8,
     ...) {
@@ -242,17 +344,29 @@ plot_state_hm <- function(
   if (!is.null(anno_columns) && is.null(anno_df)) {
     anno_df <- dplyr::distinct(cell_id, anno_columns)
   }
-  # ensure consistent ordering
-  anno_df <- sort_df_by_cell_order(anno_df, rownames(states_mat))
+
+  if (!is.null(anno_df)) {
+    # ensure consistent ordering
+    anno_df <- sort_df_by_cell_order(anno_df, rownames(states_mat))
+  }
 
   # deal with clones or consider it an annotation? They are a bit special
   # with the tree call out
+  if (is.null(clones_df) && !is.null(clone_col)) {
+    clones_df <- dplyr::distinct(states_df, cell_id, clone_col)
+  }
 
   # deal with tree, and re-order states and annotations if so
   if (!is.null(phylogeny)) {
     cell_id_plot_order <- cell_id_order_as_plotted(phylogeny)
     states_mat <- states_mat[cell_id_plot_order, ]
-    anno_df <- sort_df_by_cell_order(anno_df, cell_id_plot_order)
+
+    if (!is.null(anno_df)) {
+      anno_df <- sort_df_by_cell_order(anno_df, cell_id_plot_order)
+    }
+    if (!is.null(clones_df)) {
+      clones_df <- sort_df_by_cell_order(clones_df, cell_id_plot_order)
+    }
 
     tree_hm <- make_corrupt_tree_heatmap(phylogeny)
   } else {
@@ -263,7 +377,10 @@ plot_state_hm <- function(
   # build left annotations, returns null if there is nothing
   left_annot <- build_left_annot(
     anno_df = anno_df,
-    anno_cols_list = anno_colors_list
+    anno_cols_list = anno_colors_list,
+    clones_df = clones_df,
+    labels_fontsize = labels_fontsize,
+    only_largest_clone_group = only_largest_clone_group
   )
 
   # determine plot colors for heatmap
