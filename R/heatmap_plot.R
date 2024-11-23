@@ -249,9 +249,16 @@ plot_state_hm <- function(
   # with the tree call out
 
   # deal with tree, and re-order states and annotations if so
+  if (!is.null(phylogeny)) {
+    cell_id_plot_order <- cell_id_order_as_plotted(phylogeny)
+    states_mat <- states_mat[cell_id_plot_order, ]
+    anno_df <- sort_df_by_cell_order(anno_df, cell_id_plot_order)
 
-  # determine plot colors for heatmap
-  hm_colors <- fetch_heatmap_color_palette(state_col, states_df)
+    tree_hm <- make_corrupt_tree_heatmap(phylogeny)
+  } else {
+    tree_hm <- NULL
+  }
+
 
   # build left annotations, returns null if there is nothing
   left_annot <- build_left_annot(
@@ -259,7 +266,10 @@ plot_state_hm <- function(
     anno_cols_list = anno_colors_list
   )
 
-  # plot
+  # determine plot colors for heatmap
+  hm_colors <- fetch_heatmap_color_palette(state_col, states_df)
+
+  # plot the heatmap
   state_hm <- generate_state_hm(
     states_mat,
     plot_cols = hm_colors,
@@ -267,5 +277,11 @@ plot_state_hm <- function(
     left_annot = left_annot
   )
 
-  generate_hm_image(state_hm, file_name = file_name, ...)
+  if (!is.null(tree_hm)) {
+    total_hm <- tree_hm + state_hm
+  } else {
+    total_hm <- state_hm
+  }
+
+  generate_hm_image(total_hm, file_name = file_name, ...)
 }
