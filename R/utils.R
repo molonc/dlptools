@@ -66,4 +66,21 @@ convert_long_reads_to_wide <- function(reads_df, state_col = "state") {
   return(wide_states)
 }
 
-# no, I need this to go the other way
+
+#' sort a table given a vector of cell_ids
+#'
+#' Typically used to sort a dataframe based on the plotted tip order to align
+#' states heatmap/annotations/clone IDs to the plotted tree
+#'
+#' @param targ_df a table with cell_ids to sort
+#' @param cell_order a vector of cell_ids in the desired order (e.g., pulled
+#' from a ggplot of a tree)
+#' @return table that has been sorted
+#' @export
+#' @importFrom rlang .data
+sort_df_by_cell_order <- function(targ_df, cell_order) {
+  sorted_df <- targ_df |>
+    dplyr::arrange(base::match(.data$cell_id, cell_order))
+
+  return(sorted_df)
+}

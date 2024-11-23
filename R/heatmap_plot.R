@@ -108,12 +108,9 @@ create_chromosome_column_fct <- function(states_mat) {
 
 #' creates a complex heatmap of a given matrix of states.
 generate_state_hm <- function(
-    states_mat, labels_fontsize = 8, plot_cols = STATE_COLORS) {
+    states_mat, labels_fontsize = 8, plot_cols = STATE_COLORS, left_annot = NULL) {
   # set up a chromosome factor for column splits in the heatmap
   chroms <- create_chromosome_column_fct(states_mat)
-
-  print(states_mat[1, 1:4])
-  print(plot_cols)
 
   states_hm <- ComplexHeatmap::Heatmap(
     states_mat,
@@ -129,7 +126,8 @@ generate_state_hm <- function(
     # might need to revisit when I size img
     column_title_gp = grid::gpar(fontsize = labels_fontsize),
     heatmap_legend_param = list(nrow = 4),
-    na_col = "white"
+    na_col = "white",
+    left_annotation = left_annot
   )
 
   return(states_hm)
@@ -205,29 +203,68 @@ fetch_heatmap_color_palette <- function(state_col, states_df) {
   return(color_chosen)
 }
 
+#' builds the left-side annotations of the cells
+build_left_annot <- function(anno_df = NULL, anno_cols_list = list()) {
+  # and probably clones too
+  if (!is.null(anno_df)) {
+    left_annot <- ComplexHeatmap::HeatmapAnnotation(
+      df = as.data.frame(dplyr::select(anno_df, -c(cell_id))),
+      na_col = "black",
+      which = "row",
+      col = anno_cols_list
+    )
+  } else {
+    left_annot <- NULL
+  }
 
+  return(left_annot)
+}
+
+#' main hm building function
+#'
+#' anno_cols_list: list(Passage=c(`3`: #123456))
 #' @export
 plot_state_hm <- function(
     states_df, # long format data
     state_col, # column of data to plot
     phylogeny = NULL, # optional
     anno_df = NULL, # optional, can also specify columns in the dataframe
+    anno_colors_list = list(), # for custom colors of annotations
     clones_df = NULL, # optional, can also specify columns in the dataframe
-    anno_cols = NULL,
+    anno_columns = NULL,
     file_name = NULL, # for direct saving to a file
     labels_fontsize = 8,
     ...) {
   # first, format the states for plotting
   states_mat <- format_states_for_hm(states_df, state_col)
 
-  # determine plot colors
+  # deal with any annotations
+  if (!is.null(anno_columns) && is.null(anno_df)) {
+    anno_df <- dplyr::distinct(cell_id, anno_columns)
+  }
+  # ensure consistent ordering
+  anno_df <- sort_df_by_cell_order(anno_df, rownames(states_mat))
+
+  # deal with clones or consider it an annotation? They are a bit special
+  # with the tree call out
+
+  # deal with tree, and re-order states and annotations if so
+
+  # determine plot colors for heatmap
   hm_colors <- fetch_heatmap_color_palette(state_col, states_df)
+
+  # build left annotations, returns null if there is nothing
+  left_annot <- build_left_annot(
+    anno_df = anno_df,
+    anno_cols_list = anno_colors_list
+  )
 
   # plot
   state_hm <- generate_state_hm(
     states_mat,
     plot_cols = hm_colors,
-    labels_fontsize = labels_fontsize
+    labels_fontsize = labels_fontsize,
+    left_annot = left_annot
   )
 
   generate_hm_image(state_hm, file_name = file_name, ...)
