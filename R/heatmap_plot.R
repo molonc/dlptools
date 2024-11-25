@@ -236,7 +236,7 @@ get_clone_id_label_positions <- function(
     # get the largest group for each clone ID
     largest_clone_groups <- clone_groups |>
       dplyr::count(.data$con_group, name = "group_size") |>
-      dplyr::slice_max(.data$group_size)
+      dplyr::slice_max(.data$group_size, with_ties = FALSE)
 
     clone_groups <- dplyr::inner_join(
       dplyr::ungroup(clone_groups),
@@ -263,13 +263,20 @@ build_left_annot <- function(
     anno_cols_list = list(),
     clones_df = NULL,
     only_largest_clone_group = FALSE,
-    labels_fontsize = 8) {
+    labels_fontsize = 8,
+    clone_palette = NULL) {
   left_annot <- NULL
+
   if (!is.null(clones_df)) {
     clone_label_pos <- get_clone_id_label_positions(
       clones_df,
       only_largest_clone_group = only_largest_clone_group
     )
+    if (length(unique(clones_df$clone_id)) > 2) {
+      legend_n_row <- 4
+    } else {
+      legend_n_row <- 2
+    }
   }
   if (!is.null(anno_df)) {
     anno_df <- as.data.frame(dplyr::select(anno_df, -c(cell_id)))
@@ -288,10 +295,10 @@ build_left_annot <- function(
       na_col = "black",
       which = "row",
       annotation_legend_param = list(
-        clones = list(nrow = 4)
+        clones = list(nrow = legend_n_row)
       ),
       df = anno_df,
-      col = anno_cols_list
+      col = purrr::list_merge(anno_cols_list, clones = clone_palette)
     )
   } else if (!is.null(clones_df) && is.null(anno_df)) {
     left_annot <- ComplexHeatmap::HeatmapAnnotation(
@@ -305,8 +312,9 @@ build_left_annot <- function(
       na_col = "black",
       which = "row",
       annotation_legend_param = list(
-        clones = list(nrow = 4)
-      )
+        clones = list(nrow = legend_n_row)
+      ),
+      col = list(clones = clone_palette)
     )
   } else if (is.null(clones_df) && !is.null(anno_df)) {
     left_annot <- ComplexHeatmap::HeatmapAnnotation(
@@ -318,6 +326,34 @@ build_left_annot <- function(
   }
 
   return(left_annot)
+}
+
+
+#' confirms arguments are compatible for the plotting wrapper
+#' @param all of the plot_state_hm args
+check_args <- function() {
+  plot_args <- as.list(parent.frame())
+  if (plot_args$color_tree_clones &&
+    (is.null(plot_args$phylogeny) ||
+      (
+        is.null(plot_args$clones_df) && is.null(plot_args$clone_column)
+      )
+    )
+  ) {
+    stop(
+      paste0(
+        "To color clones need a phylogeny, and a clones_df or a column",
+        " of clone ids."
+      )
+    )
+  }
+
+  if (
+    !is.null(plot_args$clones_df) &&
+      !("clone_id" %in% colnames(plot_args$clones_df))
+  ) {
+    stop("Need the column 'clone_id' in the clone_df.")
+  }
 }
 
 #' main hm building function
@@ -332,11 +368,14 @@ plot_state_hm <- function(
     anno_colors_list = list(), # for custom colors of annotations
     clones_df = NULL, # optional, can also specify columns in the dataframe
     anno_columns = NULL,
-    clone_col = NULL,
+    clone_column = NULL,
+    color_tree_clones = FALSE,
     only_largest_clone_group = FALSE,
     file_name = NULL, # for direct saving to a file
     labels_fontsize = 8,
     ...) {
+  check_args()
+
   # first, format the states for plotting
   states_mat <- format_states_for_hm(states_df, state_col)
 
@@ -352,8 +391,14 @@ plot_state_hm <- function(
 
   # deal with clones or consider it an annotation? They are a bit special
   # with the tree call out
-  if (is.null(clones_df) && !is.null(clone_col)) {
-    clones_df <- dplyr::distinct(states_df, cell_id, clone_col)
+  if (is.null(clones_df) && !is.null(clone_column)) {
+    clones_df <- dplyr::distinct(states_df, cell_id, clone_id = clone_col)
+  }
+
+  if (!is.null(clones_df)) {
+    clone_palette <- make_clone_palette(unique(clones_df$clone_id))
+  } else {
+    clone_palette <- NULL
   }
 
   # deal with tree, and re-order states and annotations if so
@@ -368,11 +413,15 @@ plot_state_hm <- function(
       clones_df <- sort_df_by_cell_order(clones_df, cell_id_plot_order)
     }
 
-    tree_hm <- make_corrupt_tree_heatmap(phylogeny)
+    tree_hm <- make_corrupt_tree_heatmap(
+      phylogeny,
+      clones_df = clones_df,
+      color_clones = color_tree_clones,
+      clone_palette = clone_palette
+    )
   } else {
     tree_hm <- NULL
   }
-
 
   # build left annotations, returns null if there is nothing
   left_annot <- build_left_annot(
@@ -380,7 +429,8 @@ plot_state_hm <- function(
     anno_cols_list = anno_colors_list,
     clones_df = clones_df,
     labels_fontsize = labels_fontsize,
-    only_largest_clone_group = only_largest_clone_group
+    only_largest_clone_group = only_largest_clone_group,
+    clone_palette = clone_palette
   )
 
   # determine plot colors for heatmap

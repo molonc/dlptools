@@ -22,6 +22,7 @@ Imports:
     gtools,
     IRanges,
     magrittr,
+    pals,
     purrr,
     rlang,
     stats,
