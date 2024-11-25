@@ -5,32 +5,12 @@
 #' a segments file from that. This function will take a reads table and covert
 #' it to a segments table.
 #'
-#' Optionally can as it to remove reads that overlap with a mask region (see
-#' [mark_mask_regions()]), typically done with the meta_data/blacklist.txt file.
-#'
 #' @param reads_df a table with standard reads data (e.g., created with
 #' [import_dlp_files(file_type='reads')])
-#' @param with_mask boolean on whether to filter mask==True read bins.
-#' @param mask_f the blacklist file to do the masking with.
 #' @return tibble/dataframe with read bins organized into segment blocks.
 #' @export
 #' @importFrom rlang .data
-reads_to_segs_with_filters <- function(
-    reads_df, with_mask = FALSE, mask_f = NULL) {
-  if (!("mask" %in% colnames(reads_df)) && with_mask && base::is.null(mask_f)) {
-    print("
-      mask column not added and no mask file supplied. Either supply mask_f to
-      this function, or look at using mark_mask_regions() externally, then run
-      this function.
-    ")
-    return(NULL)
-  }
-
-  if (with_mask && !(base::is.null(mask_f))) {
-    reads_df <- mark_mask_regions(reads_df, mask_f = mask_f) %>%
-      dplyr::filter(!.data$mask)
-  }
-
+reads_to_segs <- function(reads_df) {
   new_segs <- reads_df %>%
     dplyr::select("cell_id", "chr", "start", "end", "state", "copy") %>%
     dplyr::group_by(.data$cell_id, .data$chr) %>%
