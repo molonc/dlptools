@@ -62,8 +62,9 @@ wget https://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/chromInfo.txt.gz
 wget https://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/gap.txt.gz
 ```
 
-You'll also want a local copy of the masking file found in `meta_data/blacklist_2023.07.17.txt`, or your own version of regions to mask. This file was build by Daniel Lai, and has been used for many DLP analyses. It is masking rough approximations of centromeres and telomeres that are generally bad for DLP analyses. Other functions (*coming soon*) will add the explicit coordinates of centromeres and telomeres to dataframes of reads and segs.
+Another important file is `inst/extdata/blacklist_2023.07.17.txt` which is used to mask regions of poor mapping quality. This package uses this file as the default with functions like `dlptools::mark_mask_regions()`, but you can also create your own to pass to that fuction. This file was build by Daniel Lai, and has been used for many DLP analyses. It is masking rough approximations of centromeres and telomeres that are generally bad for DLP analyses.
 
+Other functions (*coming soon*) will add the explicit coordinates of centromeres and telomeres to dataframes of reads and segs.
 
 ## Installing DLPtools
 
