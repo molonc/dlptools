@@ -122,3 +122,21 @@ pull_info_from_cell_id <- function(
 
   return(cell_info)
 }
+
+#' clean tree tip labels and drop any locus tips from sitka trees
+#'
+#' 'Locus tips' are from sitka and are locus values that end up on the
+#' tip of trees. Also removes the "cell_" prefix from tip labels, which is
+#' also a consequence of sitka.
+#'
+#' @param tree phylo object as read by ape::read.tree
+#' @return phylo object cleaned of "cell_" notation
+#' @export
+format_sitka_tree <- function(tree) {
+  locus_tips <- base::grep("locus", tree$tip.label, value = TRUE)
+  tree <- ape::drop.tip(tree, locus_tips)
+
+  tree$tip.label <- base::gsub("cell_", "", tree$tip.label)
+
+  return(tree)
+}
