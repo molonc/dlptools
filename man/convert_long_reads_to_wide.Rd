@@ -4,7 +4,7 @@
 \alias{convert_long_reads_to_wide}
 \title{convert long format reads to wide format}
 \usage{
-convert_long_reads_to_wide(reads_df)
+convert_long_reads_to_wide(reads_df, state_col = "state")
 }
 \arguments{
 \item{reads_df}{is the reads table to convert.}

@@ -381,7 +381,9 @@ plot_state_hm <- function(
 
   # deal with any annotations
   if (!is.null(anno_columns) && is.null(anno_df)) {
-    anno_df <- dplyr::distinct(cell_id, anno_columns)
+    anno_df <- states_df |>
+      dplyr::select(cell_id, dplyr::all_of(anno_columns)) |>
+      dplyr::distinct()
   }
 
   if (!is.null(anno_df)) {
@@ -392,7 +394,7 @@ plot_state_hm <- function(
   # deal with clones or consider it an annotation? They are a bit special
   # with the tree call out
   if (is.null(clones_df) && !is.null(clone_column)) {
-    clones_df <- dplyr::distinct(states_df, cell_id, clone_id = clone_col)
+    clones_df <- dplyr::distinct(states_df, cell_id, clone_id = .data[[clone_column]])
   }
 
   if (!is.null(clones_df)) {
