@@ -84,3 +84,41 @@ sort_df_by_cell_order <- function(targ_df, cell_order) {
 
   return(sorted_df)
 }
+
+
+#' extract sample ID from the typically formatted cell_ids
+#'
+#' expecting cell IDs as AT21350-A143952A-R10-C37 with the first position being
+#' the sample ID.
+#'
+#' @param cell_id string of a cell_id or vector of cell IDs
+#' @return string of the sample ID contained within
+#' @export
+pull_sample_id_from_cell_id <- function(cell_id) {
+  pull_info_from_cell_id(cell_id, sample_id = TRUE)
+}
+
+#' generic extractor of info contained in cell ids
+#'
+#' @param cell_id string or vector of cells id
+#' @param library_id boolean to extract library IDs
+#' @param sample_id boolean to extract sample IDs
+#' @return vector of requested information
+#' @export
+pull_info_from_cell_id <- function(
+    cell_id, library_id = FALSE, sample_id = FALSE) {
+  if (library_id && sample_id) {
+    stop("you gotta pick, sample or library")
+  }
+  if (library_id) {
+    idx <- 2
+  } else if (sample_id) {
+    idx <- 1
+  }
+  cell_info <- stringr::str_split(
+    cell_id,
+    pattern = "-", simplify = TRUE
+  )[, idx]
+
+  return(cell_info)
+}
