@@ -20,6 +20,38 @@ plot_state_hm(
   ...
 )
 }
+\arguments{
+\item{states_df}{long format read bin data to be plotted}
+
+\item{state_col}{string of column name to target for plotting in the heatmap.
+Examples include: state, BAF, state_AS, state_phase}
+
+\item{phylogeny}{optional. phylo class object to be plotted.}
+
+\item{anno_df}{optional. annotations dataframe with cell_id column and
+annotation for each cell id to be added to a heatmap.}
+
+\item{anno_colors_list}{list of named vectors specifying colors for
+annotations example: list(passage=c(\code{1}='#2872bc', \code{19}='#d23e3e'))}
+
+\item{clones_df}{optional. dataframe of clone ideas (clone_id) for each
+cell_id. Both columns required.}
+
+\item{anno_columns}{optional. Columns containing the annotation data to plot.}
+
+\item{clone_column}{optional. Column of clone id labels for cells.}
+
+\item{color_tree_clones}{boolean. optional. Whether to color the tree with
+the same colors as the clone labels.}
+
+\item{only_largest_clone_group}{boolean. optional. Only put a letter label on
+the largest group of any given clone id.}
+
+\item{file_name}{name of the file to save the plot to. Recommended for most
+cases as plots are big-ish.}
+
+\item{labels_fontsize}{how large to make text labels}
+}
 \description{
 anno_cols_list: list(Passage=c(\code{3}: #123456))
 }

@@ -13,6 +13,21 @@ build_left_annot(
   clone_palette = NULL
 )
 }
+\arguments{
+\item{anno_df}{annotations dataframe with cell_id column and annotation for
+each cell id to be added to a heatmap.}
+
+\item{anno_cols_list}{list of named vectors specifying colors for annotations
+example: list(passage=c(\code{1}='#2872bc', \code{19}='#d23e3e'))}
+
+\item{clones_df}{dataframe of clone ideas (clone_id) for each cell_id. Both
+columns required.}
+
+\item{labels_fontsize}{how large to make text labels}
+
+\item{clone_palette}{named vector of colors to give to clones. E.g., c(
+A='#12345', B='#67890'). See make_clone_palette()}
+}
 \description{
 builds the left-side annotations of the cells
 }

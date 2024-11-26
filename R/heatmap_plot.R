@@ -434,6 +434,8 @@ plot_state_hm <- function(
 
   # deal with tree, and re-order states and annotations if so
   if (!is.null(phylogeny)) {
+    # TODO: temp hack to prevent an import issue that I need to fix.
+    require(ggtree)
     cell_id_plot_order <- cell_id_order_as_plotted(phylogeny)
     states_mat <- states_mat[cell_id_plot_order, ]
 

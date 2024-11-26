@@ -216,6 +216,25 @@ knitr::include_graphics("imgs/basic_hm.png")
 ```
 
 
+Or with a different column:
+
+```{r, eval=FALSE}
+dlptools::plot_state_hm(
+  states_df = ex_state_dat,
+  state_col = "state_phase",
+  # optional, but recommended dump direct to a file with:
+  file_name = "imgs/basic_phase_hm.png"
+  # recommended for full, large, heatmaps
+)
+```
+
+
+
+```{r, out.width="75%", out.height="75%"}
+knitr::include_graphics("imgs/basic_phase_hm.png")
+```
+
+
 2. add a tree:
 
 ```{r, eval=FALSE}
@@ -295,7 +314,7 @@ ex_state_dat <- ex_state_dat |>
 
 dlptools::plot_state_hm(
   states_df = ex_state_dat,
-  state_col = "state",
+  state_col = "state_phase",
   file_name = "imgs/with_clones.png",
   clone_column = "clone",
   # optional, don't have to have annotations, or could pass the dataframe like
@@ -313,4 +332,25 @@ dlptools::plot_state_hm(
 
 ```{r, out.width="75%", out.height="75%"}
 knitr::include_graphics("imgs/with_clones.png")
+```
+
+
+
+## Errors
+
+If you see an error like this:
+
+```
+Error in `fortify()`:
+! `data` must be a <data.frame>, or an object coercible by `fortify()`, or a valid <data.frame>-like object coercible by `as.data.frame()`.
+Caused by error in `.prevalidate_data_frame_like_object()`:
+! `dim(data)` must return an <integer> of length 2.
+```
+
+That's a complaint from ggtree that I need to fix and haven't yet.
+
+Loading ggtree should fix it:
+
+```{r, eval=FALSE}
+library(ggtree)
 ```
