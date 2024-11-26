@@ -4,7 +4,7 @@
 \alias{load_mask_file}
 \title{internal to control mask file loading.}
 \usage{
-load_mask_file(mask_f)
+load_mask_file(mask_f = NULL)
 }
 \arguments{
 \item{mask_f}{path to the mask file to load.}

@@ -33,7 +33,7 @@ devtools::install_github("molonc/dlptools")
 
 These are a few steps that are often taken to start a DLP analysis.
 
-```{r example, message=FALSE, warning=FALSE}
+```{r example, message=FALSE, warning=FALSE, eval=FALSE}
 library(fs)
 library(dplyr)
 library(dlptools)
@@ -47,6 +47,14 @@ fs::dir_tree(dlp_dir, recurse = 1)
 ```
 
 
+```
+/projects/molonc/scratch/bfurman/dlp_testdata/
+└── SC-8408
+    ├── annotation
+    └── hmmcopy
+```
+
+
 First step is usually to import the cell specific metrics and mark which cells are good ones to use for downstream analyses.
 
 This example uses some typical thresholds, but you should think about these in relation to your project and sequence data at hand.
@@ -54,7 +62,7 @@ This example uses some typical thresholds, but you should think about these in r
 
 Importing data:
 
-```{r}
+```{r, eval=FALSE}
 metrics <- dlptools::import_dlp_files(dlp_dir, "metrics")
 ```
 
@@ -63,7 +71,7 @@ or really, however you like to load a directory of tsvs, this is just a convenie
 
 Here we can set some thresholds to define "good cells". These here are just a suggestion with some commonly used thresholds. These could be project specific.
 
-```{r}
+```{r, eval=FALSE}
 metrics <- metrics |>
   dplyr::mutate(
     good_cell = dplyr::if_else(
@@ -83,24 +91,30 @@ Loading the reads data would be the next step. These are 500 Kb bins where copy 
 
 Similar to the metrics, we want to mark which bins are good to use for analyses with a few thresholds:
 
-```{r}
+```{r, eval=FALSE}
 reads <- dlptools::import_dlp_files(dlp_dir, "reads")
 ```
 
 
 first, let's mark the ones that fall into regions we want to mask (see README.md for accessing this file).
 
-```{r}
-reads <- dlptools::mark_mask_regions(
-  reads,
-  mask_f = "../meta_data/blacklist_2023.07.17.txt"
-)
+```{r, eval=FALSE}
+reads <- dlptools::mark_mask_regions(reads)
+# defaults to inst/extdata/blacklist_2023.07.17.txt
 ```
+
+
+```{r, eval=FALSE}
+# you can load to inpect that file with
+system.file("extdata", "blacklist_2023.07.17.txt", package = "dlptools") |>
+  vroom::vroom()
+```
+
 
 
 then, we can add a column for which count as "good" bins. Again, just sugestions with commonly used thresholds:
 
-```{r}
+```{r, eval=FALSE}
 reads <- reads |>
   dplyr::mutate(
     good_bin = dplyr::if_else(
@@ -115,7 +129,7 @@ reads <- reads |>
 
 Now we can combine the reads state calls with the metrics, i.e., contextualizing the state calls with the cell level metrics:
 
-```{r}
+```{r, eval=FALSE}
 reads <- dplyr::left_join(
   reads, metrics,
   by = "cell_id",
@@ -123,7 +137,7 @@ reads <- dplyr::left_join(
 ```
 
 and then create a filtered set of reads for analysis
-```{r}
+```{r, eval=FALSE}
 reads_filt <- dplyr::filter(reads, good_cell & good_bin)
 
 
@@ -142,9 +156,9 @@ but that file was made with internal filters and settings that you probably don'
 
 So we can create one from our filtered reads:
 
-```{r}
+```{r, eval=FALSE}
 #  This can take a bit to run if you have a lot of runs combined.
-segs_filt <- dlptools::reads_to_segs_with_filters(reads_filt)
+segs_filt <- dlptools::reads_to_segs(reads_filt)
 
 # this is now runs of adjacent read bins with identical states collapesed
 # into a single bin. Of course, bins are no longer of equal size.
@@ -155,140 +169,188 @@ segs_filt[1:4, ]
 
 ## Plotting Trees and Heatmaps
 
-A common plot from a DLP analysis is to build a tree with some method ([sitka](https://github.com/molonc/sitka_wrapper/tree/main), or hdbscan) and then plot it next to a heatmap of read state calls. The function `dlptools::create_tree_copynumber_heatmap()` is designed to do just that. It is a wrapper around several independent steps and the full code with individual functions is available in the repo at `R/plot_tree_heatmap.R`.
+A common plot from a DLP analysis is to build a tree with some method ([sitka](https://github.com/molonc/sitka_wrapper/tree/main), or hdbscan, medicc, dice, etc.) and then plot it next to a heatmap of read state calls. 
 
-The point of the plot is to bring together a tree, with clone labels, and state calls. If you have other annotations, those can be added too.
-
-Here we'll walk through plot creation with HDBScan. This requires installing [signals](https://github.com/shahcompbio/signals) in addition to this package.
+The package [Signals](https://github.com/shahcompbio/signals/tree/master) has great functions to do this (and lots of other useful functions for this kind of stuff). 
 
 
-This example is assuming you followed the steps above to create a set of filtered reads.
+Alternatively, in this package there is `dlptools::plot_state_hm()`. The method here heavily mimics what Signals does, with some more conviences. The methods in Signals have many other functions for dealing with things not covered here (like scaling branch lengths, etc.).
 
+`dlptools::plot_state_hm()` is meant to be a one stop shop for heatmap plotting.
 
-First, need to run umap clustering and in the process create a tree with hdbscan:
+We'll work from some example data (a trimmed output of signals, but just DLP reads output works fine too):
 
 ```{r}
-library(signals)
+ex_state_dat <- vroom::vroom("data/ex_state_dat.tsv.gz")
 
-clusters <- signals::umap_clustering(
-  reads_filt,
-  minPts = 50, field = "state"
-)
+head(ex_state_dat)
+```
 
-# if you see an error like:
-#     An error occurred in umap calculation: function 'as_cholmod_sparse' not
-#     provided by package 'Matrix'
-# you might need to install some older package versions
-# remotes::install_version("Matrix", version = "1.6-1")
-# install.packages("irlba", type = "source")
-# https://github.com/bwlewis/irlba/issues/70
+```
+# A tibble: 6 × 10
+  cell_id sample_id passage   chr  start    end state   BAF state_AS state_phase
+  <chr>   <chr>     <chr>   <dbl>  <dbl>  <dbl> <dbl> <dbl> <chr>    <chr>      
+1 AT2399… AT23998   p1          1 2.00e6 2.5 e6     4 0.179 3|1      A-Gained   
+2 AT2399… AT23998   p1          1 3.00e6 3.5 e6     4 0.294 3|1      A-Gained   
+3 AT2399… AT23998   p1          1 4.00e6 4.50e6     4 0.211 3|1      A-Gained   
+4 AT2399… AT23998   p1          1 4.50e6 5   e6     5 0.299 5        A-Gained   
+5 AT2399… AT23998   p1          1 5.00e6 5.50e6     5 0.182 5        A-Gained   
+6 AT2399… AT23998   p1          1 5.50e6 6   e6     5 0.129 5        A-Gained
 ```
 
 
-Then prep the reads data (continuing with the data from example above) for plotting:
+1. basic heatmap:
 
-```{r}
-reads_f_wide <- dlptools::convert_long_reads_to_wide(reads_filt)
-```
-
-
-Now we can make the plot:
-
-```{r}
-dlptools::create_tree_copynumber_heatmap(
-  phylo_tree = clusters$tree,
-  states_df = reads_f_wide,
-  clones_df = clusters$clustering,
-  # can save direct to file by adding:
-  # remove to print to screen (but plots are typically large)
-  file_name = "../example_heatmaps/example_hdbscan.png"
+```{r, eval=FALSE}
+dlptools::plot_state_hm(
+  states_df = ex_state_dat,
+  state_col = "state",
+  # optional, but recommended dump direct to a file with:
+  file_name = "imgs/basic_hm.png"
+  # recommended for full, large, heatmaps
 )
 ```
 
-here we write directly to a file. You can print to screen by not including a `file_name` argument, but these plots are big and are often best just dumped to a file to look at.
-
-<br>
-<br>
-<br>
-
-Lets say we had some annotation we wanted to add too (as left side columns on the heatmap). This is done by matching sample IDs in cell_id names, and could be read from a t(c)sv file with `dlptools::import_annotations_df()`. 
-
-But for this example will just prep by hand:
-
-```{r}
-anno_df <- tibble(
-  # bit of a boring example, because we only have one sample and one library
-  sample_id = c("AT21614"),
-  passage = c("p10"),
-  somthing_else = c("featureA")
-)
+```{r, out.width="75%", out.height="75%"}
+knitr::include_graphics("imgs/basic_hm.png")
 ```
 
 
-And then we can pass this tibble to the plotting code to be added.
-```{r}
-dlptools::create_tree_copynumber_heatmap(
-  phylo_tree = clusters$tree,
-  states_df = reads_f_wide,
-  clones_df = clusters$clustering,
-  annos_df = anno_df
-)
-```
+Or with a different column:
 
-
-**This plot will look bad in the vignette, see the example ouputs in the example_heatmaps/ folder.**
-
-<br>
-<br>
-<br>
-
-If you've run sitka (perhaps using the [sitka_wrapper](https://github.com/molonc/sitka_wrapper)), you can read in the newick tree file created and do much the same plot. Presumably you would have also used the leiden_cut method for clone labelling, and will need that file too. 
-
-```{r}
-# here, pulled from the example files in the tree_cutting/ section of the
-# sitka_wrapper repo linked above
-sitka_files <- "/projects/molonc/aparicio_lab/bfurman/code/sitka_wrapper/tree_cutting/example_inputs/"
-clones_f <- fs::path_join(c(sitka_files, "leiden_clones_reso010_nb10.csv"))
-sitka_reads_f <- fs::path_join(c(sitka_files, "filtered_cell_state_calls.csv.gz"))
-sitka_tree_f <- fs::path_join(c(sitka_files, "tree.newick"))
-```
-
-
-Sitka trees need a little cleaning, so run through the tree formatting function to drop 'locus_' values at tips, and clean off 'cell_' names from tree leafs.
-
-There are also other importing functions that will help set the data up correctly:
-
-```{r}
-# import and format the tree file
-sitka_tree <- dlptools::import_tree(sitka_tree_f) |>
-  dlptools::format_sitka_tree()
-
-# expects a file with columns of: cell_id, clone_id
-clones <- dlptools::import_clones(clones_f)
-
-# standard sitka input format
-sitka_reads <- dlptools::import_wideformat_states_file(sitka_reads_f)
-
-# set up or read external annotations file with:
-# dlptools::import_annotations_df(anno_file)
-anno_df <- tibble(
-  # bit of a boring example, because we only have one sample and one library
-  sample_id = c("AT21552", "AT21350"),
-  passage = c("p3", "p23"),
-  somthing_else = c("featureA", "featureB")
+```{r, eval=FALSE}
+dlptools::plot_state_hm(
+  states_df = ex_state_dat,
+  state_col = "state_phase",
+  # optional, but recommended dump direct to a file with:
+  file_name = "imgs/basic_phase_hm.png"
+  # recommended for full, large, heatmaps
 )
 ```
 
 
 
-and now we can create the plot:
+```{r, out.width="75%", out.height="75%"}
+knitr::include_graphics("imgs/basic_phase_hm.png")
+```
 
-```{r}
-dlptools::create_tree_copynumber_heatmap(
-  phylo_tree = sitka_tree,
-  states_df = sitka_reads,
-  clones_df = clones,
-  annos_df = anno_df,
-  file_name = "../example_heatmaps/example_sitka.png"
+
+2. add a tree:
+
+```{r, eval=FALSE}
+ex_tree <- ape::read.tree("data/pkg_tree.newick")
+
+dlptools::plot_state_hm(
+  states_df = ex_state_dat,
+  state_col = "state",
+  phylogeny = ex_tree,
+  file_name = "imgs/with_tree_hm.png"
 )
+```
+
+
+```{r, out.width="75%", out.height="75%"}
+knitr::include_graphics("imgs/with_tree_hm.png")
+```
+
+
+3. annotation data.
+
+This can come from a separate data frame with annotations per cell ID, or you can point to columns in your state dataframe:
+
+```{r, eval=FALSE}
+dlptools::plot_state_hm(
+  states_df = dplyr::mutate(ex_state_dat, passage = as.factor(passage)),
+  state_col = "state",
+  file_name = "imgs/annotations_hm.png",
+  anno_columns = c("sample_id", "passage"),
+  # you could control the colors of your annotations with:
+  # anno_colors_list = list(passage=c(`1`='#2872bc', `19`='#d23e3e')),
+)
+```
+
+
+```{r, out.width="75%", out.height="75%"}
+knitr::include_graphics("imgs/annotations_hm.png")
+```
+
+
+Or with some pre-made annotation dataframe created by cell id:
+
+```{r, eval=FALSE}
+anno_df <- dplyr::distinct(ex_state_dat, cell_id, sample_id, passage)
+
+
+dlptools::plot_state_hm(
+  states_df = ex_state_dat,
+  state_col = "state",
+  anno_df = anno_df,
+  file_name = "imgs/annotations_2_hm.png"
+)
+```
+
+
+
+```{r, out.width="75%", out.height="75%"}
+knitr::include_graphics("imgs/annotations_2_hm.png")
+```
+
+And with either of these, we can add a tree with the `phylogeny` arguments.
+
+
+
+
+4. clones
+
+Clones work similar to annotations, where you can either supply a data frame with `cell_id` and `clone_id` columns, or just pull the information from the states dataframe:
+
+```{r, eval=FALSE}
+# fake some clone data
+ex_state_dat <- ex_state_dat |>
+  dplyr::mutate(
+    clone = dplyr::if_else(passage == "p1", "A", "B"),
+  )
+
+
+dlptools::plot_state_hm(
+  states_df = ex_state_dat,
+  state_col = "state_phase",
+  file_name = "imgs/with_clones.png",
+  clone_column = "clone",
+  # optional, don't have to have annotations, or could pass the dataframe like
+  # above
+  anno_columns = c("sample_id", "passage"),
+  # optional, don't have to have tree
+  phylogeny = ex_tree,
+  # optional, turns on tree coloring by clone
+  color_tree_clones = TRUE,
+  # optional, only largest cell group of a clone gets a letter label.
+  only_largest_clone_group = TRUE
+)
+```
+
+
+```{r, out.width="75%", out.height="75%"}
+knitr::include_graphics("imgs/with_clones.png")
+```
+
+
+
+## Errors
+
+If you see an error like this:
+
+```
+Error in `fortify()`:
+! `data` must be a <data.frame>, or an object coercible by `fortify()`, or a valid <data.frame>-like object coercible by `as.data.frame()`.
+Caused by error in `.prevalidate_data_frame_like_object()`:
+! `dim(data)` must return an <integer> of length 2.
+```
+
+That's a complaint from ggtree that I need to fix and haven't yet.
+
+Loading ggtree should fix it:
+
+```{r, eval=FALSE}
+library(ggtree)
 ```

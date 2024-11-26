@@ -44,7 +44,16 @@ import_dlp_files <- function(
 
 #' internal to control mask file loading.
 #' @param mask_f path to the mask file to load.
-load_mask_file <- function(mask_f) {
+load_mask_file <- function(mask_f = NULL) {
+  if (is.null(mask_f)) {
+    default_mask_file <- "blacklist_2023.07.17.txt"
+    warning(paste0("loading default mask file of: ", default_mask_file))
+    mask_f <- fs::path_package(
+      "extdata", default_mask_file,
+      package = "dlptools"
+    )
+  }
+
   masks <- vroom::vroom(mask_f, show_col_types = FALSE)
 
   return(masks)

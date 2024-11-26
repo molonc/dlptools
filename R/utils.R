@@ -46,7 +46,7 @@ chr_name_check <- function(df, exp_chr_name) {
 #' @return wide format table
 #' @export
 #' @importFrom rlang .data
-convert_long_reads_to_wide <- function(reads_df) {
+convert_long_reads_to_wide <- function(reads_df, state_col = "state") {
   # takes a csv of: chr,start,end,cell_id,state
   # and coverts it to: chrom_start_end,state,state
   # with an index column of location and columns of states for each cell
@@ -60,10 +60,83 @@ convert_long_reads_to_wide <- function(reads_df) {
         sep = "_"
       )
     ) %>%
-    dplyr::select("bin", "cell_id", "state") %>%
-    tidyr::pivot_wider(names_from = bin, values_from = state)
+    dplyr::select("bin", "cell_id", {{ state_col }}) %>%
+    tidyr::pivot_wider(names_from = bin, values_from = {{ state_col }})
 
   return(wide_states)
 }
 
-# no, I need this to go the other way
+
+#' sort a table given a vector of cell_ids
+#'
+#' Typically used to sort a dataframe based on the plotted tip order to align
+#' states heatmap/annotations/clone IDs to the plotted tree
+#'
+#' @param targ_df a table with cell_ids to sort
+#' @param cell_order a vector of cell_ids in the desired order (e.g., pulled
+#' from a ggplot of a tree)
+#' @return table that has been sorted
+#' @export
+#' @importFrom rlang .data
+sort_df_by_cell_order <- function(targ_df, cell_order) {
+  sorted_df <- targ_df |>
+    dplyr::arrange(base::match(.data$cell_id, cell_order))
+
+  return(sorted_df)
+}
+
+
+#' extract sample ID from the typically formatted cell_ids
+#'
+#' expecting cell IDs as AT21350-A143952A-R10-C37 with the first position being
+#' the sample ID.
+#'
+#' @param cell_id string of a cell_id or vector of cell IDs
+#' @return string of the sample ID contained within
+#' @export
+pull_sample_id_from_cell_id <- function(cell_id) {
+  pull_info_from_cell_id(cell_id, sample_id = TRUE)
+}
+
+#' generic extractor of info contained in cell ids
+#'
+#' @param cell_id string or vector of cells id
+#' @param library_id boolean to extract library IDs
+#' @param sample_id boolean to extract sample IDs
+#' @return vector of requested information
+#' @export
+pull_info_from_cell_id <- function(
+    cell_id, library_id = FALSE, sample_id = FALSE) {
+  if (library_id && sample_id) {
+    stop("you gotta pick, sample or library")
+  }
+  if (library_id) {
+    idx <- 2
+  } else if (sample_id) {
+    idx <- 1
+  }
+  cell_info <- stringr::str_split(
+    cell_id,
+    pattern = "-", simplify = TRUE
+  )[, idx]
+
+  return(cell_info)
+}
+
+#' clean tree tip labels and drop any locus tips from sitka trees
+#'
+#' 'Locus tips' are from sitka and are locus values that end up on the
+#' tip of trees. Also removes the "cell_" prefix from tip labels, which is
+#' also a consequence of sitka.
+#'
+#' @param tree phylo object as read by ape::read.tree
+#' @return phylo object cleaned of "cell_" notation
+#' @export
+format_sitka_tree <- function(tree) {
+  locus_tips <- base::grep("locus", tree$tip.label, value = TRUE)
+  tree <- ape::drop.tip(tree, locus_tips)
+
+  tree$tip.label <- base::gsub("cell_", "", tree$tip.label)
+
+  return(tree)
+}
