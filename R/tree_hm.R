@@ -67,7 +67,7 @@ make_clone_palette <- function(clone_ids) {
   clone_ids <- gtools::mixedsort(clone_ids)
   n_clones <- length(clone_ids)
   if (n_clones < 26) {
-    clone_palette <- pals::alphabet(n_clones)
+    clone_palette <- pals::alphabet() |> sample(size = n_clones)
   } else {
     clone_palette <- grDevices::colorRampPalette(pals::stepped3())(n_clones)
   }
