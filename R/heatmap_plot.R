@@ -258,6 +258,16 @@ get_clone_id_label_positions <- function(
 }
 
 #' builds the left-side annotations of the cells
+#'
+#' @param anno_df annotations dataframe with cell_id column and annotation for
+#' each cell id to be added to a heatmap.
+#' @param anno_cols_list list of named vectors specifying colors for annotations
+#' example: list(passage=c(`1`='#2872bc', `19`='#d23e3e'))
+#' @param clones_df dataframe of clone ideas (clone_id) for each cell_id. Both
+#' columns required.
+#' @param labels_fontsize how large to make text labels
+#' @param clone_palette named vector of colors to give to clones. E.g., c(
+#' A='#12345', B='#67890'). See make_clone_palette()
 build_left_annot <- function(
     anno_df = NULL,
     anno_cols_list = list(),
@@ -359,6 +369,25 @@ check_args <- function() {
 #' main hm building function
 #'
 #' anno_cols_list: list(Passage=c(`3`: #123456))
+#' @param states_df long format read bin data to be plotted
+#' @param state_col string of column name to target for plotting in the heatmap.
+#' Examples include: state, BAF, state_AS, state_phase
+#' @param file_name name of the file to save the plot to. Recommended for most
+#' cases as plots are big-ish.
+#' @param phylogeny optional. phylo class object to be plotted.
+#' @param anno_df optional. annotations dataframe with cell_id column and
+#' annotation for each cell id to be added to a heatmap.
+#' @param anno_columns optional. Columns containing the annotation data to plot.
+#' @param anno_colors_list list of named vectors specifying colors for
+#' annotations example: list(passage=c(`1`='#2872bc', `19`='#d23e3e'))
+#' @param clones_df optional. dataframe of clone ideas (clone_id) for each
+#' cell_id. Both columns required.
+#' @param clone_column optional. Column of clone id labels for cells.
+#' @param color_tree_clones boolean. optional. Whether to color the tree with
+#' the same colors as the clone labels.
+#' @param only_largest_clone_group boolean. optional. Only put a letter label on
+#' the largest group of any given clone id.
+#' @param labels_fontsize how large to make text labels
 #' @export
 plot_state_hm <- function(
     states_df, # long format data
