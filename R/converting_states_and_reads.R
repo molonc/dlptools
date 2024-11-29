@@ -12,7 +12,7 @@
 #' @importFrom rlang .data
 reads_to_segs <- function(reads_df) {
   new_segs <- reads_df %>%
-    dplyr::select("cell_id", "chr", "start", "end", "state", "copy") %>%
+    dplyr::select("cell_id", "chr", "start", "end", "state") %>%
     dplyr::group_by(.data$cell_id, .data$chr) %>%
     dplyr::mutate(
       rle_group = rle_states(.data$state)
@@ -22,7 +22,6 @@ reads_to_segs <- function(reads_df) {
       start = base::min(.data$start),
       end = base::max(.data$end),
       state = base::unique(.data$state), # will only be one state
-      median_copy = stats::median(.data$copy)
     ) %>%
     dplyr::select(-c(rle_group))
 
