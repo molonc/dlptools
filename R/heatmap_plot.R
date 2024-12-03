@@ -108,7 +108,8 @@ create_chromosome_column_fct <- function(states_mat) {
 
 #' creates a complex heatmap of a given matrix of states.
 generate_state_hm <- function(
-    states_mat, labels_fontsize = 8, plot_cols = STATE_COLORS, left_annot = NULL) {
+    states_mat, labels_fontsize = 8, plot_cols = STATE_COLORS,
+    left_annot = NULL) {
   # set up a chromosome factor for column splits in the heatmap
   chroms <- create_chromosome_column_fct(states_mat)
 
@@ -188,6 +189,7 @@ fetch_heatmap_color_palette <- function(state_col, states_df) {
 
   # check if the choice was ok
   plot_col_elements <- unique(states_df[[state_col]])
+  plot_col_elements <- plot_col_elements[!is.na(plot_col_elements)]
 
   if (state_col != "BAF" && length(plot_col_elements) > length(color_chosen)) {
     warning(
@@ -423,7 +425,10 @@ plot_state_hm <- function(
   # deal with clones or consider it an annotation? They are a bit special
   # with the tree call out
   if (is.null(clones_df) && !is.null(clone_column)) {
-    clones_df <- dplyr::distinct(states_df, cell_id, clone_id = .data[[clone_column]])
+    clones_df <- dplyr::distinct(
+      states_df, cell_id,
+      clone_id = .data[[clone_column]]
+    )
   }
 
   if (!is.null(clones_df)) {
