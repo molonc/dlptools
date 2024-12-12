@@ -17,6 +17,8 @@ plot_state_hm(
   only_largest_clone_group = FALSE,
   file_name = NULL,
   labels_fontsize = 8,
+  continuous_hm_colours = FALSE,
+  custom_continuous_range = NULL,
   ...
 )
 }
@@ -51,6 +53,8 @@ the largest group of any given clone id.}
 cases as plots are big-ish.}
 
 \item{labels_fontsize}{how large to make text labels}
+
+\item{continuous_hm_colours}{plot heatmap colors on a continous scale.}
 }
 \description{
 anno_cols_list: list(Passage=c(\code{3}: #123456))

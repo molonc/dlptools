@@ -4,7 +4,13 @@
 \alias{fetch_heatmap_color_palette}
 \title{grab colors for various hm possibilities.}
 \usage{
-fetch_heatmap_color_palette(state_col, states_df)
+fetch_heatmap_color_palette(
+  state_col,
+  states_df,
+  continuous = FALSE,
+  max_colors = 20,
+  custom_continuous_range = NULL
+)
 }
 \description{
 Standard colors used by Signals and other people from the DLP world.
