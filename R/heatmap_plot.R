@@ -167,16 +167,6 @@ generate_hm_image <- function(
   }
 }
 
-#' get plotted values bounds
-#'
-#' min, max, median of a column to generate a color palette for
-get_column_metrics <- function(vals) {
-  min <- min(vals, na.rm = TRUE)
-  median <- median(vals, na.rm = TRUE)
-  max <- max(vals, na.rm = TRUE)
-  return(c(min = min, median = median, max = max))
-}
-
 #' grab colors for various hm possibilities.
 #'
 #' Standard colors used by Signals and other people from the DLP world.

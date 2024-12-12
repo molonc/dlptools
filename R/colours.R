@@ -96,7 +96,7 @@ fetch_continuous_color_ramp <- function(
   }
 
   continuous_color_palette <- circlize::colorRamp2(
-    c(metrics["min"], metrics["median"], metrics["max"]),
+    sort(metrics),
     continuous_color_bounds
   )
 }

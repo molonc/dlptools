@@ -140,3 +140,20 @@ format_sitka_tree <- function(tree) {
 
   return(tree)
 }
+
+
+#' get plotted values bounds
+#'
+#' min, max, median of a column to generate a color palette for
+get_column_metrics <- function(vals, min_max = FALSE) {
+  if (min_max) {
+    min <- min(vals, na.rm = TRUE)
+    median <- median(vals, na.rm = TRUE)
+    max <- max(vals, na.rm = TRUE)
+    metrics_span <- c(min = min, median = median, max = max)
+  } else {
+    metrics_span <- quantile(vals, c(0.25, 0.5, 0.75), na.rm = TRUE)
+  }
+
+  return(metrics_span)
+}
