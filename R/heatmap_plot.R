@@ -52,7 +52,7 @@ import_annotations_df <- function(annotations_file) {
 #' @return tibble (or maybe just a matrix ready to go?)
 #' @export
 #' @importFrom rlang .data
-format_states_for_hm <- function(states_df, state_col) {
+format_states_for_hm <- function(states_df, state_col, continuous = FALSE) {
   states_w <- states_df |>
     dplyr::select(cell_id, chr, start, end, state_col) |>
     convert_long_reads_to_wide(state_col = state_col)
@@ -63,7 +63,7 @@ format_states_for_hm <- function(states_df, state_col) {
 
   # sort columns by chromosome and bin start_end
   states_mat <- states_mat[, gtools::mixedsort(base::colnames(states_mat))]
-  if (state_col != "BAF") {
+  if (!(state_col == "BAF" || continuous)) {
     base::class(states_mat) <- "character"
   }
 
@@ -167,11 +167,23 @@ generate_hm_image <- function(
   }
 }
 
+#' get plotted values bounds
+#'
+#' min, max, median of a column to generate a color palette for
+get_column_metrics <- function(vals) {
+  min <- min(vals, na.rm = TRUE)
+  median <- median(vals, na.rm = TRUE)
+  max <- max(vals, na.rm = TRUE)
+  return(c(min = min, median = median, max = max))
+}
+
 #' grab colors for various hm possibilities.
 #'
 #' Standard colors used by Signals and other people from the DLP world.
 #' @export
-fetch_heatmap_color_palette <- function(state_col, states_df) {
+fetch_heatmap_color_palette <- function(
+    state_col, states_df,
+    continuous = FALSE, max_colors = 20) {
   color_choices <- list(
     "state" = STATE_COLORS,
     "A" = STATE_COLORS,
@@ -182,6 +194,16 @@ fetch_heatmap_color_palette <- function(state_col, states_df) {
     "state_AS" = ASCN_COLORS
   )
 
+  if (continuous) {
+    metrics <- get_column_metrics(states_df[[state_col]])
+
+    continuous_color_palette <- circlize::colorRamp2(
+      c(metrics["min"], metrics["median"], metrics["max"]),
+      DEFAULT_CONTINUOUS_COLOR_RANGE
+    )
+    return(continuous_color_palette)
+  }
+
   color_chosen <- purrr::pluck(
     color_choices, state_col,
     .default = STATE_COLORS
@@ -190,16 +212,24 @@ fetch_heatmap_color_palette <- function(state_col, states_df) {
   # check if the choice was ok
   plot_col_elements <- unique(states_df[[state_col]])
   plot_col_elements <- plot_col_elements[!is.na(plot_col_elements)]
-
-  if (state_col != "BAF" && length(plot_col_elements) > length(color_chosen)) {
+  too_many_colors <- length(plot_col_elements) > length(color_chosen)
+  way_too_many_colors <- length(plot_col_elements) > max_colors
+  if (state_col != "BAF" && (too_many_colors || way_too_many_colors)) {
     warning(
       paste0(
         "more elements that colors for ", state_col, " can plot them all.",
-        " Defaulting to rainbow, but maybe don't plot this?"
+        " Defaulting to rainbow or continuous if there are very many colors.",
+        " But maybe consider what you're plotting."
       )
     )
-    color_chosen <- grDevices::rainbow(length(plot_col_elements))
-    names(color_chosen) <- gtools::mixedsort(plot_col_elements)
+    if (way_too_many_colors) {
+      # TODO: not convinced this would work if the variable isn't actually
+      # continuous
+      color_chosen <- DEFAULT_CONTINUOUS_PALETTE
+    } else {
+      color_chosen <- grDevices::rainbow(length(plot_col_elements))
+      names(color_chosen) <- gtools::mixedsort(plot_col_elements)
+    }
   }
 
   return(color_chosen)
@@ -390,6 +420,7 @@ check_args <- function() {
 #' @param only_largest_clone_group boolean. optional. Only put a letter label on
 #' the largest group of any given clone id.
 #' @param labels_fontsize how large to make text labels
+#' @param continuous_hm_colours plot heatmap colors on a continous scale.
 #' @export
 plot_state_hm <- function(
     states_df, # long format data
@@ -404,11 +435,16 @@ plot_state_hm <- function(
     only_largest_clone_group = FALSE,
     file_name = NULL, # for direct saving to a file
     labels_fontsize = 8,
+    continuous_hm_colours = FALSE,
     ...) {
   check_args()
 
   # first, format the states for plotting
-  states_mat <- format_states_for_hm(states_df, state_col)
+  states_mat <- format_states_for_hm(
+    states_df,
+    state_col,
+    continuous = continuous_hm_colours
+  )
 
   # deal with any annotations
   if (!is.null(anno_columns) && is.null(anno_df)) {
@@ -472,7 +508,11 @@ plot_state_hm <- function(
   )
 
   # determine plot colors for heatmap
-  hm_colors <- fetch_heatmap_color_palette(state_col, states_df)
+  hm_colors <- fetch_heatmap_color_palette(
+    state_col,
+    states_df,
+    continuous = continuous_hm_colours
+  )
 
   # plot the heatmap
   state_hm <- generate_state_hm(
