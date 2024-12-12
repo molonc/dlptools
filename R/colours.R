@@ -20,6 +20,8 @@ DEFAULT_CONTINUOUS_COLOR_RANGE <- c(
   "#FDCC8A"
 )
 
+CONTINUOUS_COLOR_RANGE_ALT <- c("#000000", "#ffffff", "#5F9EA0")
+
 #' colors for signals results of allele balances
 #' @export
 ASCN_COLORS <- c(
@@ -62,3 +64,39 @@ BAF_COLORS <- circlize::colorRamp2(
     ASCN_PHASE_COLORS["B-Hom"]
   )
 )
+
+
+#' internal function for setting up heatmap continuous range colors
+#' chooses defaults, unless overwritten by user.
+fetch_continuous_color_ramp <- function(
+    plotting_values, custom_continuous_range = NULL) {
+  metrics <- get_column_metrics(plotting_values)
+
+  if (!is.null(custom_continuous_range)) {
+    if (length(custom_continuous_range) > 3) {
+      warning(paste0(
+        "more than 3 colors given for continuous palette. Only using the",
+        " first, middle, and last value"
+      ))
+      custom_continuous_range <- custom_continuous_range[c(
+        1,
+        ceiling(length(custom_continuous_range) / 2),
+        length(custom_continuous_range)
+      )]
+    } else if (length(custom_continuous_range) < 3) {
+      stop(paste0(
+        "need to specify 3 colors (bottom, middle, top) for custom",
+        " continuous color palette."
+      ))
+    }
+
+    continuous_color_bounds <- custom_continuous_range
+  } else {
+    continuous_color_bounds <- DEFAULT_CONTINUOUS_COLOR_RANGE
+  }
+
+  continuous_color_palette <- circlize::colorRamp2(
+    c(metrics["min"], metrics["median"], metrics["max"]),
+    continuous_color_bounds
+  )
+}

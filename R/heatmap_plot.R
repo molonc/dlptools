@@ -183,7 +183,9 @@ get_column_metrics <- function(vals) {
 #' @export
 fetch_heatmap_color_palette <- function(
     state_col, states_df,
-    continuous = FALSE, max_colors = 20) {
+    continuous = FALSE,
+    max_colors = 20,
+    custom_continuous_range = NULL) {
   color_choices <- list(
     "state" = STATE_COLORS,
     "A" = STATE_COLORS,
@@ -195,11 +197,9 @@ fetch_heatmap_color_palette <- function(
   )
 
   if (continuous) {
-    metrics <- get_column_metrics(states_df[[state_col]])
-
-    continuous_color_palette <- circlize::colorRamp2(
-      c(metrics["min"], metrics["median"], metrics["max"]),
-      DEFAULT_CONTINUOUS_COLOR_RANGE
+    continuous_color_palette <- fetch_continuous_color_ramp(
+      states_df[[state_col]],
+      custom_continuous_range = custom_continuous_range
     )
     return(continuous_color_palette)
   }
@@ -436,6 +436,7 @@ plot_state_hm <- function(
     file_name = NULL, # for direct saving to a file
     labels_fontsize = 8,
     continuous_hm_colours = FALSE,
+    custom_continuous_range = NULL,
     ...) {
   check_args()
 
@@ -511,7 +512,8 @@ plot_state_hm <- function(
   hm_colors <- fetch_heatmap_color_palette(
     state_col,
     states_df,
-    continuous = continuous_hm_colours
+    continuous = continuous_hm_colours,
+    custom_continuous_range = custom_continuous_range
   )
 
   # plot the heatmap
