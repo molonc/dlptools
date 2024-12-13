@@ -48,7 +48,7 @@ Alternatively, in this package there is `dlptools::plot_state_hm()`, which does 
 The main constraint is to have a column called `cell_id` that contains the cell labels. 
 
 ```{r, eval=FALSE}
-plot_state_hm(
+dlptools::plot_state_hm(
   # long format bin level data
   states_df,
   # column of data to plot
@@ -93,7 +93,7 @@ head(ex_state_dat)
 ```
 
 
-1. basic heatmap:
+## basic heatmap
 
 ```{r, eval=FALSE}
 dlptools::plot_state_hm(
@@ -145,7 +145,7 @@ Column options include:
 ---
 
 
-2. add a tree:
+## Adding a Tree
 
 ```{r, eval=FALSE}
 ex_tree <- ape::read.tree("data/pkg_tree.newick")
@@ -164,7 +164,7 @@ knitr::include_graphics("imgs/with_tree_hm.png")
 ```
 
 
-3. annotation data.
+## Adding Annotation Data
 
 This can come from a separate data frame with annotations per cell ID, or you can point to columns in your state dataframe:
 
@@ -209,8 +209,7 @@ And with either of these, we can add a tree with the `phylogeny` arguments.
 
 
 
-
-4. clones
+## Clone Information
 
 Clones work similar to annotations, where you can either supply a data frame with `cell_id` and `clone_id` columns, or just pull the information from the states dataframe:
 
@@ -245,7 +244,7 @@ knitr::include_graphics("imgs/with_clones.png")
 ```
 
 
-5. Other continous variables
+## Continous Variables
 
 ```{r, eval=FALSE}
 dlptools::plot_state_hm(
@@ -268,6 +267,7 @@ dlptools::plot_state_hm(
 ```{r, out.width="75%", out.height="75%", echo=FALSE}
 knitr::include_graphics("imgs/continuous.png")
 ```
+
 
 ## Errors
 
