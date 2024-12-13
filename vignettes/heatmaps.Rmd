@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 ```
 
 
-```{r libraries}
+```{r libraries, echo=FALSE}
 library(dlptools)
 library(vroom)
 library(dplyr)
@@ -139,6 +139,7 @@ Column options include:
 5. BAF
 6. state_AS
 7. state_AS_phased (might be too many states to usefully visualize)
+8. or pretty much any custom column you want to plot that is reasonably similar.
 
 
 ---
