@@ -4,3 +4,6 @@
 
 ^README\.Rmd$
 ^.lintr$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
