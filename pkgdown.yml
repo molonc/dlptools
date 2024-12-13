@@ -3,7 +3,8 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   heatmaps: heatmaps.html
-last_built: 2024-12-13T18:25Z
+  useful_functions: useful_functions.html
+last_built: 2024-12-13T19:22Z
 urls:
   reference: https://molonc.github.io/dlptools/reference
   article: https://molonc.github.io/dlptools/articles
