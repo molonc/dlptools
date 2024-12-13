@@ -92,10 +92,22 @@ sort_df_by_cell_order <- function(targ_df, cell_order) {
 #' the sample ID.
 #'
 #' @param cell_id string of a cell_id or vector of cell IDs
-#' @return string of the sample ID contained within
+#' @return vector of the sample ID(s) contained within
 #' @export
-pull_sample_id_from_cell_id <- function(cell_id) {
+sample_from_cell <- function(cell_id) {
   pull_info_from_cell_id(cell_id, sample_id = TRUE)
+}
+
+#' extract library ID from the typically formatted cell_ids
+#'
+#' expecting cell IDs as AT21350-A143952A-R10-C37 with the second position being
+#' the library ID.
+#'
+#' @param cell_id string of a cell_id or vector of cell IDs
+#' @return vector of the library ID(s) contained within
+#' @export
+library_from_cell <- function(cell_id) {
+  pull_info_from_cell_id(cell_id, library_id = TRUE)
 }
 
 #' generic extractor of info contained in cell ids
@@ -107,7 +119,7 @@ pull_sample_id_from_cell_id <- function(cell_id) {
 #' @export
 pull_info_from_cell_id <- function(
     cell_id, library_id = FALSE, sample_id = FALSE) {
-  if (library_id && sample_id) {
+  if ((library_id && sample_id) || (!library_id && !sample_id)) {
     stop("you gotta pick, sample or library")
   }
   if (library_id) {

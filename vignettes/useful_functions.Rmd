@@ -60,21 +60,29 @@ This is assuming our standard DLP cell ids, e.g., `AT23998-A138956A-R03-C34`.
 
 ```{r}
 # single cell id
-dlptools::pull_info_from_cell_id("AT23998-A138956A-R03-C34", sample_id = TRUE)
+dlptools::sample_from_cell("AT23998-A138956A-R03-C34")
 
 # single library ID
-dlptools::pull_info_from_cell_id("AT23998-A138956A-R03-C34", library_id = TRUE)
+dlptools::library_from_cell("AT23998-A138956A-R03-C34")
+
+# Also a generic function for either
+# dlptools::pull_info_from_cell_id("AT23998-A138956A-R03-C34", sample_id = TRUE)
+# dlptools::pull_info_from_cell_id("AT23998-A138956A-R03-C34", library_id = TRUE)
+
 
 # multiple cell ids:
-dlptools::pull_info_from_cell_id(ex_reads$cell_id[1:5], library_id = TRUE)
+dlptools::sample_from_cell(ex_reads$cell_id[1:5])
+
+# or library
+dlptools::library_from_cell(ex_reads$cell_id[1:5])
 
 
 # more useful it using it on your reads data frame
 # extracting sample id and library id and inserting into the dataframe
 ex_reads <- ex_reads |>
   dplyr::mutate(
-    sample_id = dlptools::pull_info_from_cell_id(cell_id, sample_id = TRUE),
-    library_id = dlptools::pull_info_from_cell_id(cell_id, library_id = TRUE),
+    sample_id = dlptools::sample_from_cell(cell_id),
+    library_id = dlptools::library_from_cell(cell_id)
   )
 
 ex_reads |>
