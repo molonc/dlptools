@@ -56,6 +56,13 @@ cases as plots are big-ish.}
 \item{labels_fontsize}{how large to make text labels}
 
 \item{continuous_hm_colours}{plot heatmap colors on a continous scale.}
+
+\item{custom_continuous_colors}{a vector of 3 colors to use as the scale for
+plotting a continuous variable, specified as hexcodes. E.g.,
+c("#3182BD", "#CCCCCC", "#FDCC8A")}
+
+\item{custom_continuous_range}{a vector of values to specify as the low, mid,
+and high bounds for the continuous color scale, e.g., c(1, 5, 10)}
 }
 \description{
 anno_cols_list: list(Passage=c(\code{3}: #123456))
