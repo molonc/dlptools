@@ -9,6 +9,7 @@ fetch_heatmap_color_palette(
   states_df,
   continuous = FALSE,
   max_colors = 20,
+  custom_continuous_colors = NULL,
   custom_continuous_range = NULL
 )
 }

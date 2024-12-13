@@ -5,7 +5,11 @@
 \title{internal function for setting up heatmap continuous range colors
 chooses defaults, unless overwritten by user.}
 \usage{
-fetch_continuous_color_ramp(plotting_values, custom_continuous_range = NULL)
+fetch_continuous_color_ramp(
+  plotting_values,
+  custom_continuous_colors = NULL,
+  custom_continuous_range = NULL
+)
 }
 \description{
 internal function for setting up heatmap continuous range colors

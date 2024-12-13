@@ -18,6 +18,7 @@ plot_state_hm(
   file_name = NULL,
   labels_fontsize = 8,
   continuous_hm_colours = FALSE,
+  custom_continuous_colors = NULL,
   custom_continuous_range = NULL,
   ...
 )

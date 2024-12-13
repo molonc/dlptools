@@ -65,32 +65,47 @@ BAF_COLORS <- circlize::colorRamp2(
   )
 )
 
+#' picks beginning, middle, and end of a vector
+#' to handle when vectors that are too long are
+#' passed
+bme_vec <- function(vec, vec_name) {
+  warning(paste0(
+    "more than 3 values given for ", vec_name,
+    " Only using the first, middle, and last value."
+  ))
+  red_vec <- vec[c(
+    1,
+    ceiling(length(vec) / 2),
+    length(vec)
+  )]
+  return(red_vec)
+}
+
 
 #' internal function for setting up heatmap continuous range colors
 #' chooses defaults, unless overwritten by user.
 fetch_continuous_color_ramp <- function(
-    plotting_values, custom_continuous_range = NULL) {
-  metrics <- get_column_metrics(plotting_values)
-
-  if (!is.null(custom_continuous_range)) {
+    plotting_values, custom_continuous_colors = NULL, custom_continuous_range = NULL) {
+  if (is.null(custom_continuous_range)) {
+    metrics <- get_column_metrics(plotting_values)
+  } else {
     if (length(custom_continuous_range) > 3) {
-      warning(paste0(
-        "more than 3 colors given for continuous palette. Only using the",
-        " first, middle, and last value"
-      ))
-      custom_continuous_range <- custom_continuous_range[c(
-        1,
-        ceiling(length(custom_continuous_range) / 2),
-        length(custom_continuous_range)
-      )]
-    } else if (length(custom_continuous_range) < 3) {
+      custom_continuous_range <- bme_vec(custom_continuous_range, "custom_continuous_range")
+    }
+    metrics <- custom_continuous_range
+  }
+
+  if (!is.null(custom_continuous_colors)) {
+    if (length(custom_continuous_colors) > 3) {
+      custom_continuous_colors <- bme_vec(custom_continuous_colors, "custom_continuous_colors")
+    } else if (length(custom_continuous_colors) < 3) {
       stop(paste0(
         "need to specify 3 colors (bottom, middle, top) for custom",
         " continuous color palette."
       ))
     }
 
-    continuous_color_bounds <- custom_continuous_range
+    continuous_color_bounds <- custom_continuous_colors
   } else {
     continuous_color_bounds <- DEFAULT_CONTINUOUS_COLOR_RANGE
   }

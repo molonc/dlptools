@@ -175,6 +175,7 @@ fetch_heatmap_color_palette <- function(
     state_col, states_df,
     continuous = FALSE,
     max_colors = 20,
+    custom_continuous_colors = NULL,
     custom_continuous_range = NULL) {
   color_choices <- list(
     "state" = STATE_COLORS,
@@ -189,6 +190,7 @@ fetch_heatmap_color_palette <- function(
   if (continuous) {
     continuous_color_palette <- fetch_continuous_color_ramp(
       states_df[[state_col]],
+      custom_continuous_colors = custom_continuous_colors,
       custom_continuous_range = custom_continuous_range
     )
     return(continuous_color_palette)
@@ -426,6 +428,7 @@ plot_state_hm <- function(
     file_name = NULL, # for direct saving to a file
     labels_fontsize = 8,
     continuous_hm_colours = FALSE,
+    custom_continuous_colors = NULL,
     custom_continuous_range = NULL,
     ...) {
   check_args()
@@ -503,6 +506,7 @@ plot_state_hm <- function(
     state_col,
     states_df,
     continuous = continuous_hm_colours,
+    custom_continuous_colors = custom_continuous_colors,
     custom_continuous_range = custom_continuous_range
   )
 
