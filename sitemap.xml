@@ -35,6 +35,7 @@
 <url><loc>https://molonc.github.io/dlptools/reference/import_dlp_files.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/import_tree.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/index.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/library_from_cell.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/load_mask_file.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/make_clone_palette.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/make_corrupt_tree_heatmap.html</loc></url>
@@ -44,9 +45,9 @@
 <url><loc>https://molonc.github.io/dlptools/reference/plot_state_hm.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/pull_chr_from_col_name.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/pull_info_from_cell_id.html</loc></url>
-<url><loc>https://molonc.github.io/dlptools/reference/pull_sample_id_from_cell_id.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/reads_to_segs.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/rle_states.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/sample_from_cell.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/sort_df_by_cell_order.html</loc></url>
 </urlset>
 
