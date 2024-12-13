@@ -413,6 +413,11 @@ check_args <- function() {
 #' the largest group of any given clone id.
 #' @param labels_fontsize how large to make text labels
 #' @param continuous_hm_colours plot heatmap colors on a continous scale.
+#' @param custom_continuous_colors a vector of 3 colors to use as the scale for
+#' plotting a continuous variable, specified as hexcodes. E.g., 
+#' c("#3182BD", "#CCCCCC", "#FDCC8A")
+#' @param custom_continuous_range a vector of values to specify as the low, mid,
+#' and high bounds for the continuous color scale, e.g., c(1, 5, 10)
 #' @export
 plot_state_hm <- function(
     states_df, # long format data
