@@ -1,4 +1,8 @@
 url: https://molonc.github.io/dlptools/
 template:
   bootstrap: 5
+  bslib:
+    base_font: {google: "Nunito Sans"}
+    heading_font: {google: "Nunito Sans"}
+    code_font: {google: "Noto Sans Mono"}
 
