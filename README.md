@@ -2,7 +2,6 @@
 
 And R package for basic DLP+ data manipulation and plotting. Basically just a collection of the various functions we have been using to handle DLP data.
 
-
 ## Installing DLPtools
 
 ```r
@@ -12,9 +11,7 @@ devtools::install_github("molonc/dlptools")
 
 ## Vignettes
 
-See `vignettes/` for various overview (Rmd & htmls available) or browse the articles at the [package website]().
-
-
+See `vignettes/` for various overview (Rmd & htmls available) or browse the articles at the [package website](https://molonc.github.io/dlptools/).
 
 ## Development
 
@@ -28,7 +25,6 @@ pre-commit install
 
 # 3. code happy.
 ```
-
 
 If you haven't worked on an R package before, [this](https://r-pkgs.org/whole-game.html) is a good read to get started.
 
