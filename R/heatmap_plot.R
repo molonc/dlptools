@@ -390,6 +390,42 @@ check_args <- function() {
   }
 }
 
+
+#' confirm pallete given has enough colors or generate one
+#' @param clones_df dataframe with a column of clone_id and the cells
+#' assigned to each (long format)
+#' @param clone_palette named vector of how to color the clones.
+check_or_fetch_clone_palette <- function(clones_df, clone_palette = NULL) {
+  unique_clones <- unique(clones_df$clone_id)
+  print(unique_clones)
+  print(clone_palette)
+  if (!is.null(clone_palette)) {
+    pal_len_check <- length(clone_palette) < length(unique_clones)
+
+    if (pal_len_check) {
+      stop("the clone palette provided doesn't have enough colors!")
+    }
+
+    # ensure lengths are the same, ComplexHeatmap won't accept otherwise
+    clone_palette <- clone_palette[1:length(unique_clones)]
+
+    if (is.null(names(clone_palette))) {
+      warning(paste0(
+        "clone IDs not assigned to colors in given palette, doing so",
+        " automatically."
+      ))
+      names(clone_palette) <- unique_clones
+    }
+  } else if (!is.null(clones_df) && is.null(clone_palette)) {
+    clone_palette <- make_clone_palette(unique_clones)
+  } else {
+    clone_palette <- NULL
+  }
+
+  print(clone_palette)
+  return(clone_palette)
+}
+
 #' main hm building function
 #'
 #' anno_cols_list: list(Passage=c(`3`: #123456))
@@ -409,12 +445,15 @@ check_args <- function() {
 #' @param clone_column optional. Column of clone id labels for cells.
 #' @param color_tree_clones boolean. optional. Whether to color the tree with
 #' the same colors as the clone labels.
+#' @param clone_palette optional. ideally a named vector on how to color clones.
+#' Vector names are clond ID, values are hex codes. If vector is unnamed, names
+#' will be assigned, but without control on which get's which color.
 #' @param only_largest_clone_group boolean. optional. Only put a letter label on
 #' the largest group of any given clone id.
 #' @param labels_fontsize how large to make text labels
 #' @param continuous_hm_colours plot heatmap colors on a continous scale.
 #' @param custom_continuous_colors a vector of 3 colors to use as the scale for
-#' plotting a continuous variable, specified as hexcodes. E.g., 
+#' plotting a continuous variable, specified as hexcodes. E.g.,
 #' c("#3182BD", "#CCCCCC", "#FDCC8A")
 #' @param custom_continuous_range a vector of values to specify as the low, mid,
 #' and high bounds for the continuous color scale, e.g., c(1, 5, 10)
@@ -429,6 +468,7 @@ plot_state_hm <- function(
     anno_columns = NULL,
     clone_column = NULL,
     color_tree_clones = FALSE,
+    clone_palette = NULL,
     only_largest_clone_group = FALSE,
     file_name = NULL, # for direct saving to a file
     labels_fontsize = 8,
@@ -467,9 +507,10 @@ plot_state_hm <- function(
   }
 
   if (!is.null(clones_df)) {
-    clone_palette <- make_clone_palette(unique(clones_df$clone_id))
-  } else {
-    clone_palette <- NULL
+    clone_palette <- check_or_fetch_clone_palette(
+      clones_df,
+      clone_palette = clone_palette
+    )
   }
 
   # deal with tree, and re-order states and annotations if so
