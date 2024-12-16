@@ -2,70 +2,6 @@
 
 And R package for basic DLP+ data manipulation and plotting. Basically just a collection of the various functions we have been using to handle DLP data.
 
-## Setup
-
-A lot of the import functions are based on the idea that you have downloaded your dlp something like this:
-
-```bash
-cd where/to/save/my_dlp/
-
-for ticket in "$@" ; 
-do
-  azcopy copy https://singlecellresults.blob.core.windows.net/results/${ticket}/results/annotation/ ${ticket} --recursive
-  azcopy copy https://singlecellresults.blob.core.windows.net/results/${ticket}/results/hmmcopy/ ${ticket} --recursive
-done
-```
-
-which produces a directory with this sort of structure:
-
-```bash
-├── SC-8382
-│   ├── annotation
-│   │   ├── metrics.csv.gz
-│   │   ├── #[...other files ...]
-│   └── hmmcopy
-│   │   ├── #[...other files ...]
-│       ├── reads.csv.gz
-│       ├── reads.csv.gz.yaml
-│       ├── reads_filtered.csv.gz
-│       ├── segments.csv.gz
-│       ├── segments.csv.gz.yaml
-│       ├── segments_filtered.csv.gz
-│       └── segs.tar.gz
-├── SC-8408
-│   ├── annotation
-│   │   ├── metrics.csv.gz
-│   │   ├── #[...other files ...]
-│   └── hmmcopy
-│   │   ├── #[...other files ...]
-│       ├── reads.csv.gz
-│       ├── reads.csv.gz.yaml
-│       ├── reads_filtered.csv.gz
-│       ├── segments.csv.gz
-│       ├── segments.csv.gz.yaml
-│       ├── segments_filtered.csv.gz
-│       └── segs.tar.gz
-├── SC-8650
-```
-
-
-As well, a lot of functions require external files that are too big to package effectively (TODO: maybe add downloads as a function?).
-
-```bash
-# centromere file
-wget https://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/cytoBand.txt.gz
-
-# HG19 chromsome length information
-wget https://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/chromInfo.txt.gz
-
-# information on where telomeres start and end
-wget https://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/gap.txt.gz
-```
-
-Another important file is `inst/extdata/blacklist_2023.07.17.txt` which is used to mask regions of poor mapping quality. This package uses this file as the default with functions like `dlptools::mark_mask_regions()`, but you can also create your own to pass to that fuction. This file was build by Daniel Lai, and has been used for many DLP analyses. It is masking rough approximations of centromeres and telomeres that are generally bad for DLP analyses.
-
-Other functions (*coming soon*) will add the explicit coordinates of centromeres and telomeres to dataframes of reads and segs.
-
 ## Installing DLPtools
 
 ```r
@@ -73,9 +9,9 @@ library(devtools)
 devtools::install_github("molonc/dlptools")
 ```
 
-## Main functions
+## Vignettes
 
-See `vignettes/basic_analyses_and_heatmaps.Rmd` or the corresponding html.
+See `vignettes/` for various overview (Rmd & htmls available) or browse the articles at the [package website](https://molonc.github.io/dlptools/).
 
 ## Development
 
@@ -89,7 +25,6 @@ pre-commit install
 
 # 3. code happy.
 ```
-
 
 If you haven't worked on an R package before, [this](https://r-pkgs.org/whole-game.html) is a good read to get started.
 

@@ -52,7 +52,7 @@ import_annotations_df <- function(annotations_file) {
 #' @return tibble (or maybe just a matrix ready to go?)
 #' @export
 #' @importFrom rlang .data
-format_states_for_hm <- function(states_df, state_col) {
+format_states_for_hm <- function(states_df, state_col, continuous = FALSE) {
   states_w <- states_df |>
     dplyr::select(cell_id, chr, start, end, state_col) |>
     convert_long_reads_to_wide(state_col = state_col)
@@ -63,7 +63,7 @@ format_states_for_hm <- function(states_df, state_col) {
 
   # sort columns by chromosome and bin start_end
   states_mat <- states_mat[, gtools::mixedsort(base::colnames(states_mat))]
-  if (state_col != "BAF") {
+  if (!(state_col == "BAF" || continuous)) {
     base::class(states_mat) <- "character"
   }
 
@@ -171,7 +171,12 @@ generate_hm_image <- function(
 #'
 #' Standard colors used by Signals and other people from the DLP world.
 #' @export
-fetch_heatmap_color_palette <- function(state_col, states_df) {
+fetch_heatmap_color_palette <- function(
+    state_col, states_df,
+    continuous = FALSE,
+    max_colors = 20,
+    custom_continuous_colors = NULL,
+    custom_continuous_range = NULL) {
   color_choices <- list(
     "state" = STATE_COLORS,
     "A" = STATE_COLORS,
@@ -182,6 +187,15 @@ fetch_heatmap_color_palette <- function(state_col, states_df) {
     "state_AS" = ASCN_COLORS
   )
 
+  if (continuous) {
+    continuous_color_palette <- fetch_continuous_color_ramp(
+      states_df[[state_col]],
+      custom_continuous_colors = custom_continuous_colors,
+      custom_continuous_range = custom_continuous_range
+    )
+    return(continuous_color_palette)
+  }
+
   color_chosen <- purrr::pluck(
     color_choices, state_col,
     .default = STATE_COLORS
@@ -190,16 +204,24 @@ fetch_heatmap_color_palette <- function(state_col, states_df) {
   # check if the choice was ok
   plot_col_elements <- unique(states_df[[state_col]])
   plot_col_elements <- plot_col_elements[!is.na(plot_col_elements)]
-
-  if (state_col != "BAF" && length(plot_col_elements) > length(color_chosen)) {
+  too_many_colors <- length(plot_col_elements) > length(color_chosen)
+  way_too_many_colors <- length(plot_col_elements) > max_colors
+  if (state_col != "BAF" && (too_many_colors || way_too_many_colors)) {
     warning(
       paste0(
         "more elements that colors for ", state_col, " can plot them all.",
-        " Defaulting to rainbow, but maybe don't plot this?"
+        " Defaulting to rainbow or continuous if there are very many colors.",
+        " But maybe consider what you're plotting."
       )
     )
-    color_chosen <- grDevices::rainbow(length(plot_col_elements))
-    names(color_chosen) <- gtools::mixedsort(plot_col_elements)
+    if (way_too_many_colors) {
+      # TODO: not convinced this would work if the variable isn't actually
+      # continuous
+      color_chosen <- DEFAULT_CONTINUOUS_PALETTE
+    } else {
+      color_chosen <- grDevices::rainbow(length(plot_col_elements))
+      names(color_chosen) <- gtools::mixedsort(plot_col_elements)
+    }
   }
 
   return(color_chosen)
@@ -368,6 +390,42 @@ check_args <- function() {
   }
 }
 
+
+#' confirm pallete given has enough colors or generate one
+#' @param clones_df dataframe with a column of clone_id and the cells
+#' assigned to each (long format)
+#' @param clone_palette named vector of how to color the clones.
+check_or_fetch_clone_palette <- function(clones_df, clone_palette = NULL) {
+  unique_clones <- unique(clones_df$clone_id)
+  print(unique_clones)
+  print(clone_palette)
+  if (!is.null(clone_palette)) {
+    pal_len_check <- length(clone_palette) < length(unique_clones)
+
+    if (pal_len_check) {
+      stop("the clone palette provided doesn't have enough colors!")
+    }
+
+    # ensure lengths are the same, ComplexHeatmap won't accept otherwise
+    clone_palette <- clone_palette[1:length(unique_clones)]
+
+    if (is.null(names(clone_palette))) {
+      warning(paste0(
+        "clone IDs not assigned to colors in given palette, doing so",
+        " automatically."
+      ))
+      names(clone_palette) <- unique_clones
+    }
+  } else if (!is.null(clones_df) && is.null(clone_palette)) {
+    clone_palette <- make_clone_palette(unique_clones)
+  } else {
+    clone_palette <- NULL
+  }
+
+  print(clone_palette)
+  return(clone_palette)
+}
+
 #' main hm building function
 #'
 #' anno_cols_list: list(Passage=c(`3`: #123456))
@@ -387,9 +445,18 @@ check_args <- function() {
 #' @param clone_column optional. Column of clone id labels for cells.
 #' @param color_tree_clones boolean. optional. Whether to color the tree with
 #' the same colors as the clone labels.
+#' @param clone_palette optional. ideally a named vector on how to color clones.
+#' Vector names are clond ID, values are hex codes. If vector is unnamed, names
+#' will be assigned, but without control on which get's which color.
 #' @param only_largest_clone_group boolean. optional. Only put a letter label on
 #' the largest group of any given clone id.
 #' @param labels_fontsize how large to make text labels
+#' @param continuous_hm_colours plot heatmap colors on a continous scale.
+#' @param custom_continuous_colors a vector of 3 colors to use as the scale for
+#' plotting a continuous variable, specified as hexcodes. E.g.,
+#' c("#3182BD", "#CCCCCC", "#FDCC8A")
+#' @param custom_continuous_range a vector of values to specify as the low, mid,
+#' and high bounds for the continuous color scale, e.g., c(1, 5, 10)
 #' @export
 plot_state_hm <- function(
     states_df, # long format data
@@ -401,14 +468,22 @@ plot_state_hm <- function(
     anno_columns = NULL,
     clone_column = NULL,
     color_tree_clones = FALSE,
+    clone_palette = NULL,
     only_largest_clone_group = FALSE,
     file_name = NULL, # for direct saving to a file
     labels_fontsize = 8,
+    continuous_hm_colours = FALSE,
+    custom_continuous_colors = NULL,
+    custom_continuous_range = NULL,
     ...) {
   check_args()
 
   # first, format the states for plotting
-  states_mat <- format_states_for_hm(states_df, state_col)
+  states_mat <- format_states_for_hm(
+    states_df,
+    state_col,
+    continuous = continuous_hm_colours
+  )
 
   # deal with any annotations
   if (!is.null(anno_columns) && is.null(anno_df)) {
@@ -432,9 +507,10 @@ plot_state_hm <- function(
   }
 
   if (!is.null(clones_df)) {
-    clone_palette <- make_clone_palette(unique(clones_df$clone_id))
-  } else {
-    clone_palette <- NULL
+    clone_palette <- check_or_fetch_clone_palette(
+      clones_df,
+      clone_palette = clone_palette
+    )
   }
 
   # deal with tree, and re-order states and annotations if so
@@ -472,7 +548,13 @@ plot_state_hm <- function(
   )
 
   # determine plot colors for heatmap
-  hm_colors <- fetch_heatmap_color_palette(state_col, states_df)
+  hm_colors <- fetch_heatmap_color_palette(
+    state_col,
+    states_df,
+    continuous = continuous_hm_colours,
+    custom_continuous_colors = custom_continuous_colors,
+    custom_continuous_range = custom_continuous_range
+  )
 
   # plot the heatmap
   state_hm <- generate_state_hm(

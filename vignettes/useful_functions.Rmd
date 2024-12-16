@@ -1,0 +1,214 @@
+---
+title: "Functions in this package"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Functions in this package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message = FALSE,
+  warning = FALSE
+)
+```
+
+
+```{r}
+library(dplyr)
+library(vroom)
+library(dlptools)
+```
+
+
+# Useful functions in dlptools
+
+
+## Masking Bad Regions
+
+Masking regions that are bad for DLP, mostly the consequence of low mappability. 
+
+```{r}
+# assuming some sort of reads or segments DF with: chr, start, end
+ex_reads <- vroom::vroom("data/example_reads.tsv.gz")
+
+
+ex_reads <- dlptools::mark_mask_regions(ex_reads)
+
+# adds a boolean `mask` column
+ex_reads |>
+  dplyr::select(, cell_id, chr, start, end, mask) |>
+  dplyr::slice_head(n = 5)
+```
+
+
+The default masking file is one constructed by Daniel Lai, and can be viewed at the [package source](https://github.com/molonc/dlptools/tree/dev/inst/extdata) or by loading:
+
+```{r}
+vroom::vroom(system.file("extdata", "blacklist_2023.07.17.txt", package = "dlptools"))
+```
+
+
+
+## Information From Cell IDs
+
+This is assuming our standard DLP cell ids, e.g., `AT23998-A138956A-R03-C34`.
+
+
+```{r}
+# single cell id
+dlptools::sample_from_cell("AT23998-A138956A-R03-C34")
+
+# single library ID
+dlptools::library_from_cell("AT23998-A138956A-R03-C34")
+
+# Also a generic function for either
+# dlptools::pull_info_from_cell_id("AT23998-A138956A-R03-C34", sample_id = TRUE)
+# dlptools::pull_info_from_cell_id("AT23998-A138956A-R03-C34", library_id = TRUE)
+
+
+# multiple cell ids:
+dlptools::sample_from_cell(ex_reads$cell_id[1:5])
+
+# or library
+dlptools::library_from_cell(ex_reads$cell_id[1:5])
+
+
+# more useful it using it on your reads data frame
+# extracting sample id and library id and inserting into the dataframe
+ex_reads <- ex_reads |>
+  dplyr::mutate(
+    sample_id = dlptools::sample_from_cell(cell_id),
+    library_id = dlptools::library_from_cell(cell_id)
+  )
+
+ex_reads |>
+  dplyr::distinct(cell_id, sample_id, library_id) |>
+  dplyr::slice_sample(n = 5)
+```
+
+
+## Reads to Segments
+
+Grouping read bins into contiguous segments (e.g. post filtering read bins, etc.).
+
+```{r}
+segs_filt <- dlptools::reads_to_segs(ex_reads)
+
+# this is now runs of adjacent read bins with identical states collapesed
+# into a single bin. Of course, bins are no longer of equal size.
+segs_filt[1:4, ]
+```
+
+
+*warning:* this function will leave some unexpected gaps when dataframes have been filtered and bins removed. Inspect carfully if you have dropped bins from your dataframe.
+
+## Long to Wide Reads (or segments)
+
+Some functions require read state information to be in wide format vs long, with cell_ids as rows and chr_start_end as columns, and the states as cells.
+
+```{r}
+ex_reads_w <- dlptools::convert_long_reads_to_wide(ex_reads)
+
+ex_reads_w[1:4, 1:4]
+```
+
+
+
+<br>
+<br>
+<br>
+
+## Basic Plots
+
+This plot is a simplified alternative to the methods described in [the heatmaps vignette](https://molonc.github.io/dlptools/articles/heatmaps.html). There are no additions, like trees and annotations, but works for a variety of quick inspections.
+
+```{r, out.width="75%", out.height="75%"}
+dlptools::basic_tile_plot(
+  # just filtering to make the plot smaller for this demonstration
+  dplyr::filter(ex_reads, chr %in% c(7:9))
+)
+```
+
+To help with plotting, a variety of commonly use color palettes are available:
+
+```{r}
+# standard state colors
+dlptools::CNV_COLOURS
+
+# typically used allele specific colors
+dlptools::ASCN_COLORS
+
+# typically used phase colors
+dlptools::ASCN_PHASE_COLORS
+
+# typically BAF scale is a circlize::colorRamp2 spanning
+# standard green-grey-purple used for ASCN colors
+# dlptools::BAF_COLORS
+```
+
+## Data Importing
+
+If you've followed a semi-standard approach for downloading such as this:
+
+```bash
+# bash
+cd where/to/save/my_dlp/
+
+ticket="SC-8382"
+azcopy copy https://singlecellresults.blob.core.windows.net/results/${ticket}/results/annotation/ ${ticket} --recursive
+azcopy copy https://singlecellresults.blob.core.windows.net/results/${ticket}/results/hmmcopy/ ${ticket} --recursive
+
+```
+
+which produces a directory with this sort of structure:
+
+```bash
+├── SC-8382
+│   ├── annotation
+│   │   ├── metrics.csv.gz
+│   │   ├── #[...other files ...]
+│   └── hmmcopy
+│   │   ├── #[...other files ...]
+│       ├── reads.csv.gz
+│       ├── segments.csv.gz
+├── SC-8408
+│   ├── annotation
+│   │   ├── metrics.csv.gz
+│   │   ├── #[...other files ...]
+│   └── hmmcopy
+│   │   ├── #[...other files ...]
+│       ├── reads.csv.gz
+│       ├── segments.csv.gz
+├── SC-8650
+```
+
+then there are some functions that can help with loading data from these into a consistent dataframe:
+
+```{r, eval=FALSE}
+dlp_dir <- "/where/to/save/my_dlp/"
+
+# loading metrics
+metrics <- dlptools::import_dlp_files(dlp_dir, "metrics")
+
+# loading reads
+reads_df <- dlptools::import_dlp_files(dlp_dir, "reads")
+
+# loading segments...but generally this isn't a great idea
+# segs_df <- dlptools::import_dlp_files(dlp_dir, "segments")
+```
+
+
+
+## Other
+
+Phylogenetic trees made by Stika take some formatting before they can be plotted:
+
+```{r, eval=FALSE}
+dlptools::format_sitka_tree()
+```
+
+this function drops `locus` tips and removes the `cell_` part of cell id names on tips. This way, the trees can be aligned to cell ids in the heatmaps.
