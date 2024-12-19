@@ -116,25 +116,84 @@ cell_states_to_strings <- function(
 #'
 #' Finally, a mean distance across all sibling clades is computed and returned.
 #'
-#'
+#' @param states_df long format read bin state data
+#' @param tree phylo object to be checked
+#' @param states_col name of the column containing state data
+#' @param cell_id_col name of the column containing the tip labels
 #' @importFrom rlang .data
 #' @export
 compute_tip_sibling_distances <- function(
     states_df, tree, states_col = "state", cell_id_col = "cell_id") {
-  tip_state_strings <- cell_states_to_strings(
+  all_tip_state_strings <- cell_states_to_strings(
     states_df = states_df,
     states_col = states_col,
     cell_id_col = cell_id_col
   )
 
+  non_redundant_tips <- get_tips_that_avoid_redundant_comps(tree)
+
+  targ_tips <- dplyr::filter(
+    all_tip_state_strings,
+    tip_label %in% non_redundant_tips
+  )
+
   all_dists <- purrr::pmap_dbl(
-    tip_state_strings,
+    targ_tips,
     get_dist_to_sibs,
     tree = tree,
-    state_str_df = tip_state_strings
+    state_str_df = all_tip_state_strings
   )
 
   sib_dist <- mean(all_dists)
 
   return(sib_dist)
+}
+
+#' just a silly alias.
+#'
+#' see compute_tip_sibling_distances()
+#'
+#' @export
+check_the_vibe <- function(
+    states_df,
+    tree,
+    states_col = "state",
+    cell_id_col = "cell_id") {
+  compute_tip_sibling_distances(
+    states_df = states_df,
+    tree = tree,
+    states_col = "state",
+    cell_id_col = "cell_id"
+  )
+}
+
+#' get tips labels that will avoid duplicate sibling comparisons
+#'
+#' I.e., in a tree: (A, (B, C)) we don't want to compare B to C
+#' and then C to B, we only need to do one of those comparisons.
+#'
+#' @param tree a phylo object
+#' @return vector of tips labels that will lead to non-redundant
+#' @export
+get_tips_that_avoid_redundant_comps <- function(tree) {
+  sibs <- phangorn::Siblings(tree, tree$tip.label)
+
+  distinct_comps <- purrr::imap(sibs, \(s, n) {
+    if (is.null(s)) {
+      s <- 0 # place holder
+    }
+    data.frame(node = n, sib = s)
+  }) |>
+    purrr::list_rbind() |>
+    dplyr::mutate(
+      min_v = pmin(sib, node, na.rm = ),
+      max_v = pmax(sib, node),
+      sorted_sib_node = paste0(min_v, max_v)
+    ) |>
+    dplyr::distinct(sorted_sib_node, .keep_all = TRUE)
+
+  # tip labels to use that avoid redundant comparisons
+  non_redundant_labs <- tree$tip.label[distinct_comps$node]
+
+  return(non_redundant_labs)
 }

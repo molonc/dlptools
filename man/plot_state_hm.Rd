@@ -14,6 +14,7 @@ plot_state_hm(
   anno_columns = NULL,
   clone_column = NULL,
   color_tree_clones = FALSE,
+  clone_palette = NULL,
   only_largest_clone_group = FALSE,
   file_name = NULL,
   labels_fontsize = 8,
@@ -46,6 +47,10 @@ cell_id. Both columns required.}
 
 \item{color_tree_clones}{boolean. optional. Whether to color the tree with
 the same colors as the clone labels.}
+
+\item{clone_palette}{optional. ideally a named vector on how to color clones.
+Vector names are clond ID, values are hex codes. If vector is unnamed, names
+will be assigned, but without control on which get's which color.}
 
 \item{only_largest_clone_group}{boolean. optional. Only put a letter label on
 the largest group of any given clone id.}
