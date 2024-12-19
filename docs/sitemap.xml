@@ -4,6 +4,7 @@
 <url><loc>https://molonc.github.io/dlptools/LICENSE.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/articles/heatmaps.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/articles/index.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/articles/tree_believability.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/articles/useful_functions.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/authors.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/index.html</loc></url>
@@ -16,8 +17,12 @@
 <url><loc>https://molonc.github.io/dlptools/reference/bme_vec.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/build_left_annot.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/cell_id_order_as_plotted.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/cell_states_to_strings.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/check_args.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/check_or_fetch_clone_palette.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/check_the_vibe.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/chr_name_check.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/compute_tip_sibling_distances.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/convert_long_reads_to_wide.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/create_chromosome_column_fct.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/factor_column_mixedsort.html</loc></url>
@@ -30,15 +35,19 @@
 <url><loc>https://molonc.github.io/dlptools/reference/get_clone_id_label_positions.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/get_clone_members.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/get_column_metrics.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/get_dist_to_sibs.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/get_tips_that_avoid_redundant_comps.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/import_annotations_df.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/import_clones.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/import_dlp_files.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/import_tree.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/index.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/library_from_cell.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/load_mask_file.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/make_clone_palette.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/make_corrupt_tree_heatmap.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/make_tree_plot_obj.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/map_states_to_letters.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/mark_mask_regions.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/pipe.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/plot_state_hm.html</loc></url>
@@ -47,6 +56,7 @@
 <url><loc>https://molonc.github.io/dlptools/reference/pull_sample_id_from_cell_id.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/reads_to_segs.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/rle_states.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/sample_from_cell.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/sort_df_by_cell_order.html</loc></url>
 </urlset>
 

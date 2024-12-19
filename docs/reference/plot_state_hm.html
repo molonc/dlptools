@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -19,6 +19,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/heatmaps.html">Flexible Heatmaps</a></li>
+    <li><a class="dropdown-item" href="../articles/tree_believability.html">Tree Believability</a></li>
     <li><a class="dropdown-item" href="../articles/useful_functions.html">Functions in this package</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -52,6 +53,7 @@
 <span>  anno_columns <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  clone_column <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  color_tree_clones <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  clone_palette <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  only_largest_clone_group <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  file_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  labels_fontsize <span class="op">=</span> <span class="fl">8</span>,</span>
@@ -105,6 +107,12 @@ cell_id. Both columns required.</p></dd>
 <dt id="arg-color-tree-clones">color_tree_clones<a class="anchor" aria-label="anchor" href="#arg-color-tree-clones"></a></dt>
 <dd><p>boolean. optional. Whether to color the tree with
 the same colors as the clone labels.</p></dd>
+
+
+<dt id="arg-clone-palette">clone_palette<a class="anchor" aria-label="anchor" href="#arg-clone-palette"></a></dt>
+<dd><p>optional. ideally a named vector on how to color clones.
+Vector names are clond ID, values are hex codes. If vector is unnamed, names
+will be assigned, but without control on which get's which color.</p></dd>
 
 
 <dt id="arg-only-largest-clone-group">only_largest_clone_group<a class="anchor" aria-label="anchor" href="#arg-only-largest-clone-group"></a></dt>
