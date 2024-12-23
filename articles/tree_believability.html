@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -106,6 +106,9 @@ one will have sister taxa that are more similar to one another.</p>
 distance between states across the genome of sibling tree tips. (See the
 section <strong>Future Thoughts</strong> below for why this isn’t a
 perfect method.)</p>
+<p>The function to calculate the check is
+<code><a href="../reference/compute_tip_sibling_distances.html">dlptools::compute_tip_sibling_distances()</a></code>, and here I’ll
+walk through an example of what’s going on behind the scenes.</p>
 <p><br></p>
 <p>Starting with some toy data:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">

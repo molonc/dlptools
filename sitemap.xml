@@ -13,7 +13,9 @@
 <url><loc>https://molonc.github.io/dlptools/reference/CNV_COLOURS.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/DEFAULT_CONTINUOUS_COLOR_RANGE.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/STATE_COLORS.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/add_centromere_locations.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/basic_tile_plot.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/bin_within_centromere.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/bme_vec.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/build_left_annot.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/cell_id_order_as_plotted.html</loc></url>
@@ -36,6 +38,7 @@
 <url><loc>https://molonc.github.io/dlptools/reference/get_clone_members.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/get_column_metrics.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/get_dist_to_sibs.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/get_package_file_path.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/get_tips_that_avoid_redundant_comps.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/import_annotations_df.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/import_clones.html</loc></url>
@@ -53,6 +56,7 @@
 <url><loc>https://molonc.github.io/dlptools/reference/plot_state_hm.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/pull_chr_from_col_name.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/pull_info_from_cell_id.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/read_and_prep_ucsg_cenrtomeres.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/reads_to_segs.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/rle_states.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/sample_from_cell.html</loc></url>
