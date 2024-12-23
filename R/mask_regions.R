@@ -15,7 +15,6 @@
 mark_mask_regions <- function(
     subject_df, mask_f = NULL,
     mask_chr_name = "seqnames", subject_chr_name = "chr") {
-  # in importing.R
   masks <- load_mask_file(mask_f = mask_f)
 
   # error checking of passed params
@@ -44,4 +43,21 @@ mark_mask_regions <- function(
   )
 
   return(subject_df)
+}
+
+#' internal to control mask file loading.
+#' @param mask_f path to the mask file to load.
+load_mask_file <- function(mask_f = NULL) {
+  if (is.null(mask_f)) {
+    default_mask_file <- "blacklist_2023.07.17.txt"
+    warning(paste0("loading default mask file of: ", default_mask_file))
+    mask_f <- fs::path_package(
+      "extdata", default_mask_file,
+      package = "dlptools"
+    )
+  }
+
+  masks <- vroom::vroom(mask_f, show_col_types = FALSE)
+
+  return(masks)
 }
