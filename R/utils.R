@@ -169,3 +169,20 @@ get_column_metrics <- function(vals, min_max = FALSE) {
 
   return(metrics_span)
 }
+
+#' retrieve file path to package data files
+#' @param file_name string of the file to target for loading
+#' @return file path string
+get_package_file_path <- function(file_name) {
+  warning(paste0("loading package file: ", file_name), immediate. = TRUE)
+  mask_f <- fs::path_package(
+    "extdata", file_name,
+    package = "dlptools"
+  )
+
+  if (is.null(mask_f)) {
+    stop(past0("could not find package file: ", file_name))
+  }
+
+  return(mask_f)
+}
