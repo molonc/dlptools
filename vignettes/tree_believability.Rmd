@@ -66,6 +66,10 @@ The idea employed here is simple, when comparing trees, the "better" one will ha
 
 We can evaluate this in a non-perfect way by evaluting string distance between states across the genome of sibling tree tips. (See the section **Future Thoughts** below for why this isn't a perfect method.)
 
+
+The function to calculate the check is `dlptools::compute_tip_sibling_distances()`, and here I'll walk through an example of what's going on behind the scenes.
+
+
 <br>
 
 Starting with some toy data:

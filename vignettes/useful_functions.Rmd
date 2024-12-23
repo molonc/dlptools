@@ -35,7 +35,6 @@ Masking regions that are bad for DLP, mostly the consequence of low mappability.
 # assuming some sort of reads or segments DF with: chr, start, end
 ex_reads <- vroom::vroom("data/example_reads.tsv.gz")
 
-
 ex_reads <- dlptools::mark_mask_regions(ex_reads)
 
 # adds a boolean `mask` column
@@ -51,6 +50,44 @@ The default masking file is one constructed by Daniel Lai, and can be viewed at 
 vroom::vroom(system.file("extdata", "blacklist_2023.07.17.txt", package = "dlptools"))
 ```
 
+
+## Marking Centromere Locations
+
+Centromeres are problematic for DLP data, the state calls are often inflated and highly inconsistent between adjacent bins. It's a messy region that we often want to omit. The default masking file (above) pretty much captures these regions, but sometimes we may want to be more specific. 
+
+Alternatively, sometimes we want to specify windows around centromeres to include in filtering too.
+
+The files loaded to mark centromeres come from [UCSC](https://hgdownload.soe.ucsc.edu/downloads.html) cytoband files of hg19 and hg38 releases.
+
+```{r}
+# easiest way is to just explictly mark whether bins are in centromeres
+dlptools::bin_within_centromere(
+  reads_df = ex_reads,
+  padding = 3e6, # e.g., specifying 3 Mb on each side of centromere
+  # default padding is 0
+  hg19 = TRUE,
+  # alternatively hg38=TRUE
+  bin_location_column = "start" # column to use for the location of a bin,
+  # default is "start". So the start of a bin in checked if it falls within the
+  # extent of the centromere, plus any specified padding.
+) |>
+  dplyr::count(cell_id, within_centro) |>
+  dplyr::slice_head(n = 6)
+```
+
+
+Alternatively, this can be done in parts:
+
+```{r}
+# e.g., just adding the centromere information by chromosome
+dlptools::add_centromere_locations(
+  reads_df = ex_reads,
+  hg19 = TRUE, # or hg38=TRUE
+) |>
+  dplyr::select(
+    cell_id, chr, centro_start, centro_end, start_p, end_p, start_q, end_q
+  )
+```
 
 
 ## Information From Cell IDs
