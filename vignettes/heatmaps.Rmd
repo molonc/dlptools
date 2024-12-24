@@ -40,51 +40,14 @@ The package [Signals](https://github.com/shahcompbio/signals/tree/master) has gr
 
 Alternatively, in this package there is `dlptools::plot_state_hm()`, which does similar things to the Signals package, but with some more conveniences.
 
-`dlptools::plot_state_hm()` is meant to be a one stop shop for heatmap plotting of many variable types and options.
+`dlptools::plot_state_hm()` is meant to be a one stop shop for heatmap plotting of many variable types and options (click that link for all of the options).
 
 
-`?dlptools::plot_state_hm()` will show the options, and below we'll walk throuh some examples.
 
 The main constraint is to have a column called `cell_id` that contains the cell labels. 
 
-```{r, eval=FALSE}
-dlptools::plot_state_hm(
-  # long format bin level data
-  states_df,
-  # column of data to plot
-  state_col,
-  # optional, tree with tip labels matching the cell_id column
-  phylogeny = NULL,
-  # for direct saving to a file
-  file_name = NULL,
-  # optional dataframe of a cell_id column + any cell level information columns
-  anno_df = NULL,
-  # for custom colors of annotations, see ?plot_state for examples
-  anno_colors_list = list(),
-  # can call out the annotation columns from the original dataframe
-  # instead of a separate frame.
-  anno_columns = NULL,
-  # optional, can also specify columns in the dataframe
-  clones_df = NULL,
-  # column name to pull clone IDs from instead of separate DF.
-  clone_column = NULL,
-  # bool, color the tree with clone colors
-  color_tree_clones = FALSE,
-  # bool, only letter label the largest group of any given clone
-  only_largest_clone_group = FALSE,
-  # font size of labels on heatmap image
-  labels_fontsize = 8,
-  # set to TRUE if plotting continuous values on the heatmap.
-  continuous_hm_colours = FALSE,
-  # specificiation of color range for continuous values
-  custom_continuous_colors = NULL,
-  # specification of values for ends of continous range.
-  custom_continuous_range = NULL
-)
-```
 
-
-We'll work from some example data (a trimmed output of signals, but just DLP reads output works fine too):
+We'll work from some example data to show some examples (it's a trimmed output of signals, but just DLP reads output works fine too):
 
 ```{r}
 ex_state_dat <- vroom::vroom("data/ex_state_dat.tsv.gz")
