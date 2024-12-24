@@ -52,7 +52,8 @@ import_annotations_df <- function(annotations_file) {
 #' @return tibble (or maybe just a matrix ready to go?)
 #' @export
 #' @importFrom rlang .data
-format_states_for_hm <- function(states_df, state_col, continuous = FALSE) {
+format_states_for_hm <- function(
+    states_df, state_col, continuous = FALSE, replace_11_with_11plus = TRUE) {
   states_w <- states_df |>
     dplyr::select(cell_id, chr, start, end, state_col) |>
     convert_long_reads_to_wide(state_col = state_col)
@@ -67,7 +68,7 @@ format_states_for_hm <- function(states_df, state_col, continuous = FALSE) {
     base::class(states_mat) <- "character"
   }
 
-  if (state_col == "state") {
+  if (state_col == "state" && replace_11_with_11plus) {
     states_mat[states_mat == "11"] <- "11+"
   }
 
@@ -112,6 +113,12 @@ generate_state_hm <- function(
     left_annot = NULL) {
   # set up a chromosome factor for column splits in the heatmap
   chroms <- create_chromosome_column_fct(states_mat)
+
+  # this is a little special case catch for how we tend to handle 11s. 11+
+  # is introduced when formatting the matrix for states.
+  if ("11+" %in% ex_mat && !("11+" %in% names(plot_cols))) {
+    plot_cols["11+"] <- plot_cols["11"]
+  }
 
   states_hm <- ComplexHeatmap::Heatmap(
     states_mat,
@@ -176,7 +183,8 @@ fetch_heatmap_color_palette <- function(
     continuous = FALSE,
     max_colors = 20,
     custom_continuous_colors = NULL,
-    custom_continuous_range = NULL) {
+    custom_continuous_range = NULL,
+    discrete_colors = NULL) {
   color_choices <- list(
     "state" = STATE_COLORS,
     "A" = STATE_COLORS,
@@ -186,6 +194,20 @@ fetch_heatmap_color_palette <- function(
     "state_AS_phased" = ASCN_COLORS,
     "state_AS" = ASCN_COLORS
   )
+
+  if (!is.null(discrete_colors)) {
+    # confirm all values are specified
+    unique_plot_vals <- unique(states_df[[state_col]])
+    palette_check <- all(unique_plot_vals %in% names(discrete_colors))
+    if (!palette_check) {
+      stop(
+        "you did not specify enough colors for the plot with 'discrete_colors'"
+      )
+    }
+
+    # TODO: if the check fails, fill in with defaults and just warn?
+    return(discrete_colors)
+  }
 
   if (continuous) {
     continuous_color_palette <- fetch_continuous_color_ramp(
@@ -397,8 +419,7 @@ check_args <- function() {
 #' @param clone_palette named vector of how to color the clones.
 check_or_fetch_clone_palette <- function(clones_df, clone_palette = NULL) {
   unique_clones <- unique(clones_df$clone_id)
-  print(unique_clones)
-  print(clone_palette)
+
   if (!is.null(clone_palette)) {
     pal_len_check <- length(clone_palette) < length(unique_clones)
 
@@ -407,7 +428,7 @@ check_or_fetch_clone_palette <- function(clones_df, clone_palette = NULL) {
     }
 
     # ensure lengths are the same, ComplexHeatmap won't accept otherwise
-    clone_palette <- clone_palette[1:length(unique_clones)]
+    clone_palette <- clone_palette[seq_along(unique_clones)]
 
     if (is.null(names(clone_palette))) {
       warning(paste0(
@@ -422,7 +443,6 @@ check_or_fetch_clone_palette <- function(clones_df, clone_palette = NULL) {
     clone_palette <- NULL
   }
 
-  print(clone_palette)
   return(clone_palette)
 }
 
@@ -457,6 +477,11 @@ check_or_fetch_clone_palette <- function(clones_df, clone_palette = NULL) {
 #' c("#3182BD", "#CCCCCC", "#FDCC8A")
 #' @param custom_continuous_range a vector of values to specify as the low, mid,
 #' and high bounds for the continuous color scale, e.g., c(1, 5, 10)
+#' @param discrete_colors specified colors for the values being plotted.
+#' Named vector: c(1="#3182BD", 2="#FDCC8A"). Need to specify for every value
+#' @param replace_11_with_11plus bool. Default TRUE. For HMMCopy state values,
+#' state 11 is really 11+, so we replace 11s with 11+ for the plot.
+#' being plotted
 #' @export
 plot_state_hm <- function(
     states_df, # long format data
@@ -475,6 +500,8 @@ plot_state_hm <- function(
     continuous_hm_colours = FALSE,
     custom_continuous_colors = NULL,
     custom_continuous_range = NULL,
+    hm_discrete_colors = NULL,
+    replace_11_with_11plus = TRUE,
     ...) {
   check_args()
 
@@ -482,7 +509,8 @@ plot_state_hm <- function(
   states_mat <- format_states_for_hm(
     states_df,
     state_col,
-    continuous = continuous_hm_colours
+    continuous = continuous_hm_colours,
+    replace_11_with_11plus = replace_11_with_11plus
   )
 
   # deal with any annotations
@@ -553,7 +581,8 @@ plot_state_hm <- function(
     states_df,
     continuous = continuous_hm_colours,
     custom_continuous_colors = custom_continuous_colors,
-    custom_continuous_range = custom_continuous_range
+    custom_continuous_range = custom_continuous_range,
+    discrete_colors = hm_discrete_colors
   )
 
   # plot the heatmap
