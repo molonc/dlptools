@@ -60,6 +60,8 @@
 <span>  continuous_hm_colours <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  custom_continuous_colors <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  custom_continuous_range <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  hm_discrete_colors <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  replace_11_with_11plus <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -142,6 +144,17 @@ c("#3182BD", "#CCCCCC", "#FDCC8A")</p></dd>
 <dt id="arg-custom-continuous-range">custom_continuous_range<a class="anchor" aria-label="anchor" href="#arg-custom-continuous-range"></a></dt>
 <dd><p>a vector of values to specify as the low, mid,
 and high bounds for the continuous color scale, e.g., c(1, 5, 10)</p></dd>
+
+
+<dt id="arg-hm-discrete-colors">hm_discrete_colors<a class="anchor" aria-label="anchor" href="#arg-hm-discrete-colors"></a></dt>
+<dd><p>specified colors for the values being plotted.
+Named vector: c(1="#3182BD", 2="#FDCC8A"). Need to specify for every value</p></dd>
+
+
+<dt id="arg-replace-with-plus">replace_11_with_11plus<a class="anchor" aria-label="anchor" href="#arg-replace-with-plus"></a></dt>
+<dd><p>bool. Default TRUE. For HMMCopy state values,
+state 11 is really 11+, so we replace 11s with 11+ for the plot.
+being plotted</p></dd>
 
 </dl></div>
 
