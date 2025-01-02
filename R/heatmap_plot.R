@@ -116,7 +116,7 @@ generate_state_hm <- function(
 
   # this is a little special case catch for how we tend to handle 11s. 11+
   # is introduced when formatting the matrix for states.
-  if ("11+" %in% ex_mat && !("11+" %in% names(plot_cols))) {
+  if ("11+" %in% states_mat && !("11+" %in% names(plot_cols))) {
     plot_cols["11+"] <- plot_cols["11"]
   }
 
