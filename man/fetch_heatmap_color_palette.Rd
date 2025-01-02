@@ -10,7 +10,8 @@ fetch_heatmap_color_palette(
   continuous = FALSE,
   max_colors = 20,
   custom_continuous_colors = NULL,
-  custom_continuous_range = NULL
+  custom_continuous_range = NULL,
+  discrete_colors = NULL
 )
 }
 \description{

@@ -477,7 +477,7 @@ check_or_fetch_clone_palette <- function(clones_df, clone_palette = NULL) {
 #' c("#3182BD", "#CCCCCC", "#FDCC8A")
 #' @param custom_continuous_range a vector of values to specify as the low, mid,
 #' and high bounds for the continuous color scale, e.g., c(1, 5, 10)
-#' @param discrete_colors specified colors for the values being plotted.
+#' @param hm_discrete_colors specified colors for the values being plotted.
 #' Named vector: c(1="#3182BD", 2="#FDCC8A"). Need to specify for every value
 #' @param replace_11_with_11plus bool. Default TRUE. For HMMCopy state values,
 #' state 11 is really 11+, so we replace 11s with 11+ for the plot.

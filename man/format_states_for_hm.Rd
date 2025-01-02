@@ -4,7 +4,12 @@
 \alias{format_states_for_hm}
 \title{format states for plotting in a heatmap}
 \usage{
-format_states_for_hm(states_df, state_col, continuous = FALSE)
+format_states_for_hm(
+  states_df,
+  state_col,
+  continuous = FALSE,
+  replace_11_with_11plus = TRUE
+)
 }
 \arguments{
 \item{states_df}{long format states information}
