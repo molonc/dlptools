@@ -14,6 +14,7 @@ CNV_COLOURS <- structure(
 STATE_COLORS <- CNV_COLOURS
 
 #' min, median, max for a continuous color range
+#' @export
 DEFAULT_CONTINUOUS_COLOR_RANGE <- c(
   "#3182BD",
   "#CCCCCC",
@@ -93,6 +94,15 @@ fetch_continuous_color_ramp <- function(
       custom_continuous_range <- bme_vec(custom_continuous_range, "custom_continuous_range")
     }
     metrics <- custom_continuous_range
+  }
+
+  if (length(unique(metrics)) < 3) {
+    stop(paste0(
+      "Can't generate a color ramp for the selected continuous value as the",
+      " quantiles and median are not 3 distinct values. Consider using the",
+      " 'custom_continuous_range' parameter to specify how you want to break",
+      " your data over the color scale."
+    ))
   }
 
   if (!is.null(custom_continuous_colors)) {
