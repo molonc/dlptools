@@ -1,3 +1,15 @@
+#' make a plot of just the foreground events
+#'
+#' Colors highlight the change in state between the tip and parent node.
+#'
+#' @param states_df bin based dataframe of state changes. Typically the output
+#' of characterize_foreground_total_state_changes() or from
+#' medicc_profiles_to_foreground(). But really, any bin dataframe with a column
+#' indicating change between tip and parent will work.
+#' @param phylogeny phylo object of the tree being used for analysis.
+#' @param file_name what to call the resulting plot png.
+#' @param fg_change the column to plot with the changes between parent and tips.
+#' @export
 plot_heatmap_of_tip_changes <- function(
     states_df, phylogeny, file_name, changes_col = "fg_change") {
   min_state <- min(states_df[[changes_col]], na.rm = TRUE)
@@ -41,7 +53,13 @@ plot_heatmap_of_tip_changes <- function(
   )
 }
 
-
+#' generate a plot of just the foreground states, making the background white.
+#'
+#' These are the actual state values of the bins in foreground events.
+#'
+#' @param states_df bin based dataframe that has foreground events marked.
+#' @param file_name name for the resulting png.
+#' @export
 plot_fg_state_highlight <- function(states_df, file_name) {
   states_df |>
     dplyr::mutate(
@@ -57,7 +75,13 @@ plot_fg_state_highlight <- function(states_df, file_name) {
     )
 }
 
-
+#' generate a plot of just the background states, making the foreground white.
+#'
+#' These are the actual state values of the bins in background bins.
+#'
+#' @param states_df bin based dataframe that has foreground events marked.
+#' @param file_name name for the resulting png.
+#' @export
 plot_bg_state_highlight <- function(states_df, file_name) {
   states_df |>
     dplyr::mutate(
