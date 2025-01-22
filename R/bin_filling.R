@@ -7,6 +7,9 @@
 # ...or can I? How would I tell it where to split? Would need to calculate the
 # mid point of the centromere.
 
+#' loading UCSC chromosome length files
+#' @param version default "hg19", can also load "hg38"
+#' @return tibgble of chromosome, total length, etc.
 #' @export
 load_chrom_info_file <- function(version = c("hg19", "hg38")) {
   version <- match.arg(version)
@@ -32,14 +35,30 @@ load_chrom_info_file <- function(version = c("hg19", "hg38")) {
   return(chrom_info)
 }
 
+#' For a given length, create bins of a given size
+#'
+#' e.g., length = 10, bin = 5, will get bins: 1-5, 6-10
+#'
+#' @param total_len int to create bins for
+#' @param bin_size int of size of bin
+#' @return tibble of bins with columns of start and end
 #' @export
 expand_length_to_bins <- function(total_len, bin_size = 5e5) {
   starts <- seq(1, total_len, by = bin_size)
   ends <- seq(bin_size, total_len + bin_size, by = bin_size)
+  if ((total_len + bin_size) %% bin_size == 0) {
+    # TODO: this seems unnecessary. Better seq to fix?
+    ends <- ends[seq_along(ends) - 1]
+  }
   bins <- tibble::tibble(start = starts, end = ends)
   return(bins)
 }
 
+#' create bins of given size for a genome
+#'
+#' @param version default "hg19", or can select "hg38"
+#' @param bins_size int of how big to make the bins
+#' @return tibble of bins for each chromosome. Columns: chr start end
 #' @export
 create_expected_bins <- function(version = c("hg19", "hg38"), bin_size = 5e5) {
   version <- match.arg(version)
@@ -61,6 +80,23 @@ create_expected_bins <- function(version = c("hg19", "hg38"), bin_size = 5e5) {
 }
 
 
+#' Add back chr, start, end of bins missing from cells
+#'
+#' Often we filter read bins based on various criteria, or tools we use might
+#' drop bins of read/state data. This function will put missing bins back into
+#' a dataframe for cells.
+#'
+#' Basic operation will result in NAs for every column except cell_id, chr,
+#' start, end for the newly added bins. But you can also carry over cell
+#' metadata by specifying which columns to keep for the inferred bins. This
+#' should be cell level data.
+#'
+#' @param state_df the dataframe/tibble to insert the missing bins into
+#' @param version which genome version you are using. Default "hg19", or select
+#' "hg38"
+#' @param bin_size size of bins that should be there.
+#' @param cell_metadata_cols vector of columns to carry through to inferred bins
+#' @return input dataframe with extra bins for each cells that were missing.
 #' @export
 add_missing_bins_for_cells <- function(
     state_df, version = c("hg19", "hg38"), bin_size = 500000,
