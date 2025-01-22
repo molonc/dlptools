@@ -118,3 +118,25 @@ add_missing_bins_for_cells <- function(
 
   return(state_df)
 }
+
+#' infer missing data using the upstream neighbour bin
+#'
+#' This function fills in NAs of columns with the information from an upstream
+#' bin. The exception are bins missing from the start of chromosomes, which are
+#' filled by their downstream neighbour if there is nothing upstream.
+#'
+#' Primarily used to fill in "state" data for filtered bins. But can also pass
+#' other states to fill in.
+#'
+#' @param state_df dataframe of state data with NAs for some bins that need
+#' to be filled in. E.g., after dlptools::running add_missing_bins_for_cells()
+#' @export
+#' @importFrom rlang .data
+fill_state_from_neighbours <- function(state_df, cols_to_fill = c("state")) {
+  filled_df <- state_df |>
+    dplyr::group_by(.data$cell_id, .data$chr) |>
+    tidyr::fill(cols_to_fill, .direction = "downup") |>
+    dplyr::ungroup()
+
+  return(filled_df)
+}
