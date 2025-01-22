@@ -4,10 +4,12 @@
 \alias{plot_fg_state_highlight}
 \title{generate a plot of just the foreground states, making the background white.}
 \usage{
-plot_fg_state_highlight(states_df, file_name)
+plot_fg_state_highlight(states_df, phylogeny, file_name)
 }
 \arguments{
 \item{states_df}{bin based dataframe that has foreground events marked.}
+
+\item{phylogeny}{phylo object used to infer foreground}
 
 \item{file_name}{name for the resulting png.}
 }

@@ -58,9 +58,10 @@ plot_heatmap_of_tip_changes <- function(
 #' These are the actual state values of the bins in foreground events.
 #'
 #' @param states_df bin based dataframe that has foreground events marked.
+#' @param phylogeny phylo object used to infer foreground
 #' @param file_name name for the resulting png.
 #' @export
-plot_fg_state_highlight <- function(states_df, file_name) {
+plot_fg_state_highlight <- function(states_df, phylogeny, file_name) {
   states_df |>
     dplyr::mutate(
       fg_highlight = dplyr::if_else(
@@ -69,7 +70,7 @@ plot_fg_state_highlight <- function(states_df, file_name) {
     ) |>
     plot_state_hm(
       state_col = "fg_highlight",
-      phylogeny = os052_p9_tree,
+      phylogeny = phylogeny,
       file_name = file_name,
       hm_discrete_colors = c(dlptools::CNV_COLOURS, `background` = "#f4f8f6")
     )
@@ -80,9 +81,10 @@ plot_fg_state_highlight <- function(states_df, file_name) {
 #' These are the actual state values of the bins in background bins.
 #'
 #' @param states_df bin based dataframe that has foreground events marked.
+#' @param phylogeny phylo object used to infer foreground
 #' @param file_name name for the resulting png.
 #' @export
-plot_bg_state_highlight <- function(states_df, file_name) {
+plot_bg_state_highlight <- function(states_df, phylogeny, file_name) {
   states_df |>
     dplyr::mutate(
       bg_highlight = dplyr::if_else(
@@ -91,7 +93,7 @@ plot_bg_state_highlight <- function(states_df, file_name) {
     ) |>
     plot_state_hm(
       state_col = "bg_highlight",
-      phylogeny = os052_p9_tree,
+      phylogeny = phylogeny,
       file_name = file_name,
       hm_discrete_colors = c(dlptools::CNV_COLOURS, `foreground` = "#f4f8f6")
     )

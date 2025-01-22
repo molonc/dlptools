@@ -22,6 +22,7 @@ get_tip_parents <- function(phylogeny) {
 #' @param phylogeny phylo object
 #' @return input dataframe, but with parent node information added. Creates a
 #' 'parent_node' column.
+#' @export
 add_tip_ancestors_to_df <- function(states_df, phylogeny) {
   # 1. get parent node of each tip
   cell_node_ancestors <- get_tip_parents(phylogeny)
