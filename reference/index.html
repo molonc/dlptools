@@ -18,7 +18,8 @@
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/heatmaps.html">Flexible Heatmaps</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/foreground.html">Copy Number 'Foreground'</a></li>
+    <li><a class="dropdown-item" href="../articles/heatmaps.html">Flexible Heatmaps</a></li>
     <li><a class="dropdown-item" href="../articles/tree_believability.html">Tree Believability</a></li>
     <li><a class="dropdown-item" href="../articles/useful_functions.html">Functions in this package</a></li>
   </ul></li>
@@ -84,6 +85,12 @@
         <dd>add centromere information to reads by chromosome</dd>
       </dl><dl><dt>
 
+          <code><a href="add_tip_ancestors_to_df.html">add_tip_ancestors_to_df()</a></code>
+
+        </dt>
+        <dd>add parent node labels to a dataframe of cell ids with states</dd>
+      </dl><dl><dt>
+
           <code><a href="basic_tile_plot.html">basic_tile_plot()</a></code>
 
         </dt>
@@ -120,10 +127,28 @@
         <dd>collapse cell states to strings</dd>
       </dl><dl><dt>
 
+          <code><a href="characterize_foreground_allele_state_changes.html">characterize_foreground_allele_state_changes()</a></code>
+
+        </dt>
+        <dd>mark types of allele specific foreground state changes</dd>
+      </dl><dl><dt>
+
+          <code><a href="characterize_foreground_total_state_changes.html">characterize_foreground_total_state_changes()</a></code>
+
+        </dt>
+        <dd>mark the types of change between a parent node state and the tip.</dd>
+      </dl><dl><dt>
+
           <code><a href="check_args.html">check_args()</a></code>
 
         </dt>
         <dd>confirms arguments are compatible for the plotting wrapper</dd>
+      </dl><dl><dt>
+
+          <code><a href="check_if_state_columns_are_valid.html">check_if_state_columns_are_valid()</a></code>
+
+        </dt>
+        <dd>internal check for using the characterization function</dd>
       </dl><dl><dt>
 
           <code><a href="check_or_fetch_clone_palette.html">check_or_fetch_clone_palette()</a></code>
@@ -234,6 +259,12 @@
         <dd>retrieve file path to package data files</dd>
       </dl><dl><dt>
 
+          <code><a href="get_tip_parents.html">get_tip_parents()</a></code>
+
+        </dt>
+        <dd>resolve who the immediate parent nodes are for each tip.</dd>
+      </dl><dl><dt>
+
           <code><a href="get_tips_that_avoid_redundant_comps.html">get_tips_that_avoid_redundant_comps()</a></code>
 
         </dt>
@@ -262,6 +293,12 @@
 
         </dt>
         <dd>read a tree from a file in newick format</dd>
+      </dl><dl><dt>
+
+          <code><a href="is_not_numeric_lacks_order.html">is_not_numeric_lacks_order()</a></code>
+
+        </dt>
+        <dd>confirms a vector is not numeric and is unorderd</dd>
       </dl><dl><dt>
 
           <code><a href="library_from_cell.html">library_from_cell()</a></code>
@@ -306,6 +343,30 @@
         <dd>add a mask column to a dataframe</dd>
       </dl><dl><dt>
 
+          <code><a href="medicc_profiles_to_foreground.html">medicc_profiles_to_foreground()</a></code>
+
+        </dt>
+        <dd>medicc profiles files to foreground assessment</dd>
+      </dl><dl><dt>
+
+          <code><a href="plot_bg_state_highlight.html">plot_bg_state_highlight()</a></code>
+
+        </dt>
+        <dd>generate a plot of just the background states, making the foreground white.</dd>
+      </dl><dl><dt>
+
+          <code><a href="plot_fg_state_highlight.html">plot_fg_state_highlight()</a></code>
+
+        </dt>
+        <dd>generate a plot of just the foreground states, making the background white.</dd>
+      </dl><dl><dt>
+
+          <code><a href="plot_heatmap_of_tip_changes.html">plot_heatmap_of_tip_changes()</a></code>
+
+        </dt>
+        <dd>make a plot of just the foreground events</dd>
+      </dl><dl><dt>
+
           <code><a href="plot_state_hm.html">plot_state_hm()</a></code>
 
         </dt>
@@ -328,6 +389,18 @@
 
         </dt>
         <dd>load and prep default centromerefiles from UCSC</dd>
+      </dl><dl><dt>
+
+          <code><a href="read_medicc_profiles.html">read_medicc_profiles()</a></code>
+
+        </dt>
+        <dd>ingest a medicc profiles file</dd>
+      </dl><dl><dt>
+
+          <code><a href="read_medicc_tree.html">read_medicc_tree()</a></code>
+
+        </dt>
+        <dd>read medicc tree to phylo object.</dd>
       </dl><dl><dt>
 
           <code><a href="reads_to_segs.html">reads_to_segs()</a></code>
