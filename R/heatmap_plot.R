@@ -313,7 +313,7 @@ get_clone_id_label_positions <- function(
 #' columns required.
 #' @param labels_fontsize how large to make text labels
 #' @param clone_palette named vector of colors to give to clones. E.g., c(
-#' A='#12345', B='#67890'). See make_clone_palette()
+#' A='#12345', B='#67890'). See dlptools::make_clone_palette()
 build_left_annot <- function(
     anno_df = NULL,
     anno_cols_list = list(),

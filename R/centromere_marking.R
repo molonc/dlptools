@@ -1,6 +1,6 @@
 #' add centromere information to reads by chromosome
 #'
-#' See read_and_prep_ucsg_cenrtomeres() for details of file origins.
+#' See dlptools::read_and_prep_ucsg_cenrtomeres() for details of file origins.
 #'
 #' @param centro_file NULL or string to the path if you download yourself
 #' @param hg19 boolean to target hg19 for loading
@@ -37,7 +37,8 @@ add_centromere_locations <- function(
 #' @param bin_locatation_column which column to use as the location of a bin.
 #' popular choices are the start of a bin, middle of a bin, or and of a bin.
 #' @param hg19 bool. Not needed unless this function is also adding the
-#' centromere information to the data frame. See add_centromere_locations()
+#' centromere information to the data frame. See
+#' dlptools::add_centromere_locations()
 #' which will be called if the correct centromere columns are not present.
 #' @param hg38 bool. Same as hg19...but for hg38.
 #' @return input table, but with a boolean 'within_centro' column added (and
