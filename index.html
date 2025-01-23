@@ -58,7 +58,8 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="dlptools">DLPTools<a class="anchor" aria-label="anchor" href="#dlptools"></a>
 </h1></div>
-<p>And R package for basic DLP+ data manipulation and plotting. Basically just a collection of the various functions we have been using to handle DLP data.</p>
+<p>A collection of the various functions we, in the <a href="https://aparicio.molonc.ca/" class="external-link">Aparicio Lab</a>, have been using for basic DLP data manipulation and plotting.</p>
+<p>All code subject to change and actively under development.</p>
 <div class="section level2">
 <h2 id="installing-dlptools">Installing DLPtools<a class="anchor" aria-label="anchor" href="#installing-dlptools"></a>
 </h2>
@@ -72,89 +73,9 @@
 <p>See <code>vignettes/</code> for various overview (Rmd &amp; htmls available) or browse the articles at the <a href="https://molonc.github.io/dlptools/">package website</a>.</p>
 </div>
 <div class="section level2">
-<h2 id="development">Development<a class="anchor" aria-label="anchor" href="#development"></a>
+<h2 id="in-house-development">In-House Development<a class="anchor" aria-label="anchor" href="#in-house-development"></a>
 </h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># 1. clone the repo</span></span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="fu">git</span> clone URL</span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co"># 2. install the pre-commit hooks</span></span>
-<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="ex">pre-commit</span> install</span>
-<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co"># 3. code happy.</span></span></code></pre></div>
-<p>If you haven’t worked on an R package before, <a href="https://r-pkgs.org/whole-game.html" class="external-link">this</a> is a good read to get started.</p>
-<p>To add functions, we can rely on <code><a href="https://devtools.r-lib.org/" class="external-link">library(devtools)</a></code> to help with the metadata stuff and package construction. Steps include:</p>
-<ol style="list-style-type: decimal">
-<li>boot an R instance and set the working directory to wherever you cloned this repo</li>
-</ol>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">setwd</a></span><span class="op">(</span><span class="st">"/path/to/dlptools/"</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/" class="external-link">devtools</a></span><span class="op">)</span></span></code></pre></div>
-<ol start="2" style="list-style-type: decimal">
-<li>add your R function either within an existing <code>R/*R</code> module, or create a new module</li>
-</ol>
-<pre><code>vim R/my_new_module.R</code></pre>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># add your function, with documentation in roxygen style! See other funcs for </span></span>
-<span><span class="co"># examples.</span></span>
-<span></span>
-<span><span class="co">#' the thing my function does</span></span>
-<span><span class="co">#'</span></span>
-<span><span class="co"># my function does this great thing</span></span>
-<span><span class="co">#' </span></span>
-<span><span class="co">#' @param x a description of the arg for my function</span></span>
-<span><span class="co">#' @export</span></span>
-<span><span class="va">my_cool_func</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="co"># also, try and use namespaces for functions that come from other packages, </span></span>
-<span><span class="co"># e.g., purrr::map() instead of just map(), or dplyr::select() instead of just select()</span></span>
-<span><span class="co"># leads to fewer mixups as code bases grow and encounter redundantly named functions.</span></span></code></pre></div>
-<ol start="3" style="list-style-type: decimal">
-<li>To test your function, in the R instance you can load it and check it out</li>
-</ol>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># will load the whole package including your new function</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">load_all</span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">my_cool_func</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div>
-<ol start="4" style="list-style-type: decimal">
-<li>Then in your R instance, we can build the needed meta data for the new function.</li>
-</ol>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># searches the R/ directory for new functions and updates the NAMESPACE file.</span></span>
-<span><span class="co"># also creates .Rd files based on your function docstring.</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">document</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>If your function includes code from another R package (even base R), you need to declare that and add it to the package metadata (unless it’s already listed in the <code>Imports:</code> section of the <code>DESCRIPTION</code> file).</p>
-<p>From the R instance:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_package</span><span class="op">(</span><span class="st">"purrr"</span><span class="op">)</span> <span class="co"># or whatever package your function needs</span></span></code></pre></div>
-<ol start="5" style="list-style-type: decimal">
-<li>From the R instance, run a check that the package is still good</li>
-</ol>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">check</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<ol start="6" style="list-style-type: decimal">
-<li>ideally we write unit tests 😬</li>
-</ol>
-<p><a href="https://r-pkgs.org/whole-game.html#use_testthat" class="external-link uri">https://r-pkgs.org/whole-game.html#use_testthat</a></p>
-<ol start="7" style="list-style-type: decimal">
-<li>commit your changes to the repo</li>
-</ol>
-<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">git</span> status <span class="co"># to see what is all changed</span></span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="fu">git</span> add R/my_new_module.R</span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co"># and probably the other files that the package updated</span></span>
-<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="fu">git</span> add NAMESPACE</span>
-<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="fu">git</span> add man/my_cool_func.R</span>
-<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="fu">git</span> commit</span>
-<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="co"># and battle it out with the pre-commit hooks...the R ones are painfully slow</span></span>
-<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a></span>
-<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a><span class="co"># write a GOOD commit message. For inspiration look at other commits and </span></span>
-<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a><span class="co"># checkout https://cbea.ms/git-commit/</span></span>
-<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a><span class="co"># also try to include the type of thing being committed, i.e.,</span></span>
-<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a><span class="co"># conventional commits style: https://www.conventionalcommits.org/en/v1.0.0/</span></span></code></pre></div>
+<p>If you are going to contribute to this, and don’t know how, check out the <code>development.md</code> in the GitHub repo for advice.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="license">
