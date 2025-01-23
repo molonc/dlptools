@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +44,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">pull_info_from_cell_id</span><span class="op">(</span><span class="va">cell_id</span>, library_id <span class="op">=</span> <span class="cn">FALSE</span>, sample_id <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">pull_info_from_cell_id</span><span class="op">(</span><span class="va">cell_id</span>, info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="st">"sample"</span>, <span class="st">"library"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -55,12 +55,8 @@
 <dd><p>string or vector of cells id</p></dd>
 
 
-<dt id="arg-library-id">library_id<a class="anchor" aria-label="anchor" href="#arg-library-id"></a></dt>
-<dd><p>boolean to extract library IDs</p></dd>
-
-
-<dt id="arg-sample-id">sample_id<a class="anchor" aria-label="anchor" href="#arg-sample-id"></a></dt>
-<dd><p>boolean to extract sample IDs</p></dd>
+<dt id="arg-info">info<a class="anchor" aria-label="anchor" href="#arg-info"></a></dt>
+<dd><p>"sample" or "library" to pull</p></dd>
 
 </dl></div>
     <div class="section level2">

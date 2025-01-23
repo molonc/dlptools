@@ -11,7 +11,7 @@ state calls. In the past, we have filtered within 3 Mb of centromeres."></head><
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,8 +54,7 @@ state calls. In the past, we have filtered within 3 Mb of centromeres.</p>
 <span>  <span class="va">reads_df</span>,</span>
 <span>  padding <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  bin_location_column <span class="op">=</span> <span class="st">"start"</span>,</span>
-<span>  hg19 <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  hg38 <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  version <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"hg19"</span>, <span class="st">"hg38"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -71,19 +70,20 @@ state calls. In the past, we have filtered within 3 Mb of centromeres.</p>
 <dd><p>int of number of BP to add to each side of the centromere</p></dd>
 
 
+<dt id="arg-bin-locatation-column">bin_locatation_column<a class="anchor" aria-label="anchor" href="#arg-bin-locatation-column"></a></dt>
+<dd><p>which column to use as the location of a bin.
+popular choices are the start of a bin, middle of a bin, or and of a bin.</p></dd>
+
+
 <dt id="arg-hg-">hg19<a class="anchor" aria-label="anchor" href="#arg-hg-"></a></dt>
 <dd><p>bool. Not needed unless this function is also adding the
-centromere information to the data frame. See add_centromere_locations()
+centromere information to the data frame. See
+dlptools::add_centromere_locations()
 which will be called if the correct centromere columns are not present.</p></dd>
 
 
 <dt id="arg-hg-">hg38<a class="anchor" aria-label="anchor" href="#arg-hg-"></a></dt>
 <dd><p>bool. Same as hg19...but for hg38.</p></dd>
-
-
-<dt id="arg-bin-locatation-column">bin_locatation_column<a class="anchor" aria-label="anchor" href="#arg-bin-locatation-column"></a></dt>
-<dd><p>which column to use as the location of a bin.
-popular choices are the start of a bin, middle of a bin, or and of a bin.</p></dd>
 
 </dl></div>
     <div class="section level2">

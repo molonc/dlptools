@@ -15,6 +15,7 @@
 <url><loc>https://molonc.github.io/dlptools/reference/DEFAULT_CONTINUOUS_COLOR_RANGE.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/STATE_COLORS.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/add_centromere_locations.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/add_missing_bins_for_cells.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/add_tip_ancestors_to_df.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/basic_tile_plot.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/bin_within_centromere.html</loc></url>
@@ -32,9 +33,12 @@
 <url><loc>https://molonc.github.io/dlptools/reference/compute_tip_sibling_distances.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/convert_long_reads_to_wide.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/create_chromosome_column_fct.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/create_expected_bins.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/expand_length_to_bins.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/factor_column_mixedsort.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/fetch_continuous_color_ramp.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/fetch_heatmap_color_palette.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/fill_state_from_neighbours.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/format_sitka_tree.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/format_states_for_hm.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/generate_hm_image.html</loc></url>
@@ -53,6 +57,7 @@
 <url><loc>https://molonc.github.io/dlptools/reference/index.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/is_not_numeric_lacks_order.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/library_from_cell.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/load_chrom_info_file.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/load_mask_file.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/make_clone_palette.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/make_corrupt_tree_heatmap.html</loc></url>

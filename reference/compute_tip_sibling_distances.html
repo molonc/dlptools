@@ -9,7 +9,7 @@ similar tips together better than another tree."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -83,11 +83,11 @@ the states across the genome as a string and obtaining a string distance.</p>
 states from counting as 2 characters) and then made into a single string
 across the genome for each cell. I.e.,
 2 2 2 3 3 3 10 -&gt; C C C D D D K
-see map_states_to_letters() for details.</p>
+see dlptools::map_states_to_letters() for details.</p>
 <p>Then for each tip, it's sister tip is found and the string distance is
 measured. If the sister to a tip is a clade, the mean distance to all tips
 in the clade are found. E.g., in tree (A, (B, C)) the sister to A is both
-B &amp; C. See get_dist_to_sibs() for details.</p>
+B &amp; C. See dlptools::get_dist_to_sibs() for details.</p>
 <p>Finally, a mean distance across all sibling clades is computed and returned.</p>
     </div>
 
