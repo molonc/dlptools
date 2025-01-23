@@ -39,7 +39,7 @@ ex_reads <- dlptools::mark_mask_regions(ex_reads)
 
 # adds a boolean `mask` column
 ex_reads |>
-  dplyr::select(, cell_id, chr, start, end, mask) |>
+  dplyr::select(cell_id, chr, start, end, mask) |>
   dplyr::slice_head(n = 5)
 ```
 
@@ -65,8 +65,7 @@ dlptools::bin_within_centromere(
   reads_df = ex_reads,
   padding = 3e6, # e.g., specifying 3 Mb on each side of centromere
   # default padding is 0
-  hg19 = TRUE,
-  # alternatively hg38=TRUE
+  version = "hg19", # default, don't neeed to specify. Alternative is "hg38"
   bin_location_column = "start" # column to use for the location of a bin,
   # default is "start". So the start of a bin in checked if it falls within the
   # extent of the centromere, plus any specified padding.
@@ -82,7 +81,7 @@ Alternatively, this can be done in parts:
 # e.g., just adding the centromere information by chromosome
 dlptools::add_centromere_locations(
   reads_df = ex_reads,
-  hg19 = TRUE, # or hg38=TRUE
+  version = "hg19" # default, don't need to specify. Alternative is "hg38"
 ) |>
   dplyr::select(
     cell_id, chr, centro_start, centro_end, start_p, end_p, start_q, end_q
@@ -103,8 +102,8 @@ dlptools::sample_from_cell("AT23998-A138956A-R03-C34")
 dlptools::library_from_cell("AT23998-A138956A-R03-C34")
 
 # Also a generic function for either
-# dlptools::pull_info_from_cell_id("AT23998-A138956A-R03-C34", sample_id = TRUE)
-# dlptools::pull_info_from_cell_id("AT23998-A138956A-R03-C34", library_id = TRUE)
+# dlptools::pull_info_from_cell_id("AT23998-A138956A-R03-C34", 'sample')
+# dlptools::pull_info_from_cell_id("AT23998-A138956A-R03-C34", 'library')
 
 
 # multiple cell ids:
@@ -126,6 +125,116 @@ ex_reads |>
   dplyr::distinct(cell_id, sample_id, library_id) |>
   dplyr::slice_sample(n = 5)
 ```
+
+
+## Inferring Missing Bin Data
+
+In the course of DLP analyses, we often filter bins, e.g., the masking regions explained above, bins within centromeres, bins with poor mappability or GC correction. Also, some methods we use (Signals, medicc), might drop data they don't like.
+
+But that leaves gaps in the data, and limits the length of segments that can be inferred.
+
+While the relative merit can be debated, one possible solution to this is to fill in the missing state data from an adjacent bin. I.e., if the bin on chromosome 1 from 1.5-2.0Mb is missing, use the state data from 1.0-1.5Mb to fill in the missing data for that bin.
+
+These functions will help you do that.
+
+First lets set up some filtered data:
+
+```{r}
+raw_reads <- vroom::vroom("data/example_reads.tsv.gz")
+
+filt_reads <- raw_reads |>
+  dlptools::mark_mask_regions() |>
+  dlptools::bin_within_centromere(padding = 3e6) |>
+  dplyr::filter(
+    gc != -1 & map > 0.99 & !within_centro & !mask
+  )
+
+
+tibble::tibble(
+  raw_bins = dplyr::distinct(raw_reads, chr, start, end) |> dplyr::count(),
+  filtered_bins = dplyr::distinct(filt_reads, chr, start, end) |> dplyr::count()
+)
+```
+
+<br>
+<br>
+
+Then we can insert missing bins. This will create NAs for all data columns except cell_id, chr, start, end, unless otherwise specified. Only cell level data should be specified to be carried through.
+
+```{r}
+# e.g., we can add some other fake cell level meta data to carry through for
+# missing bins
+filt_reads$library <- "fake_library"
+
+filt_with_missing <- dlptools::add_missing_bins_for_cells(
+  filt_reads,
+  version = "hg19", # default, don't need to specify
+  bin_size = 5e5, # default, don't need to specify
+  # OPTIONAL! can also specify other columns to carry through for cells
+  cell_metadata_cols = c("library")
+)
+
+filt_with_missing |>
+  dplyr::relocate(library, cell_id) |>
+  dplyr::slice_head(n = 10)
+```
+
+NAs are inserted for missing bins.
+
+<br>
+<br>
+
+Then we can actually fill in those bins with their neighbours, and specify any  of the columns you want filled:
+
+```{r}
+dlptools::fill_state_from_neighbours(
+  filt_with_missing,
+  cols_to_fill = c("state", "gc") # default is "state", don't need to specify
+) |>
+  dplyr::slice_head(n = 10)
+```
+
+
+Of course, it could all be done in a pipe:
+
+```{r, eval=FALSE}
+raw_reads |>
+  dlptools::mark_mask_regions() |>
+  dlptools::bin_within_centromere(padding = 3e6) |>
+  dplyr::filter(
+    gc != -1 & map > 0.99 & !within_centro & !mask
+  ) |>
+  dlptools::add_missing_bins_for_cells() |>
+  dlptools::fill_state_from_neighbours()
+```
+
+
+Functions being used internally include:
+
+```{r}
+create_expected_bins(
+  version = "hg19", # default, or hg38
+  bin_size = 5e5 # default
+) |>
+  dplyr::slice_head(n = 5)
+```
+
+or expanding any integer into bins:
+
+```{r}
+dlptools::expand_length_to_bins(10, bin_size = 5)
+```
+
+
+And chromosome lengths used are coming from USCS `chromInfo` files:
+
+```{r}
+dlptools::load_chrom_info_file(
+  version = "hg19" # default, or "hg38"
+) |>
+  dplyr::slice_head(n = 5)
+```
+
 
 
 ## Reads to Segments

@@ -8,9 +8,11 @@
 #' @return input table with centromere information added by chromosome
 #' @export
 add_centromere_locations <- function(
-    reads_df, centro_file = NULL, hg19 = FALSE, hg38 = FALSE) {
+    reads_df, centro_file = NULL, version = c("hg19", "hg38")) {
+  version_choice <- match.arg(version)
+
   centros <- read_and_prep_ucsg_cenrtomeres(
-    centro_file = centro_file, hg19 = hg19, hg38 = hg38
+    centro_file = centro_file, version = version_choice
   )
 
   reads_df <- dplyr::left_join(
@@ -48,26 +50,18 @@ bin_within_centromere <- function(
     reads_df,
     padding = 0,
     bin_location_column = "start",
-    hg19 = FALSE,
-    hg38 = FALSE) {
-  version_choices <- c(hg19 = hg19, hg38 = hg38)
+    version = c("hg19", "hg38")) {
+  version_choice <- match.arg(version)
   columns_check <- all(c("centro_start", "centro_end") %in% colnames(reads_df))
 
-  if (!columns_check && all(version_choices == FALSE)) {
-    stop(paste0(
-      "Centromere information columns not present, use",
-      " add_centromere_locations() or call again with hg19=TRUE or hg38=TRUE"
+  if (!columns_check) {
+    warning(paste0(
+      "centromere locations not present, adding locations for ",
+      version_choice,
+      ". If that is not correct, set version to 'hg38')."
     ))
-  } else if (all(version_choices)) {
-    stop("you gotta pick one, hg19=TRUE or hg38=TRUE")
-  } else if (!columns_check && any(version_choices)) {
-    warning("adding centromere information to the dataframe")
 
-    reads_df <- add_centromere_locations(
-      reads_df = reads_df,
-      hg19 = version_choices[["hg19"]],
-      hg38 = version_choices[["hg38"]]
-    )
+    reads_df <- add_centromere_locations(reads_df = reads_df)
   }
 
   reads_df <- reads_df |>
@@ -102,18 +96,8 @@ bin_within_centromere <- function(
 #' @export
 read_and_prep_ucsg_cenrtomeres <- function(
     centro_file = NULL,
-    hg19 = FALSE,
-    hg38 = FALSE) {
-  version_choices <- c(hg19 = hg19, hg38 = hg38)
-
-  if (all(version_choices) && is.null(centro_file)) {
-    stop("Need to set hg19 or hg38 to TRUE, but not both")
-  } else if (all(version_choices == FALSE)) {
-    stop("I don't know what you want me to do. hg19 or hg38? Set one to true.")
-  } else {
-    targ_version <- names(version_choices)[which(version_choices == TRUE)]
-    print(targ_version)
-  }
+    version = c("hg19", "hg38")) {
+  version_choice <- match.arg(version)
 
   if (is.null(centro_file)) {
     default_centro_files <- c(
@@ -123,7 +107,7 @@ read_and_prep_ucsg_cenrtomeres <- function(
       hg38 = "hg38_cytoBand.txt.gz"
     )
 
-    centro_file <- get_package_file_path(default_centro_files[targ_version])
+    centro_file <- get_package_file_path(default_centro_files[version_choice])
   }
 
   # import file and filter to features of interest

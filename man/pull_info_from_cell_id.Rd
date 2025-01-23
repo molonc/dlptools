@@ -4,14 +4,12 @@
 \alias{pull_info_from_cell_id}
 \title{generic extractor of info contained in cell ids}
 \usage{
-pull_info_from_cell_id(cell_id, library_id = FALSE, sample_id = FALSE)
+pull_info_from_cell_id(cell_id, info = c(NA, "sample", "library"))
 }
 \arguments{
 \item{cell_id}{string or vector of cells id}
 
-\item{library_id}{boolean to extract library IDs}
-
-\item{sample_id}{boolean to extract sample IDs}
+\item{info}{"sample" or "library" to pull}
 }
 \value{
 vector of requested information
