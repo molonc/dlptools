@@ -32,12 +32,12 @@ States for a cell id are first converted to letters (to prevent double digit
 states from counting as 2 characters) and then made into a single string
 across the genome for each cell. I.e.,
 2 2 2 3 3 3 10 -> C C C D D D K
-see map_states_to_letters() for details.
+see dlptools::map_states_to_letters() for details.
 
 Then for each tip, it's sister tip is found and the string distance is
 measured. If the sister to a tip is a clade, the mean distance to all tips
 in the clade are found. E.g., in tree (A, (B, C)) the sister to A is both
-B & C. See get_dist_to_sibs() for details.
+B & C. See dlptools::get_dist_to_sibs() for details.
 
 Finally, a mean distance across all sibling clades is computed and returned.
 }

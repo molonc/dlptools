@@ -4,7 +4,7 @@
 \alias{read_and_prep_ucsg_cenrtomeres}
 \title{load and prep default centromerefiles from UCSC}
 \usage{
-read_and_prep_ucsg_cenrtomeres(centro_file = NULL, hg19 = FALSE, hg38 = FALSE)
+read_and_prep_ucsg_cenrtomeres(centro_file = NULL, version = c("hg19", "hg38"))
 }
 \arguments{
 \item{centro_file}{NULL or string to the path if you download yourself}

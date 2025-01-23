@@ -7,5 +7,5 @@
 check_the_vibe(states_df, tree, states_col = "state", cell_id_col = "cell_id")
 }
 \description{
-see compute_tip_sibling_distances()
+see dlptools::compute_tip_sibling_distances()
 }

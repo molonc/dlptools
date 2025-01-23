@@ -7,8 +7,7 @@
 add_centromere_locations(
   reads_df,
   centro_file = NULL,
-  hg19 = FALSE,
-  hg38 = FALSE
+  version = c("hg19", "hg38")
 )
 }
 \arguments{
@@ -22,5 +21,5 @@ add_centromere_locations(
 input table with centromere information added by chromosome
 }
 \description{
-See read_and_prep_ucsg_cenrtomeres() for details of file origins.
+See dlptools::read_and_prep_ucsg_cenrtomeres() for details of file origins.
 }

@@ -8,8 +8,7 @@ bin_within_centromere(
   reads_df,
   padding = 0,
   bin_location_column = "start",
-  hg19 = FALSE,
-  hg38 = FALSE
+  version = c("hg19", "hg38")
 )
 }
 \arguments{
@@ -17,14 +16,15 @@ bin_within_centromere(
 
 \item{padding}{int of number of BP to add to each side of the centromere}
 
+\item{bin_locatation_column}{which column to use as the location of a bin.
+popular choices are the start of a bin, middle of a bin, or and of a bin.}
+
 \item{hg19}{bool. Not needed unless this function is also adding the
-centromere information to the data frame. See add_centromere_locations()
+centromere information to the data frame. See
+dlptools::add_centromere_locations()
 which will be called if the correct centromere columns are not present.}
 
 \item{hg38}{bool. Same as hg19...but for hg38.}
-
-\item{bin_locatation_column}{which column to use as the location of a bin.
-popular choices are the start of a bin, middle of a bin, or and of a bin.}
 }
 \value{
 input table, but with a boolean 'within_centro' column added (and

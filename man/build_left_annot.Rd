@@ -26,7 +26,7 @@ columns required.}
 \item{labels_fontsize}{how large to make text labels}
 
 \item{clone_palette}{named vector of colors to give to clones. E.g., c(
-A='#12345', B='#67890'). See make_clone_palette()}
+A='#12345', B='#67890'). See dlptools::make_clone_palette()}
 }
 \description{
 builds the left-side annotations of the cells
