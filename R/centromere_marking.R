@@ -11,7 +11,7 @@ add_centromere_locations <- function(
     reads_df, centro_file = NULL, version = c("hg19", "hg38")) {
   version_choice <- match.arg(version)
 
-  centros <- read_and_prep_ucsg_cenrtomeres(
+  centros <- load_ucsg_cenrtomeres(
     centro_file = centro_file, version = version_choice
   )
 
@@ -24,7 +24,7 @@ add_centromere_locations <- function(
   return(reads_df)
 }
 
-#' mark edge of bin as within centromere or not
+#' add boolean if bin overlaps with a centromere.
 #'
 #' Can optionally specify a padding to mark locations of bins as being close
 #' enough to a centromere. Often bins near centromeres are corrupt in their
@@ -36,16 +36,17 @@ add_centromere_locations <- function(
 #'
 #' @param reads_df tibble of read data
 #' @param padding int of number of BP to add to each side of the centromere
-#' @param bin_locatation_column which column to use as the location of a bin.
-#' popular choices are the start of a bin, middle of a bin, or and of a bin.
+#' @param bin_start_col Default: start. column name of the start of bins.
+#' @param bin_end_col Default: end column name of the end of bins.
 #' @param version default 'hg19', or choose 'hg38' for locations of centromeres.
 #' @return input table, but with a boolean 'within_centro' column added (and
 #' potentially other centromere information columns, if needed)
 #' @export
-mark_bins_in_centromeres <- function(
+mark_bins_overlapping_centromeres <- function(
     reads_df,
     padding = 0,
-    bin_location_column = "start",
+    bin_start_col = "start",
+    bin_end_col = "end",
     version = c("hg19", "hg38")) {
   version_choice <- match.arg(version)
   columns_check <- all(c("centro_start", "centro_end") %in% colnames(reads_df))
@@ -62,10 +63,10 @@ mark_bins_in_centromeres <- function(
 
   reads_df <- reads_df |>
     dplyr::mutate(
-      within_centro = dplyr::between(
-        .data[[bin_location_column]],
-        centro_start - padding,
-        centro_end + padding
+      centromere_padding = padding,
+      overlaps_centro = (
+        .data[[bin_start_col]] <= centro_end + padding &
+          .data[[bin_end_col]] >= centro_start - padding
       )
     )
 
@@ -90,9 +91,9 @@ mark_bins_in_centromeres <- function(
 #' @param hg38 boolean to target hg38 for loading
 #' @return tibble of parsed centromere spans
 #' @export
-read_and_prep_ucsg_cenrtomeres <- function(
-    centro_file = NULL,
-    version = c("hg19", "hg38")) {
+load_ucsg_cenrtomeres <- function(
+    version = c("hg19", "hg38"),
+    centro_file = NULL) {
   version_choice <- match.arg(version)
 
   if (is.null(centro_file)) {
