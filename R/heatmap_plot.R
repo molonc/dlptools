@@ -229,6 +229,16 @@ fetch_heatmap_color_palette <- function(
   plot_col_elements <- plot_col_elements[!is.na(plot_col_elements)]
   too_many_colors <- length(plot_col_elements) > length(color_chosen)
   way_too_many_colors <- length(plot_col_elements) > max_colors
+  all_values_in_palette <- all(plot_col_elements %in% names(color_chosen))
+  if (!all_values_in_palette) {
+    palette_vals <- paste(c(names(color_chosen), "NA"), collapse = ", ")
+    stop(paste0(
+      "There are values in the plotted column: '", state_col, "' that the ",
+      "automatically chosen color palette does not have. You'll need to ",
+      "either convert those to NAs or specify the plot colors you want.",
+      "Palette handles: ", palette_vals
+    ))
+  }
   if (state_col != "BAF" && (too_many_colors || way_too_many_colors)) {
     warning(
       paste0(
