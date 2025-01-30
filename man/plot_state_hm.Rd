@@ -22,7 +22,7 @@ plot_state_hm(
   custom_continuous_colors = NULL,
   custom_continuous_range = NULL,
   hm_discrete_colors = NULL,
-  replace_11_with_11plus = TRUE,
+  legend_11plus = FALSE,
   ...
 )
 }
@@ -74,8 +74,9 @@ and high bounds for the continuous color scale, e.g., c(1, 5, 10)}
 \item{hm_discrete_colors}{specified colors for the values being plotted.
 Named vector: c(1="#3182BD", 2="#FDCC8A"). Need to specify for every value}
 
-\item{replace_11_with_11plus}{bool. Default TRUE. For HMMCopy state values,
-state 11 is really 11+, so we replace 11s with 11+ for the plot.
+\item{legend_11plus}{bool. Default FALSE. For HMMCopy state values,
+state 11 is really 11+, so we replace 11s with 11+ for the plot in the
+legend.
 being plotted}
 }
 \description{
