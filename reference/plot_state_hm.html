@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,7 +62,7 @@
 <span>  custom_continuous_colors <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  custom_continuous_range <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  hm_discrete_colors <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  replace_11_with_11plus <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  legend_11plus <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -152,9 +152,10 @@ and high bounds for the continuous color scale, e.g., c(1, 5, 10)</p></dd>
 Named vector: c(1="#3182BD", 2="#FDCC8A"). Need to specify for every value</p></dd>
 
 
-<dt id="arg-replace-with-plus">replace_11_with_11plus<a class="anchor" aria-label="anchor" href="#arg-replace-with-plus"></a></dt>
-<dd><p>bool. Default TRUE. For HMMCopy state values,
-state 11 is really 11+, so we replace 11s with 11+ for the plot.
+<dt id="arg-legend-plus">legend_11plus<a class="anchor" aria-label="anchor" href="#arg-legend-plus"></a></dt>
+<dd><p>bool. Default FALSE. For HMMCopy state values,
+state 11 is really 11+, so we replace 11s with 11+ for the plot in the
+legend.
 being plotted</p></dd>
 
 </dl></div>
