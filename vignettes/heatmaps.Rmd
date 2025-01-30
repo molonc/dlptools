@@ -65,6 +65,9 @@ dlptools::plot_state_hm(
   # optional, but recommended dump direct to a file with:
   file_name = "imgs/basic_hm.png"
   # recommended for full, large, heatmaps
+  # optional for HMMcopy state data, 11 is really 11+, so we can display the
+  # legend that way with
+  # legend_11plus=TRUE
 )
 ```
 

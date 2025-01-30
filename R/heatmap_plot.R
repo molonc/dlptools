@@ -53,7 +53,7 @@ import_annotations_df <- function(annotations_file) {
 #' @export
 #' @importFrom rlang .data
 format_states_for_hm <- function(
-    states_df, state_col, continuous = FALSE, replace_11_with_11plus = TRUE) {
+    states_df, state_col, continuous = FALSE) {
   states_w <- states_df |>
     dplyr::select(cell_id, chr, start, end, state_col) |>
     convert_long_reads_to_wide(state_col = state_col)
@@ -67,13 +67,6 @@ format_states_for_hm <- function(
 
   # sort columns by chromosome and bin start_end
   states_mat <- states_mat[, gtools::mixedsort(base::colnames(states_mat))]
-  if (!(state_col == "BAF" || continuous)) {
-    base::class(states_mat) <- "character"
-  }
-
-  if (state_col == "state" && replace_11_with_11plus) {
-    states_mat[states_mat == "11"] <- "11+"
-  }
 
   return(states_mat)
 }
@@ -113,14 +106,19 @@ create_chromosome_column_fct <- function(states_mat) {
 #' creates a complex heatmap of a given matrix of states.
 generate_state_hm <- function(
     states_mat, labels_fontsize = 8, plot_cols = STATE_COLORS,
-    left_annot = NULL) {
+    left_annot = NULL, legend_11plus = FALSE) {
   # set up a chromosome factor for column splits in the heatmap
   chroms <- create_chromosome_column_fct(states_mat)
 
-  # this is a little special case catch for how we tend to handle 11s. 11+
-  # is introduced when formatting the matrix for states.
-  if ("11+" %in% states_mat && !("11+" %in% names(plot_cols))) {
-    plot_cols["11+"] <- plot_cols["11"]
+  if (legend_11plus) {
+    # fix for HMMcopy states where 11 is really 11+, so we can reflect that
+    # in the legend
+    legend_params <- list(
+      nrow = 4,
+      title = "state", at = 1:11, labels = c(1:10, "11+"), legend_gp = dlptools::CNV_COLOURS
+    )
+  } else {
+    legend_params <- list(nrow = 4)
   }
 
   states_hm <- ComplexHeatmap::Heatmap(
@@ -136,7 +134,7 @@ generate_state_hm <- function(
     column_title_side = "bottom",
     # might need to revisit when I size img
     column_title_gp = grid::gpar(fontsize = labels_fontsize),
-    heatmap_legend_param = list(nrow = 4),
+    heatmap_legend_param = legend_params, # list(nrow = 4),
     na_col = "white",
     left_annotation = left_annot
   )
@@ -482,8 +480,9 @@ check_or_fetch_clone_palette <- function(clones_df, clone_palette = NULL) {
 #' and high bounds for the continuous color scale, e.g., c(1, 5, 10)
 #' @param hm_discrete_colors specified colors for the values being plotted.
 #' Named vector: c(1="#3182BD", 2="#FDCC8A"). Need to specify for every value
-#' @param replace_11_with_11plus bool. Default TRUE. For HMMCopy state values,
-#' state 11 is really 11+, so we replace 11s with 11+ for the plot.
+#' @param legend_11plus bool. Default FALSE. For HMMCopy state values,
+#' state 11 is really 11+, so we replace 11s with 11+ for the plot in the
+#' legend.
 #' being plotted
 #' @export
 plot_state_hm <- function(
@@ -504,7 +503,7 @@ plot_state_hm <- function(
     custom_continuous_colors = NULL,
     custom_continuous_range = NULL,
     hm_discrete_colors = NULL,
-    replace_11_with_11plus = TRUE,
+    legend_11plus = FALSE,
     ...) {
   check_args()
 
@@ -512,8 +511,7 @@ plot_state_hm <- function(
   states_mat <- format_states_for_hm(
     states_df,
     state_col,
-    continuous = continuous_hm_colours,
-    replace_11_with_11plus = replace_11_with_11plus
+    continuous = continuous_hm_colours
   )
 
   # deal with any annotations
@@ -593,7 +591,8 @@ plot_state_hm <- function(
     states_mat,
     plot_cols = hm_colors,
     labels_fontsize = labels_fontsize,
-    left_annot = left_annot
+    left_annot = left_annot,
+    legend_11plus = legend_11plus
   )
 
   if (!is.null(tree_hm)) {

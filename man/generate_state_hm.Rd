@@ -8,7 +8,8 @@ generate_state_hm(
   states_mat,
   labels_fontsize = 8,
   plot_cols = STATE_COLORS,
-  left_annot = NULL
+  left_annot = NULL,
+  legend_11plus = FALSE
 )
 }
 \description{
