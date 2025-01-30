@@ -62,6 +62,9 @@ format_states_for_hm <- function(
   states_mat <- base::as.matrix(dplyr::select(states_w, -.data$cell_id))
   rownames(states_mat) <- states_w$cell_id
 
+  # convert NaNs to NA
+  states_mat[is.nan(states_mat)] <- NA
+
   # sort columns by chromosome and bin start_end
   states_mat <- states_mat[, gtools::mixedsort(base::colnames(states_mat))]
   if (!(state_col == "BAF" || continuous)) {
