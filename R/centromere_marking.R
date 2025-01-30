@@ -38,15 +38,11 @@ add_centromere_locations <- function(
 #' @param padding int of number of BP to add to each side of the centromere
 #' @param bin_locatation_column which column to use as the location of a bin.
 #' popular choices are the start of a bin, middle of a bin, or and of a bin.
-#' @param hg19 bool. Not needed unless this function is also adding the
-#' centromere information to the data frame. See
-#' dlptools::add_centromere_locations()
-#' which will be called if the correct centromere columns are not present.
-#' @param hg38 bool. Same as hg19...but for hg38.
+#' @param version default 'hg19', or choose 'hg38' for locations of centromeres.
 #' @return input table, but with a boolean 'within_centro' column added (and
 #' potentially other centromere information columns, if needed)
 #' @export
-bin_within_centromere <- function(
+mark_bins_in_centromeres <- function(
     reads_df,
     padding = 0,
     bin_location_column = "start",
