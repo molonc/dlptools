@@ -19,7 +19,7 @@ import_tree <- function(tree_f) {
 #' @return tibble
 #' @export
 import_clones <- function(clones_f) {
-  clones <- vroom::vroom(clones_f)
+  clones <- vroom::vroom(clones_f, show_col_types = FALSE)
   # TODO: check for column names with a stop if wrong.
   if (!all(c("cell_id", "clone_id") %in% colnames(clones))) {
     stop("clones file requires columns: 'cell_id', 'clone_id'")

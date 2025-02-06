@@ -110,7 +110,8 @@ load_ucsg_cenrtomeres <- function(
   # import file and filter to features of interest
   centros <- vroom::vroom(
     centro_file,
-    col_names = c("chrom", "start", "end", "arm_full_name", "feat")
+    col_names = c("chrom", "start", "end", "arm_full_name", "feat"),
+    show_col_types = FALSE
   ) |>
     dplyr::filter(feat == "acen") |>
     dplyr::mutate(chrom = dplyr::if_else(
