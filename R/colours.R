@@ -66,6 +66,12 @@ BAF_COLORS <- circlize::colorRamp2(
   )
 )
 
+#' @export
+RAW_COPY_COLORS <- circlize::colorRamp2(
+  seq(0, 11, 1),
+  CNV_COLOURS[1:(length(CNV_COLOURS) - 1)]
+)
+
 #' picks beginning, middle, and end of a vector
 #' to handle when vectors that are too long are
 #' passed
@@ -86,7 +92,9 @@ bme_vec <- function(vec, vec_name) {
 #' internal function for setting up heatmap continuous range colors
 #' chooses defaults, unless overwritten by user.
 fetch_continuous_color_ramp <- function(
-    plotting_values, custom_continuous_colors = NULL, custom_continuous_range = NULL) {
+    plotting_values,
+    custom_continuous_colors = NULL,
+    custom_continuous_range = NULL) {
   if (is.null(custom_continuous_range)) {
     metrics <- get_column_metrics(plotting_values)
   } else {

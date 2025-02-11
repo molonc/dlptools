@@ -134,7 +134,7 @@ generate_state_hm <- function(
     column_title_side = "bottom",
     # might need to revisit when I size img
     column_title_gp = grid::gpar(fontsize = labels_fontsize),
-    heatmap_legend_param = legend_params, # list(nrow = 4),
+    heatmap_legend_param = legend_params,
     na_col = "white",
     left_annotation = left_annot
   )
@@ -186,15 +186,25 @@ fetch_heatmap_color_palette <- function(
     custom_continuous_colors = NULL,
     custom_continuous_range = NULL,
     discrete_colors = NULL) {
+  # TODO: this function is getting a bit ridiculous. Refactor or think about how
+  # to better handle special cases.
+
   color_choices <- list(
     "state" = STATE_COLORS,
     "A" = STATE_COLORS,
     "B" = STATE_COLORS,
     "BAF" = BAF_COLORS,
+    "copy" = RAW_COPY_COLORS,
     "state_phase" = ASCN_PHASE_COLORS,
     "state_AS_phased" = ASCN_COLORS,
     "state_AS" = ASCN_COLORS
   )
+
+  # common special cases
+  if (state_col %in% c("BAF", "copy")) {
+    color_chosen <- purrr::pluck(color_choices, state_col)
+    return(color_chosen)
+  }
 
   if (!is.null(discrete_colors)) {
     # confirm all values are specified
