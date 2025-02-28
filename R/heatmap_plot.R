@@ -208,8 +208,9 @@ fetch_heatmap_color_palette <- function(
 
   if (!is.null(discrete_colors)) {
     # confirm all values are specified
-    unique_plot_vals <- unique(states_df[[state_col]])
-    palette_check <- all(unique_plot_vals %in% names(discrete_colors))
+    palette_check <- does_palette_cover_plot_vals(
+      states_df[[state_col]], discrete_colors
+    )
     if (!palette_check) {
       stop(
         "you did not specify enough colors for the plot with 'discrete_colors'"
@@ -235,12 +236,13 @@ fetch_heatmap_color_palette <- function(
   )
 
   # check if the choice was ok
+  palette_check <- does_palette_cover_plot_vals(
+    states_df[[state_col]], color_chosen
+  )
   plot_col_elements <- unique(states_df[[state_col]])
-  plot_col_elements <- plot_col_elements[!is.na(plot_col_elements)]
   too_many_colors <- length(plot_col_elements) > length(color_chosen)
   way_too_many_colors <- length(plot_col_elements) > max_colors
-  all_values_in_palette <- all(plot_col_elements %in% names(color_chosen))
-  if (!all_values_in_palette) {
+  if (!palette_check) {
     palette_vals <- paste(c(names(color_chosen), "NA"), collapse = ", ")
     stop(paste0(
       "There are values in the plotted column: '", state_col, "' that the ",

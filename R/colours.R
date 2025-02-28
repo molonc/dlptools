@@ -133,3 +133,27 @@ fetch_continuous_color_ramp <- function(
     continuous_color_bounds
   )
 }
+
+
+#' internal to confirm color choice was ok
+#'
+#' @param p_vals vector of values to be plotted in the heatmap with the palette
+#' @param palette palette being used. A named vector with names corresponding
+#' to the plot values.
+#' @param exclude_na bool. Whether to drop NAs from the check. ComplexHeatmap
+#' handles NAs with a default color regardless of palette.
+does_palette_cover_plot_vals <- function(p_vals, palette, exclude_na = TRUE) {
+  unique_plot_vals <- unique(p_vals)
+  if (exclude_na) {
+    unique_plot_vals <- unique_plot_vals[!is.na(unique_plot_vals)]
+  }
+
+  print(as.character(unique_plot_vals))
+  print(as.character(names(palette)))
+
+  palette_check <- all(
+    as.character(unique_plot_vals) %in% as.character(names(palette))
+  )
+
+  return(palette_check)
+}
