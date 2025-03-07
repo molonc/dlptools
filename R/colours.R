@@ -148,9 +148,6 @@ does_palette_cover_plot_vals <- function(p_vals, palette, exclude_na = TRUE) {
     unique_plot_vals <- unique_plot_vals[!is.na(unique_plot_vals)]
   }
 
-  print(as.character(unique_plot_vals))
-  print(as.character(names(palette)))
-
   palette_check <- all(
     as.character(unique_plot_vals) %in% as.character(names(palette))
   )
