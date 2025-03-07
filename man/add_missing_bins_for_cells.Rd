@@ -8,7 +8,8 @@ add_missing_bins_for_cells(
   state_df,
   version = c("hg19", "hg38"),
   bin_size = 5e+05,
-  cell_metadata_cols = c()
+  cell_metadata_cols = c(),
+  input_chroms_only = TRUE
 )
 }
 \arguments{
@@ -20,6 +21,10 @@ add_missing_bins_for_cells(
 \item{bin_size}{size of bins that should be there.}
 
 \item{cell_metadata_cols}{vector of columns to carry through to inferred bins}
+
+\item{input_chroms_only}{bool. Only insert bins for chromosomes in the input
+state dataframe. I.e., if you've filtered X or Y, don't add bins for X or Y.
+Setting to FALSE adds bins for entire genome. Default: TRUE}
 }
 \value{
 input dataframe with extra bins for each cells that were missing.

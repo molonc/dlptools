@@ -96,13 +96,21 @@ create_expected_bins <- function(version = c("hg19", "hg38"), bin_size = 5e5) {
 #' "hg38"
 #' @param bin_size size of bins that should be there.
 #' @param cell_metadata_cols vector of columns to carry through to inferred bins
+#' @param input_chroms_only bool. Only insert bins for chromosomes in the input
+#' state dataframe. I.e., if you've filtered X or Y, don't add bins for X or Y.
+#' Setting to FALSE adds bins for entire genome. Default: TRUE
 #' @return input dataframe with extra bins for each cells that were missing.
 #' @export
 add_missing_bins_for_cells <- function(
     state_df, version = c("hg19", "hg38"), bin_size = 500000,
-    cell_metadata_cols = c()) {
+    cell_metadata_cols = c(),
+    input_chroms_only = TRUE) {
   version <- match.arg(version)
   exp_bins <- create_expected_bins(version, bin_size)
+
+  if (input_chroms_only) {
+    exp_bins <- dplyr::filter(exp_bins, chr %in% unique(state_df$chr))
+  }
 
   cell_bins <- dplyr::cross_join(
     # could optionally carry in other columns too
