@@ -11,7 +11,7 @@ a dataframe for cells."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +54,8 @@ a dataframe for cells.</p>
 <span>  <span class="va">state_df</span>,</span>
 <span>  version <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"hg19"</span>, <span class="st">"hg38"</span><span class="op">)</span>,</span>
 <span>  bin_size <span class="op">=</span> <span class="fl">5e+05</span>,</span>
-<span>  cell_metadata_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  cell_metadata_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  input_chroms_only <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -77,6 +78,12 @@ a dataframe for cells.</p>
 
 <dt id="arg-cell-metadata-cols">cell_metadata_cols<a class="anchor" aria-label="anchor" href="#arg-cell-metadata-cols"></a></dt>
 <dd><p>vector of columns to carry through to inferred bins</p></dd>
+
+
+<dt id="arg-input-chroms-only">input_chroms_only<a class="anchor" aria-label="anchor" href="#arg-input-chroms-only"></a></dt>
+<dd><p>bool. Only insert bins for chromosomes in the input
+state dataframe. I.e., if you've filtered X or Y, don't add bins for X or Y.
+Setting to FALSE adds bins for entire genome. Default: TRUE</p></dd>
 
 </dl></div>
     <div class="section level2">
