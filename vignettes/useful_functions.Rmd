@@ -239,15 +239,49 @@ dlptools::load_chrom_info_file(
 Grouping read bins into contiguous segments (e.g. post filtering read bins, etc.).
 
 ```{r}
-segs_filt <- dlptools::reads_to_segs(ex_reads)
+ex_segs <- dlptools::reads_to_segs(ex_reads)
 
 # this is now runs of adjacent read bins with identical states collapesed
 # into a single bin. Of course, bins are no longer of equal size.
-segs_filt[1:4, ]
+ex_segs[1:4, ]
 ```
 
 
 *warning:* this function will leave some unexpected gaps when dataframes have been filtered and bins removed. Inspect carfully if you have dropped bins from your dataframe.
+
+## Segments to Reads
+
+Split segments back into bins of some size.
+
+```{r}
+rebinned_reads <- dlptools::segs_to_reads(
+  ex_segs,
+  # bin_size = 5e5 # default, but can change
+)
+
+rebinned_reads[1:4, ]
+```
+
+And recovers our original reads:
+
+```{r}
+nrow(rebinned_reads) == nrow(ex_reads)
+```
+
+Useful for things like dropping small segs from data:
+
+```{r}
+filt_reads <- ex_reads |>
+  dlptools::reads_to_segs() |>
+  dplyr::filter(seg_width > 1.5e6) |>
+  dlptools::segs_to_reads()
+# some columns lost in the tansform due to combining reads to segs. Unclear how
+# to carry all columns of information.
+
+c(filt_reads = nrow(filt_reads), input_reads = nrow(ex_reads))
+```
+
+
 
 ## Long to Wide Reads (or segments)
 

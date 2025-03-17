@@ -11,19 +11,22 @@
 #' @export
 #' @importFrom rlang .data
 reads_to_segs <- function(reads_df) {
-  new_segs <- reads_df %>%
-    dplyr::select("cell_id", "chr", "start", "end", "state") %>%
+  new_segs <- reads_df |>
+    dplyr::select("cell_id", "chr", "start", "end", "state") |>
     dplyr::group_by(.data$cell_id, .data$chr) %>%
     dplyr::mutate(
       rle_group = rle_states(.data$state)
-    ) %>%
-    dplyr::group_by(.data$cell_id, .data$chr, .data$rle_group) %>%
+    ) |>
+    dplyr::group_by(.data$cell_id, .data$chr, .data$rle_group) |>
     dplyr::summarise(
       start = base::min(.data$start),
       end = base::max(.data$end),
       state = base::unique(.data$state), # will only be one state
-    ) %>%
-    dplyr::select(-c(rle_group))
+    ) |>
+    dplyr::select(-c(rle_group)) |>
+    dplyr::mutate(
+      seg_width = end - start
+    )
 
   return(new_segs)
 }
@@ -61,11 +64,12 @@ rle_states <- function(states) {
 #' @param seg_end_col name of the column that indicates the end of a segment
 #' @importFrom rlang .data
 #' @return input frame split into bins
+#' @export
 segs_to_reads <- function(
     segs_df, bin_size = 5e5, seg_start_col = "start", seg_end_col = "end") {
   binned_segs <- segs_df |>
     dplyr::mutate(
-      seg_width = .data[[seg_end_col]] - .data[[seg_start_col]],
+      seg_width = .data[[seg_end_col]] - .data[[seg_start_col]] + 1,
       bins = purrr::map(seg_width, \(width) {
         expand_length_to_bins(width, bin_size = bin_size) |>
           dplyr::rename(bin_start = start, bin_end = end)
@@ -73,12 +77,8 @@ segs_to_reads <- function(
     ) |>
     tidyr::unnest(bins) |>
     dplyr::mutate(
-      bin_start = dplyr::if_else(
-        bin_start == 1,
-        bin_start + .data[[seg_start_col]] - 1,
-        bin_start + .data[[seg_start_col]]
-      ),
-      bin_end = bin_end + .data[[seg_start_col]],
+      bin_start = bin_start + .data[[seg_start_col]] - 1,
+      bin_end = bin_end + .data[[seg_start_col]] - 1,
       short_seg = seg_width < bin_size,
       bin_end = dplyr::if_else(
         # reset any bins that exceed end of segment
