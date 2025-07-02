@@ -11,6 +11,9 @@
 #' @export
 #' @importFrom rlang .data
 reads_to_segs <- function(reads_df) {
+  if (any(is.na(reads_df$state))) {
+    stop("Error: 'state' column in reads_df contains NA values.")
+  }
   new_segs <- reads_df |>
     dplyr::select("cell_id", "chr", "start", "end", "state") |>
     dplyr::group_by(.data$cell_id, .data$chr) %>%
@@ -97,6 +100,9 @@ segs_to_reads <- function(
     warning(paste0(
       "Some segments unable to be evenly split into requested bin sizes.",
       " Use df$uneven_bin column to find which ones."
+    warning(paste0(
+      "Some segments unable to be evenly split into requested bin sizes.",
+      " Use df$uneven_bin column to find which ones."
     ))
   }
 
@@ -106,6 +112,3 @@ segs_to_reads <- function(
       " Use df$short_seg column to find which ones."
     ))
   }
-
-  return(binned_segs)
-}
