@@ -108,7 +108,7 @@ segs_to_reads <- function(
       "Some segments shorter than the requested bin sizes.",
       " Use df$short_seg column to find which ones."
     ))
- }
+  }
 
   return(binned_segs)
 }
