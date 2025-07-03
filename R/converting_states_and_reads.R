@@ -109,3 +109,6 @@ segs_to_reads <- function(
       " Use df$short_seg column to find which ones."
     ))
  }
+
+  return(binned_segs)
+}
