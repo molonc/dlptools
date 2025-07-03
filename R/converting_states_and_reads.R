@@ -100,9 +100,6 @@ segs_to_reads <- function(
     warning(paste0(
       "Some segments unable to be evenly split into requested bin sizes.",
       " Use df$uneven_bin column to find which ones."
-    warning(paste0(
-      "Some segments unable to be evenly split into requested bin sizes.",
-      " Use df$uneven_bin column to find which ones."
     ))
   }
 
@@ -111,4 +108,4 @@ segs_to_reads <- function(
       "Some segments shorter than the requested bin sizes.",
       " Use df$short_seg column to find which ones."
     ))
-  }
+ }
