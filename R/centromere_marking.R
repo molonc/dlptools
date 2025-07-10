@@ -11,7 +11,7 @@ add_centromere_locations <- function(
     reads_df, centro_file = NULL, version = c("hg19", "hg38")) {
   version_choice <- match.arg(version)
 
-  centros <- load_ucsg_cenrtomeres(
+  centros <- load_ucsc_centromeres(
     centro_file = centro_file, version = version_choice
   )
 
