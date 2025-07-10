@@ -85,7 +85,7 @@ dlptools::add_centromere_locations(
   )
 
 # internally this function is used to retrieve chromosome locations
-# dlptools::load_ucsg_cenrtomeres()
+# dlptools::load_ucsc_centromeres()
 ```
 
 
@@ -279,6 +279,21 @@ filt_reads <- ex_reads |>
 # to carry all columns of information.
 
 c(filt_reads = nrow(filt_reads), input_reads = nrow(ex_reads))
+```
+
+
+## Ploidy of samples
+
+We can get an idea of the ploidy of a sample by taking the mean of the copy numbers of the segments. However, it's probably a good idea
+
+* to weight by the size of segment, so large segments contribute more the ploidy than small segments
+* calculate means for each chromosome, and then across all chromosomes so that each chromosome contributes equally.
+
+This function does that:
+
+```{r}
+weighted_ploidy(ex_segs) |>
+  dplyr::slice_head(n = 5)
 ```
 
 

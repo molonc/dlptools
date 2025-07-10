@@ -23,10 +23,11 @@ weighted_ploidy <- function(
     cn_col = "state",
     chrom_col = "chr") {
   sample_ploidy <- cn_df |>
-    dplyr::mutate(
-      span = cn_df[[end_col]] - cn_df[[start_col]],
-      seg_cn_w = cn_df[[cn_col]] * span
-    ) |>
+    dplyr::ungroup()
+  dplyr::mutate(
+    span = cn_df[[end_col]] - cn_df[[start_col]],
+    seg_cn_w = cn_df[[cn_col]] * span
+  ) |>
     dplyr::group_by(.data[[sample_col]], .data[[chrom_col]]) |>
     dplyr::summarise(
       w_chr_cn = sum(seg_cn_w) / sum(span)
