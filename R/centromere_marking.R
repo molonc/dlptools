@@ -91,7 +91,7 @@ mark_bins_overlapping_centromeres <- function(
 #' @param hg38 boolean to target hg38 for loading
 #' @return tibble of parsed centromere spans
 #' @export
-load_ucsg_cenrtomeres <- function(
+load_ucsc_centromeres <- function(
     version = c("hg19", "hg38"),
     centro_file = NULL) {
   version_choice <- match.arg(version)
