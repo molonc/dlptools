@@ -47,7 +47,9 @@ ex_reads |>
 The default masking file is one constructed by Daniel Lai, and can be viewed at the [package source](https://github.com/molonc/dlptools/tree/dev/inst/extdata) or by loading:
 
 ```{r}
-vroom::vroom(system.file("extdata", "blacklist_2023.07.17.txt", package = "dlptools"))
+vroom::vroom(
+  system.file("extdata", "blacklist_2023.07.17.txt", package = "dlptools")
+)
 ```
 
 
