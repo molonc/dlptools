@@ -11,6 +11,9 @@
 #' @export
 #' @importFrom rlang .data
 reads_to_segs <- function(reads_df) {
+  if (any(is.na(reads_df$state))) {
+    stop("Error: 'state' column in reads_df contains NA values.")
+  }
   new_segs <- reads_df |>
     dplyr::select("cell_id", "chr", "start", "end", "state") |>
     dplyr::group_by(.data$cell_id, .data$chr) %>%
