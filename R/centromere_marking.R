@@ -11,7 +11,7 @@ add_centromere_locations <- function(
     reads_df, centro_file = NULL, version = c("hg19", "hg38")) {
   version_choice <- match.arg(version)
 
-  centros <- load_ucsg_cenrtomeres(
+  centros <- load_ucsc_centromeres(
     centro_file = centro_file, version = version_choice
   )
 
@@ -91,7 +91,7 @@ mark_bins_overlapping_centromeres <- function(
 #' @param hg38 boolean to target hg38 for loading
 #' @return tibble of parsed centromere spans
 #' @export
-load_ucsg_cenrtomeres <- function(
+load_ucsc_centromeres <- function(
     version = c("hg19", "hg38"),
     centro_file = NULL) {
   version_choice <- match.arg(version)
