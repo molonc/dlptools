@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -102,7 +102,9 @@ mappability.</p>
 viewed at the <a href="https://github.com/molonc/dlptools/tree/dev/inst/extdata" class="external-link">package
 source</a> or by loading:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">vroom</span><span class="fu">::</span><span class="fu"><a href="https://vroom.r-lib.org/reference/vroom.html" class="external-link">vroom</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"blacklist_2023.07.17.txt"</span>, package <span class="op">=</span> <span class="st">"dlptools"</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu">vroom</span><span class="fu">::</span><span class="fu"><a href="https://vroom.r-lib.org/reference/vroom.html" class="external-link">vroom</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"blacklist_2023.07.17.txt"</span>, package <span class="op">=</span> <span class="st">"dlptools"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 26 × 4</span></span></span>
 <span><span class="co">#&gt;    seqnames     start       end    width</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
@@ -175,7 +177,7 @@ files of hg19 and hg38 releases.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 620,590 more rows</span></span></span>
 <span></span>
 <span><span class="co"># internally this function is used to retrieve chromosome locations</span></span>
-<span><span class="co"># dlptools::load_ucsg_cenrtomeres()</span></span></code></pre></div>
+<span><span class="co"># dlptools::load_ucsc_centromeres()</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="information-from-cell-ids">Information From Cell IDs<a class="anchor" aria-label="anchor" href="#information-from-cell-ids"></a>
@@ -432,12 +434,36 @@ have dropped bins from your dataframe.</p>
 <span><span class="co">#&gt;      619787      620600</span></span></code></pre></div>
 </div>
 <div class="section level3">
+<h3 id="ploidy-of-samples">Ploidy of samples<a class="anchor" aria-label="anchor" href="#ploidy-of-samples"></a>
+</h3>
+<p>We can get an idea of the ploidy of a sample by taking the mean of
+the copy numbers of the segments. However, it’s probably a good idea</p>
+<ul>
+<li>to weight by the size of segment, so large segments contribute more
+the ploidy than small segments</li>
+<li>calculate means for each chromosome, and then across all chromosomes
+so that each chromosome contributes equally.</li>
+</ul>
+<p>This function does that:</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/weighted_ploidy.html">weighted_ploidy</a></span><span class="op">(</span><span class="va">ex_segs</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 2</span></span></span>
+<span><span class="co">#&gt;   cell_id                  ploidy</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AT23998-A138956A-R03-C34   4.00</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AT23998-A138956A-R04-C58   4.22</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> AT23998-A138956A-R05-C42   4.18</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> AT23998-A138956A-R05-C64   4.17</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> AT23998-A138956A-R06-C31   4.12</span></span></code></pre></div>
+</div>
+<div class="section level3">
 <h3 id="long-to-wide-reads-or-segments">Long to Wide Reads (or segments)<a class="anchor" aria-label="anchor" href="#long-to-wide-reads-or-segments"></a>
 </h3>
 <p>Some functions require read state information to be in wide format vs
 long, with cell_ids as rows and chr_start_end as columns, and the states
 as cells.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ex_reads_w</span> <span class="op">&lt;-</span> <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/convert_long_reads_to_wide.html">convert_long_reads_to_wide</a></span><span class="op">(</span><span class="va">ex_reads</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ex_reads_w</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span>
@@ -456,15 +482,15 @@ as cells.</p>
 <p>This plot is a simplified alternative to the methods described in <a href="https://molonc.github.io/dlptools/articles/heatmaps.html">the
 heatmaps vignette</a>. There are no additions, like trees and
 annotations, but works for a variety of quick inspections.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/basic_tile_plot.html">basic_tile_plot</a></span><span class="op">(</span></span>
 <span>  <span class="co"># just filtering to make the plot smaller for this demonstration</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">ex_reads</span>, <span class="va">chr</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">7</span><span class="op">:</span><span class="fl">9</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="useful_functions_files/figure-html/unnamed-chunk-20-1.png" width="75%" height="75%"></p>
+<p><img src="useful_functions_files/figure-html/unnamed-chunk-21-1.png" width="75%" height="75%"></p>
 <p>To help with plotting, a variety of commonly use color palettes are
 available:</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># standard state colors</span></span>
 <span><span class="fu">dlptools</span><span class="fu">::</span><span class="va"><a href="../reference/CNV_COLOURS.html">CNV_COLOURS</a></span></span>
 <span><span class="co">#&gt;         0         1         2         3         4         5         6         7 </span></span>
@@ -495,33 +521,33 @@ available:</p>
 </h3>
 <p>If you’ve followed a semi-standard approach for downloading such as
 this:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="co"># bash</span></span>
-<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a><span class="bu">cd</span> where/to/save/my_dlp/</span>
-<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a></span>
-<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a><span class="va">ticket</span><span class="op">=</span><span class="st">"SC-8382"</span></span>
-<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a><span class="ex">azcopy</span> copy https://singlecellresults.blob.core.windows.net/results/<span class="va">${ticket}</span>/results/annotation/ <span class="va">${ticket}</span> <span class="at">--recursive</span></span>
-<span id="cb21-6"><a href="#cb21-6" tabindex="-1"></a><span class="ex">azcopy</span> copy https://singlecellresults.blob.core.windows.net/results/<span class="va">${ticket}</span>/results/hmmcopy/ <span class="va">${ticket}</span> <span class="at">--recursive</span></span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="co"># bash</span></span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a><span class="bu">cd</span> where/to/save/my_dlp/</span>
+<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a><span class="va">ticket</span><span class="op">=</span><span class="st">"SC-8382"</span></span>
+<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a><span class="ex">azcopy</span> copy https://singlecellresults.blob.core.windows.net/results/<span class="va">${ticket}</span>/results/annotation/ <span class="va">${ticket}</span> <span class="at">--recursive</span></span>
+<span id="cb22-6"><a href="#cb22-6" tabindex="-1"></a><span class="ex">azcopy</span> copy https://singlecellresults.blob.core.windows.net/results/<span class="va">${ticket}</span>/results/hmmcopy/ <span class="va">${ticket}</span> <span class="at">--recursive</span></span></code></pre></div>
 <p>which produces a directory with this sort of structure:</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="ex">├──</span> SC-8382</span>
-<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a><span class="ex">│</span>   ├── annotation</span>
-<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a><span class="ex">│</span>   │   ├── metrics.csv.gz</span>
-<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a><span class="ex">│</span>   │   ├── <span class="co">#[...other files ...]</span></span>
-<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a><span class="ex">│</span>   └── hmmcopy</span>
-<span id="cb22-6"><a href="#cb22-6" tabindex="-1"></a><span class="ex">│</span>   │   ├── <span class="co">#[...other files ...]</span></span>
-<span id="cb22-7"><a href="#cb22-7" tabindex="-1"></a><span class="ex">│</span>       ├── reads.csv.gz</span>
-<span id="cb22-8"><a href="#cb22-8" tabindex="-1"></a><span class="ex">│</span>       ├── segments.csv.gz</span>
-<span id="cb22-9"><a href="#cb22-9" tabindex="-1"></a><span class="ex">├──</span> SC-8408</span>
-<span id="cb22-10"><a href="#cb22-10" tabindex="-1"></a><span class="ex">│</span>   ├── annotation</span>
-<span id="cb22-11"><a href="#cb22-11" tabindex="-1"></a><span class="ex">│</span>   │   ├── metrics.csv.gz</span>
-<span id="cb22-12"><a href="#cb22-12" tabindex="-1"></a><span class="ex">│</span>   │   ├── <span class="co">#[...other files ...]</span></span>
-<span id="cb22-13"><a href="#cb22-13" tabindex="-1"></a><span class="ex">│</span>   └── hmmcopy</span>
-<span id="cb22-14"><a href="#cb22-14" tabindex="-1"></a><span class="ex">│</span>   │   ├── <span class="co">#[...other files ...]</span></span>
-<span id="cb22-15"><a href="#cb22-15" tabindex="-1"></a><span class="ex">│</span>       ├── reads.csv.gz</span>
-<span id="cb22-16"><a href="#cb22-16" tabindex="-1"></a><span class="ex">│</span>       ├── segments.csv.gz</span>
-<span id="cb22-17"><a href="#cb22-17" tabindex="-1"></a><span class="ex">├──</span> SC-8650</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="ex">├──</span> SC-8382</span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a><span class="ex">│</span>   ├── annotation</span>
+<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a><span class="ex">│</span>   │   ├── metrics.csv.gz</span>
+<span id="cb23-4"><a href="#cb23-4" tabindex="-1"></a><span class="ex">│</span>   │   ├── <span class="co">#[...other files ...]</span></span>
+<span id="cb23-5"><a href="#cb23-5" tabindex="-1"></a><span class="ex">│</span>   └── hmmcopy</span>
+<span id="cb23-6"><a href="#cb23-6" tabindex="-1"></a><span class="ex">│</span>   │   ├── <span class="co">#[...other files ...]</span></span>
+<span id="cb23-7"><a href="#cb23-7" tabindex="-1"></a><span class="ex">│</span>       ├── reads.csv.gz</span>
+<span id="cb23-8"><a href="#cb23-8" tabindex="-1"></a><span class="ex">│</span>       ├── segments.csv.gz</span>
+<span id="cb23-9"><a href="#cb23-9" tabindex="-1"></a><span class="ex">├──</span> SC-8408</span>
+<span id="cb23-10"><a href="#cb23-10" tabindex="-1"></a><span class="ex">│</span>   ├── annotation</span>
+<span id="cb23-11"><a href="#cb23-11" tabindex="-1"></a><span class="ex">│</span>   │   ├── metrics.csv.gz</span>
+<span id="cb23-12"><a href="#cb23-12" tabindex="-1"></a><span class="ex">│</span>   │   ├── <span class="co">#[...other files ...]</span></span>
+<span id="cb23-13"><a href="#cb23-13" tabindex="-1"></a><span class="ex">│</span>   └── hmmcopy</span>
+<span id="cb23-14"><a href="#cb23-14" tabindex="-1"></a><span class="ex">│</span>   │   ├── <span class="co">#[...other files ...]</span></span>
+<span id="cb23-15"><a href="#cb23-15" tabindex="-1"></a><span class="ex">│</span>       ├── reads.csv.gz</span>
+<span id="cb23-16"><a href="#cb23-16" tabindex="-1"></a><span class="ex">│</span>       ├── segments.csv.gz</span>
+<span id="cb23-17"><a href="#cb23-17" tabindex="-1"></a><span class="ex">├──</span> SC-8650</span></code></pre></div>
 <p>then there are some functions that can help with loading data from
 these into a consistent dataframe:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dlp_dir</span> <span class="op">&lt;-</span> <span class="st">"/where/to/save/my_dlp/"</span></span>
 <span></span>
 <span><span class="co"># loading metrics</span></span>
@@ -538,7 +564,7 @@ these into a consistent dataframe:</p>
 </h3>
 <p>Phylogenetic trees made by Stika take some formatting before they can
 be plotted:</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/format_sitka_tree.html">format_sitka_tree</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>this function drops <code>locus</code> tips and removes the
 <code>cell_</code> part of cell id names on tips. This way, the trees
