@@ -25,6 +25,7 @@ Imports:
     pals,
     phangorn,
     purrr,
+    furrr,
     rlang,
     stats,
     stringdist,
