@@ -4,7 +4,12 @@
 \alias{pairwise_bin_difference}
 \title{metric of pairwise differences between two cells.}
 \usage{
-pairwise_bin_difference(bin_df, cells = c(), min_seg_length = 2500000)
+pairwise_bin_difference(
+  bin_df,
+  cells = c(),
+  min_seg_length = 2500000,
+  return_pairs_matrix = FALSE
+)
 }
 \arguments{
 \item{bin_df}{a dataframe of read bins with states. Expected columns of:
@@ -17,6 +22,8 @@ other.}
 
 \item{min_seg_length}{double. This is the minium length of matching segment
 bins to use when measuring similarity.}
+
+\item{return_pairs_matrix}{boolean. If TRUE, returns a pairwise matrix object of distances. This is useful to then pass to functions like hclust() and so forth. Can also do afterwards with dlptools::convert_dists_to_pairwise()}
 }
 \value{
 tibble of cell pairs and metrics about their differences.
@@ -38,4 +45,9 @@ future::plan(future::multicore, workers=N_CORES_YOU_WANT)
 
 Example for 100 cells, which is 4950 pairs, this function will take 2 minutes
 with 4 cores.
+
+The returned DF is organized by each cell and the distances to each other
+cell (so there are some redundant comparisons, like cell 1 vs cell 2 and
+cell 2 vs cell 1). There is also a column "nearest_neighbour" which is a
+boolean identifying which comparison is the minimum distance for each cell.
 }

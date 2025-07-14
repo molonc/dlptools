@@ -15,6 +15,7 @@ Imports:
     circlize,
     ComplexHeatmap,
     dplyr,
+    fitdistrplus,
     fs,
     GenomicRanges,
     ggplot2,
