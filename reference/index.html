@@ -20,6 +20,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/foreground.html">Copy Number 'Foreground'</a></li>
     <li><a class="dropdown-item" href="../articles/heatmaps.html">Flexible Heatmaps</a></li>
+    <li><a class="dropdown-item" href="../articles/pairwise-differences.html">Pairwise Differences Cetween Cells</a></li>
     <li><a class="dropdown-item" href="../articles/tree_believability.html">Tree Believability</a></li>
     <li><a class="dropdown-item" href="../articles/useful_functions.html">Various Functions</a></li>
   </ul></li>
@@ -169,10 +170,22 @@
         <dd>internal for checking the names of chromosome columns in a dataframe.</dd>
       </dl><dl><dt>
 
+          <code><a href="compare_two_cells.html">compare_two_cells()</a></code>
+
+        </dt>
+        <dd>internal workhorse of pairwise_bin_difference function</dd>
+      </dl><dl><dt>
+
           <code><a href="compute_tip_sibling_distances.html">compute_tip_sibling_distances()</a></code>
 
         </dt>
         <dd>measure string distances between sibling tips</dd>
+      </dl><dl><dt>
+
+          <code><a href="convert_dists_to_pairwise.html">convert_dists_to_pairwise()</a></code>
+
+        </dt>
+        <dd>convert cell distances to a pairwise matrix</dd>
       </dl><dl><dt>
 
           <code><a href="convert_long_reads_to_wide.html">convert_long_reads_to_wide()</a></code>
@@ -227,6 +240,12 @@
 
         </dt>
         <dd>infer missing data using the upstream neighbour bin</dd>
+      </dl><dl><dt>
+
+          <code><a href="find_outlier_cells.html">find_outlier_cells()</a></code>
+
+        </dt>
+        <dd>Find outlier cells using a beta distribution</dd>
       </dl><dl><dt>
 
           <code><a href="format_sitka_tree.html">format_sitka_tree()</a></code>
@@ -391,6 +410,12 @@
         <dd>medicc profiles files to foreground assessment</dd>
       </dl><dl><dt>
 
+          <code><a href="pairwise_bin_difference.html">pairwise_bin_difference()</a></code>
+
+        </dt>
+        <dd>metric of pairwise differences between two cells.</dd>
+      </dl><dl><dt>
+
           <code><a href="plot_bg_state_highlight.html">plot_bg_state_highlight()</a></code>
 
         </dt>
@@ -407,6 +432,12 @@
 
         </dt>
         <dd>make a plot of just the foreground events</dd>
+      </dl><dl><dt>
+
+          <code><a href="plot_nnd_outlier_cells.html">plot_nnd_outlier_cells()</a></code>
+
+        </dt>
+        <dd>visualize cell nearest neighbour distance values</dd>
       </dl><dl><dt>
 
           <code><a href="plot_state_hm.html">plot_state_hm()</a></code>

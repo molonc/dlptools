@@ -5,6 +5,7 @@
 <url><loc>https://molonc.github.io/dlptools/articles/foreground.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/articles/heatmaps.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/articles/index.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/articles/pairwise-differences.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/articles/tree_believability.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/articles/useful_functions.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/authors.html</loc></url>
@@ -30,7 +31,9 @@
 <url><loc>https://molonc.github.io/dlptools/reference/check_or_fetch_clone_palette.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/check_the_vibe.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/chr_name_check.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/compare_two_cells.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/compute_tip_sibling_distances.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/convert_dists_to_pairwise.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/convert_long_reads_to_wide.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/create_chromosome_column_fct.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/create_expected_bins.html</loc></url>
@@ -40,6 +43,7 @@
 <url><loc>https://molonc.github.io/dlptools/reference/fetch_continuous_color_ramp.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/fetch_heatmap_color_palette.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/fill_state_from_neighbours.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/find_outlier_cells.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/format_sitka_tree.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/format_states_for_hm.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/generate_hm_image.html</loc></url>
@@ -68,10 +72,12 @@
 <url><loc>https://molonc.github.io/dlptools/reference/mark_bins_overlapping_centromeres.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/mark_mask_regions.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/medicc_profiles_to_foreground.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/pairwise_bin_difference.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/pipe.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/plot_bg_state_highlight.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/plot_fg_state_highlight.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/plot_heatmap_of_tip_changes.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/plot_nnd_outlier_cells.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/plot_state_hm.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/pull_chr_from_col_name.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/pull_info_from_cell_id.html</loc></url>
