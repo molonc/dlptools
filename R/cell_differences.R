@@ -13,7 +13,7 @@
 #'
 #' future::plan(future::multicore, workers=N_CORES_YOU_WANT)
 #'
-#' Example for 100 cells, which is 4950 pairs, this function will take 2 minutes
+#' Example for 100 cells, which is 4950 pairs, this function will take 4 minutes
 #' with 4 cores.
 #'
 #' The returned DF is organized by each cell and the distances to each other
@@ -135,7 +135,7 @@ pairwise_bin_difference <- function(
 convert_dists_to_pairwise <- function(cell_dists) {
   p_mtx <- xtabs(
     prop_diff ~ .,
-    dplyr::select(cell_dists, cell_one, cell_two, prop_diff)
+    dplyr::select(cell_dists, index_cell, comp_cell, prop_diff)
   ) |> t()
 
   return(p_mtx)
@@ -206,7 +206,7 @@ compare_two_cells <- function(cell_1_df, cell_2_df, min_seg_length) {
 #' dlptools::pairwise_bin_differences()
 #' @param outlier_percentile double. Default 0.99. What percentile of the
 #' distribution to consider an outlier cell.
-#' @return tibble of information on cells considered outliers.
+#' @return NA or tibble of information on cells considered outliers. NA if no outliers found.
 #' @export
 find_outlier_cells <- function(cell_diffs, outlier_percentile = 0.99) {
   if (!"nearest_neighbour" %in% colnames(cell_diffs)) {
@@ -220,6 +220,7 @@ find_outlier_cells <- function(cell_diffs, outlier_percentile = 0.99) {
 
   # maybe do the average, I am capturing some interesting cells with a low
   # distance to one another, but high distance to everyone else.
+  # cell_diffs <- pairwise_diffs
   nn_cells <- dplyr::filter(cell_diffs, nearest_neighbour)
   diff_beta_dist <- fitdistrplus::fitdist(nn_cells$prop_diff, "beta")
 
@@ -230,6 +231,11 @@ find_outlier_cells <- function(cell_diffs, outlier_percentile = 0.99) {
   )
 
   outlier_cells <- dplyr::filter(nn_cells, prop_diff >= min_diff)
+
+  if (nrow(outlier_cells) == 0) {
+    print("no outlier cells found!")
+    return(NA)
+  }
 
   outlier_cell_info <- cell_diffs |>
     dplyr::filter(index_cell %in% outlier_cells$index_cell) |>
@@ -257,7 +263,7 @@ plot_nnd_outlier_cells <- function(cell_diffs, outlier_cells) {
   p_dat <- cell_diffs |>
     dplyr::group_by(index_cell) |>
     dplyr::mutate(
-      outlier = index_cell %in% outlier_cells,
+      outlier = index_cell %in% outlier_cells$outlier_cell,
       p_lab = dplyr::case_when(
         prop_diff == min(prop_diff) & !outlier ~ "min-NN",
         prop_diff == min(prop_diff) & outlier ~ "min-NN-outlier",
@@ -274,24 +280,27 @@ plot_nnd_outlier_cells <- function(cell_diffs, outlier_cells) {
 
   p_dat$index_cell <- factor(p_dat$index_cell, levels = cell_ord)
 
-  ggplot(p_dat, aes(x = index_cell, y = prop_diff, color = p_lab)) +
-    geom_point() +
+  ggplot2::ggplot(
+    p_dat,
+    ggplot2::aes(x = index_cell, y = prop_diff, color = p_lab)
+  ) +
+    ggplot2::geom_point() +
     # facet_grid(~outlier, scales='free_x') +
-    theme_classic() +
+    ggplot2::theme_classic() +
     ggplot2::theme(
-      plot.background = element_rect(color = "white"),
-      axis.text.x = element_blank(),
-      panel.grid = element_blank(),
-      axis.ticks.x = element_blank()
+      plot.background = ggplot2::element_rect(color = "white"),
+      axis.text.x = ggplot2::element_blank(),
+      panel.grid = ggplot2::element_blank(),
+      axis.ticks.x = ggplot2::element_blank()
     ) +
-    scale_color_manual(
+    ggplot2::scale_color_manual(
       values = c(
         `min-NN` = GEN_PLOT_COLS[2],
         `min-NN-outlier` = GEN_PLOT_COLS[3],
         `other` = "grey"
       )
     ) +
-    xlab("Index Cell") +
-    ylab("Nearest Neighbour Distance") +
-    guides(color = guide_legend(title = ""))
+    ggplot2::xlab("Index Cell") +
+    ggplot2::ylab("Nearest Neighbour Distance") +
+    ggplot2::guides(color = ggplot2::guide_legend(title = ""))
 }
