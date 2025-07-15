@@ -1,5 +1,5 @@
 ---
-title: "Pairwise Differences Cetween Cells"
+title: "Pairwise Differences Between Cells"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{pairwise-differences}
