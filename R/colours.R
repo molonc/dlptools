@@ -72,6 +72,13 @@ RAW_COPY_COLORS <- circlize::colorRamp2(
   CNV_COLOURS[1:(length(CNV_COLOURS) - 1)]
 )
 
+GEN_PLOT_COLS <- c(
+  "#4269D0FF", "#3CA951FF", "#FF725CFF",
+  "#EFB118FF", "#FF8AB7FF", "#A463F2FF",
+  "#97BBF5FF", "#9C6B4EFF",
+  "#9498A0FF", "#6CC5B0FF"
+)
+
 #' picks beginning, middle, and end of a vector
 #' to handle when vectors that are too long are
 #' passed

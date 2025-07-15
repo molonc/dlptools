@@ -1,0 +1,137 @@
+---
+title: "Pairwise Differences Cetween Cells"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{pairwise-differences}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(dlptools)
+```
+
+
+The functions here were inspired by a paper called: Genomic evolution and cellular states of whole-genome doubling in ovarian cancer. By Weiner et al. 2025, some folks at MSKCC.
+
+The basic idea across all of them is just to count the numbers of bins that are different in state between two cells, divided by the number of bins considered. Then we can do things like fit a beta distribution to identify outliers, or do other clustering to find groups of similar/different cells, etc.
+
+These functions will make that a bit easier.
+
+First some toy data:
+
+```{r}
+reads_df <- vroom::vroom("data/example_reads.tsv.gz")
+
+# only using a few cells to demonstrate functions below
+targ_cells <- unique(reads_df$cell_id)[1:50]
+
+reads_df <- dplyr::filter(reads_df, cell_id %in% targ_cells)
+
+# standard reads dataframe of bin based state calls
+dplyr::slice_head(reads_df, n = 5)
+```
+
+First, we can measure pairwise distances between all cells. Warning, this function is *slow*, and the number of pairwise comparisons grows with more cells. E.g., 100 cells is 4950 comparisons and takes a couple minutes. There is definitely room for improvement here.
+
+Parallelizing will make your life a bit better. Internally, this function uses `furrr`, you just need to set up a plan.
+
+```{r}
+# first set up a parallel plan, here with 4 cores being used
+future::plan(future::multicore, workers = 4)
+
+pairwise_diffs <- dlptools::pairwise_bin_difference(reads_df)
+
+dplyr::slice_head(pairwise_diffs, n = 5)
+```
+
+
+which is each cell (`index cell`) compared to each other cell (`comp_cell`) and some information on the proportion of bins different (`prop_diff`).
+
+<br>
+<br>
+<br>
+
+The function `dlptools::pairwise_bin_difference()` has a `cells` parameter. Leaving it empty, the default, compares all cells in a pairwise manner.
+
+This will compare this one cell against all others:
+
+```{r, eval=FALSE}
+dlptools::pairwise_bin_difference(
+  reads_df,
+  cells = "some_cell_id"
+)
+```
+
+
+Alternatively, this will just compared these cells to themselves:
+
+```{r, eval=FALSE}
+dlptools::pairwise_bin_difference(
+  reads_df,
+  cells = c("cell_id_one", "cell_id_two", "cell_id_three")
+)
+```
+
+
+<br>
+
+The nearest neighbour of each cell is marked in the dataframe returned above. This function now takes that information, fits a beta distribution to those nearest neighbours, then returns outlier cells based on that distribution:
+
+```{r}
+outlier_cells <- dlptools::find_outlier_cells(pairwise_diffs)
+
+dplyr::slice_head(outlier_cells, n = 5)
+```
+
+<br>
+<br>
+<br>
+
+There is a quick plot that can be made to visualize these distances:
+
+```{r}
+dlptools::plot_nnd_outlier_cells(
+  pairwise_diffs, outlier_cells
+)
+```
+
+
+<br>
+<br>
+<br>
+
+
+There is also an option to return a pairwise matrix from the initial distance measurement:
+
+```{r, eval=FALSE}
+dlptools::pairwise_bin_difference(
+  reads_df,
+  return_pairs_matrix = TRUE
+)
+```
+
+or best done afterwards so you don't have to wait for the long calculation again:
+
+```{r}
+pairs_mtx <- dlptools::convert_dists_to_pairwise(pairwise_diffs)
+
+pairs_mtx[1:4, 1:4]
+```
+
+A matrix like this can then be useful for other analyses, like if you wanted to do some clustering:
+
+```{r}
+pairs_mtx |>
+  as.dist() |>
+  hclust() |>
+  plot()
+```
+

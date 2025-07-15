@@ -42,6 +42,7 @@ reads_to_segs <- function(reads_df) {
 #'
 #' @param states really and vector of values.
 #' @return vector of integers
+#' @export
 rle_states <- function(states) {
   states_rle <- base::rle(states)
   rles <- base::rep(base::seq_along(states_rle$lengths), states_rle$lengths)
