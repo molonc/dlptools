@@ -17,7 +17,7 @@ considered bins."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -103,7 +103,7 @@ bins to use when measuring similarity.</p></dd>
 Dramatic speed improvements can be had by setting up a parallel plan for
 furrr like so:</p>
 <p>future::plan(future::multicore, workers=N_CORES_YOU_WANT)</p>
-<p>Example for 100 cells, which is 4950 pairs, this function will take 2 minutes
+<p>Example for 100 cells, which is 4950 pairs, this function will take 4 minutes
 with 4 cores.</p>
 <p>The returned DF is organized by each cell and the distances to each other
 cell (so there are some redundant comparisons, like cell 1 vs cell 2 and
