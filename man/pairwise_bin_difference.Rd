@@ -43,7 +43,7 @@ furrr like so:
 
 future::plan(future::multicore, workers=N_CORES_YOU_WANT)
 
-Example for 100 cells, which is 4950 pairs, this function will take 2 minutes
+Example for 100 cells, which is 4950 pairs, this function will take 4 minutes
 with 4 cores.
 
 The returned DF is organized by each cell and the distances to each other

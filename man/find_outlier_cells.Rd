@@ -14,7 +14,7 @@ dlptools::pairwise_bin_differences()}
 distribution to consider an outlier cell.}
 }
 \value{
-tibble of information on cells considered outliers.
+NA or tibble of information on cells considered outliers. NA if no outliers found.
 }
 \description{
 Also inspired by MSKCC SPECTRUM paper. Using the measured pairwise bin
