@@ -1,0 +1,66 @@
+---
+title: "Basic Exploratory Plots"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{basic_plots}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(dlptools)
+```
+
+
+Most of the plots here related to exploring aspects of a DLP run to help learn how well it may have worked or not!
+
+A good resource of exploring aspects of DLP are these confluence pages:
+
+* [DLP Library Analysis Basics](https://molonc.atlassian.net/wiki/spaces/SOFT/pages/2702082064/DLP+Library+Analysis+Basics)
+* [Comparison of SCP and Mondrian](https://molonc.atlassian.net/wiki/spaces/SOFT/pages/2473459715/DLP+pipeline+comparison+scp+vs+mondrian)
+* [Explanation of Metrics Columns](https://molonc.atlassian.net/wiki/spaces/SOFT/pages/2459041795)
+
+
+
+## Chip Layout Plots
+
+The first thing we usually want to check, is how the chip is laid out:
+
+```{r}
+# just some example data from a recent run with lots of experimental conditions
+ex_mets <- vroom::vroom("data/ex_metrics.tsv.gz")
+
+dlptools::chip_plot(ex_mets, "experimental_condition")
+```
+
+
+<br>
+<br>
+
+Then often we want to look for spatial effects across the chip.
+
+Such as, quality:
+
+```{r}
+dlptools::chip_plot(ex_mets, "quality")
+```
+
+<br>
+<br>
+
+or perhaps total reads:
+
+```{r}
+dlptools::chip_plot(ex_mets, "total_reads")
+```
+
+
+<br>
+<br>

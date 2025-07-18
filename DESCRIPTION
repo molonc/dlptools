@@ -19,6 +19,7 @@ Imports:
     fs,
     GenomicRanges,
     ggplot2,
+    ggrepel,
     ggtree,
     gtools,
     IRanges,

@@ -74,9 +74,17 @@ RAW_COPY_COLORS <- circlize::colorRamp2(
 
 GEN_PLOT_COLS <- c(
   "#4269D0FF", "#3CA951FF", "#FF725CFF",
-  "#EFB118FF", "#FF8AB7FF", "#A463F2FF",
-  "#97BBF5FF", "#9C6B4EFF",
+  "#EFB118FF", "#A463F2FF",
+  "#97BBF5FF", "#9C6B4EFF", "#FF8AB7FF",
   "#9498A0FF", "#6CC5B0FF"
+)
+
+BASE_PLOT_THEME <- list(
+  ggplot2::theme_minimal() +
+    ggplot2::theme(
+      plot.background = ggplot2::element_rect(color = "white"),
+      panel.border = ggplot2::element_rect(fill = NA)
+    )
 )
 
 #' picks beginning, middle, and end of a vector
