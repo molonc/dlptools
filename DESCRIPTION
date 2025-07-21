@@ -1,6 +1,6 @@
 Package: dlptools
 Title: DLPTools: Handling DLP+ Data
-Version: 0.3.10
+Version: 0.3.11
 Authors@R: 
     person("Ben", "Furman", , "bfurman@bccrc.ca", role = c("aut", "cre"))
 Description: A collections of functions for basic manipulation and plotting of
@@ -19,15 +19,19 @@ Imports:
     fs,
     GenomicRanges,
     ggplot2,
+    ggrepel,
+    ggsci,
     ggtree,
     gtools,
     IRanges,
     magrittr,
     pals,
+    patchwork,
     phangorn,
     purrr,
     furrr,
     rlang,
+    scales,
     stats,
     stringdist,
     stringr,
