@@ -2,6 +2,7 @@
 <url><loc>https://molonc.github.io/dlptools/404.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/LICENSE-text.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/LICENSE.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/articles/basic_plots.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/articles/foreground.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/articles/heatmaps.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/articles/index.html</loc></url>
@@ -22,6 +23,7 @@
 <url><loc>https://molonc.github.io/dlptools/reference/basic_tile_plot.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/bme_vec.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/build_left_annot.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/cell_cn_profile.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/cell_id_order_as_plotted.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/cell_states_to_strings.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/characterize_foreground_allele_state_changes.html</loc></url>
@@ -30,6 +32,7 @@
 <url><loc>https://molonc.github.io/dlptools/reference/check_if_state_columns_are_valid.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/check_or_fetch_clone_palette.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/check_the_vibe.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/chip_plot.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/chr_name_check.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/compare_two_cells.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/compute_tip_sibling_distances.html</loc></url>
@@ -46,6 +49,7 @@
 <url><loc>https://molonc.github.io/dlptools/reference/find_outlier_cells.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/format_sitka_tree.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/format_states_for_hm.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/gc_plot.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/generate_hm_image.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/generate_state_hm.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/get_clone_id_label_positions.html</loc></url>
