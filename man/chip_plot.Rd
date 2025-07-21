@@ -12,6 +12,9 @@ chip_plot(metrics_df, targ_val)
 \item{targ_val}{the value of interest for plotting. E.g.,
 experimental_condition, quality, total_reads.}
 }
+\value{
+ggplot2 object
+}
 \description{
 Map of a metric as observed in the layout of the DLP chip.
 }
