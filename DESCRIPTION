@@ -20,6 +20,7 @@ Imports:
     GenomicRanges,
     ggplot2,
     ggrepel,
+    ggsci,
     ggtree,
     gtools,
     IRanges,
