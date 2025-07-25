@@ -212,9 +212,11 @@ gc_plot <- function(
 #' @param pseudo_log_y boolean. Pseudo-log transform the y axis, as sometimes
 #' high copy numbers obscure the plot. Or you can always set a
 #' ggplot2::coord_cartesian() yourself on the plot returned by this function.
+#' @param yaxis string. Defaults to copy, which is typically what is wanted for
+#' plotting. But you can change to other bin values, like state.
 #' @return ggplot2 object
 #' @export
-cell_cn_profile <- function(reads_df, cell_ids = c(), pseduo_log_y = FALSE) {
+cell_cn_profile <- function(reads_df, cell_ids = c(), pseduo_log_y = FALSE, yaxis = "copy") {
   if (length(cell_ids) == 0) {
     n_cell_ids <- unique(reads_df$cell_id)
     if (length(n_cell_ids) > 10) {
@@ -231,7 +233,7 @@ cell_cn_profile <- function(reads_df, cell_ids = c(), pseduo_log_y = FALSE) {
   cells_df$chr <- factor_column_mixedsort(cells_df, "chr")
 
   cell_p <- ggplot2::ggplot(
-    cells_df, ggplot2::aes(start, copy, col = as.factor(state))
+    cells_df, ggplot2::aes(start, .data[[yaxis]], col = as.factor(state))
   ) +
     ggplot2::geom_point(size = 0.5) +
     ggplot2::facet_grid(

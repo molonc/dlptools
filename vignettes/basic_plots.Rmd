@@ -123,4 +123,16 @@ dlptools::cell_cn_profile(
 )
 ```
 
+<br>
+<br>
+<br>
 
+If needed, can also change what the y-axis is to other bin-based options:
+
+```{r, fig.width=10, fig.height=5}
+dlptools::cell_cn_profile(
+  ex_reads,
+  cell_ids = unique(ex_reads$cell_id)[1:2],
+  yaxis = "state"
+)
+```
