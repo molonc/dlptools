@@ -11,7 +11,7 @@ features. But this function works in a pinch."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.12</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,7 +52,7 @@ features. But this function works in a pinch.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cell_cn_profile</span><span class="op">(</span><span class="va">reads_df</span>, cell_ids <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>, pseduo_log_y <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cell_cn_profile</span><span class="op">(</span><span class="va">reads_df</span>, cell_ids <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>, pseduo_log_y <span class="op">=</span> <span class="cn">FALSE</span>, yaxis <span class="op">=</span> <span class="st">"copy"</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -68,6 +68,11 @@ features. But this function works in a pinch.</p>
 the plot will be useless. If blank, will plot all cells in dataframe, but
 only if less than 10, because honestly at that point, you probably need a
 different plot.</p></dd>
+
+
+<dt id="arg-yaxis">yaxis<a class="anchor" aria-label="anchor" href="#arg-yaxis"></a></dt>
+<dd><p>string. Defaults to copy, which is typically what is wanted for
+plotting. But you can change to other bin values, like state.</p></dd>
 
 
 <dt id="arg-pseudo-log-y">pseudo_log_y<a class="anchor" aria-label="anchor" href="#arg-pseudo-log-y"></a></dt>
