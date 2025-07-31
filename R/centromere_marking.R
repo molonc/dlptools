@@ -114,12 +114,10 @@ load_ucsc_centromeres <- function(
     show_col_types = FALSE
   ) |>
     dplyr::filter(feat == "acen") |>
-    dplyr::mutate(chrom = dplyr::if_else(
+    dplyr::mutate(
       # removes the 'chr' from the chromosome name, e.g., chr1 -> 1
-      chrom %in% c("chrX", "chrY"),
-      stringr::str_extract(chrom, "[A-Z]"),
-      stringr::str_extract(chrom, "[0-9]+")
-    ))
+      chrom = stringr::str_extract(chrom, "([A-Z]|[0-9]+)")
+    )
   centros <- centros |>
     dplyr::group_by(chrom) |>
     dplyr::mutate(
