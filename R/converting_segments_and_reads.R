@@ -29,7 +29,8 @@ reads_to_segs <- function(reads_df) {
     dplyr::select(-c(rle_group)) |>
     dplyr::mutate(
       seg_width = end - start
-    )
+    ) |>
+    dplyr::ungroup()
 
   return(new_segs)
 }
