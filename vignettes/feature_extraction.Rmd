@@ -45,7 +45,7 @@ segs_df <- reads_df |>
   dlptools::fill_state_from_neighbours() |>
   dlptools::reads_to_segs() |>
   dplyr::filter(
-    seg_width > 1.5e7
+    seg_width > 1.5e6
   ) |>
   dlptools::segs_to_reads() |>
   dlptools::add_missing_bins_for_cells() |>
@@ -91,7 +91,7 @@ see `?dlptools::extract_wu_features` for more.
 <br>
 <br>
 
-Alternatively, we can get Wang et al. features. Though if going this route, it would be a good idea to look more at sigminer itself:
+Alternatively, we can get Wang et al. features. Though if going this route, it would be a good idea to look more at [sigminer](https://github.com/ShixiangWang/sigminer?tab=readme-ov-file) itself:
 
 ```{r, warning=FALSE, message = FALSE}
 sig_feats <- extract_sigminer_wang_features(segs_df)
