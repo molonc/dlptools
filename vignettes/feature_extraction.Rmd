@@ -1,0 +1,104 @@
+---
+title: "Feature Extraction for CN Signatures"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{feature_extraction}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(dlptools)
+```
+
+dlptools offers two feature extraction types:
+
+1. Wu et al. https://www.biorxiv.org/content/10.1101/2025.03.02.641098v1
+2. Wang et al. https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1009557
+
+The Wang et al features are just a thin wrapper around [sigminer](https://github.com/ShixiangWang/sigminer?tab=readme-ov-file) functions. Check out that package for more tools and actual signature extraction.
+
+<br>
+<br>
+
+A likely starting point of this exercise might be some read bin data, or some segment data. It's probably good that it's been cleaned up to your liking.
+
+Perhaps the workflow would look something like this:
+
+```{r, warning=FALSE, message = FALSE}
+reads_df <- vroom::vroom("data/example_full_reads.tsv.gz")
+
+segs_df <- reads_df |>
+  dlptools::mark_mask_regions() |>
+  dlptools::mark_bins_overlapping_centromeres(padding = 3e6) |>
+  dplyr::filter(
+    gc != -1 & map > 0.99 & !overlaps_centro & !mask
+  ) |>
+  dlptools::add_missing_bins_for_cells() |>
+  dlptools::fill_state_from_neighbours() |>
+  dlptools::reads_to_segs() |>
+  dplyr::filter(
+    seg_width > 1.5e7
+  ) |>
+  dlptools::segs_to_reads() |>
+  dlptools::add_missing_bins_for_cells() |>
+  dlptools::fill_state_from_neighbours() |>
+  dlptools::reads_to_segs()
+
+
+dplyr::slice_head(segs_df, n = 5)
+```
+ 
+
+
+<br>
+<br>
+
+For extracting Wu et al. features:
+
+```{r}
+dlptools::extract_wu_features(
+  segs_df = segs_df
+) |>
+  dplyr::slice_head(n = 5)
+```
+<br>
+<br>
+
+There are other options, like annotating the input dataframe, or returning a matrix for subsequent signature extraction:
+
+```{r}
+feat_mtx <- dlptools::extract_wu_features(
+  segs_df = segs_df,
+  return_matrix = TRUE
+)
+
+feat_mtx[1:4, 1:4]
+```
+
+<br>
+
+see `?dlptools::extract_wu_features` for more.
+
+<br>
+<br>
+<br>
+
+Alternatively, we can get Wang et al. features. Though if going this route, it would be a good idea to look more at sigminer itself:
+
+```{r, warning=FALSE, message = FALSE}
+sig_feats <- extract_sigminer_wang_features(segs_df)
+
+sig_feats[1:4, 1:4]
+```
+
+<br>
+<br>
+<br>
