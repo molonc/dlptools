@@ -37,6 +37,8 @@ Imports:
     stringr,
     tidyr,
     vroom
+Remotes:
+    github::ShixiangWang/sigminer
 Suggests: 
     knitr,
     rmarkdown
