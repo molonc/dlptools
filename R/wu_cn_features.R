@@ -11,7 +11,7 @@
 #' 1. CN states: 5 bins, 0-1, 2, 3, 4, 5+
 #' 2. segment size: 3 bins, <5 MB, 5-10Mb, 10Mb,
 #' 3. segment shape: 3 bins, LL (low left, low right segment), HH, OT (other)
-#' 4. segment change: 2 bins: AA (difference between surrounding segments <
+#' 4. segment change: 2 bins: AA (difference between surrounding segments <=
 #' some critical value), or BB
 #'
 #' Some issues:
