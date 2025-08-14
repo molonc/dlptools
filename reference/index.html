@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.13</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.14</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -19,6 +19,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/basic_plots.html">Basic Exploratory Plots</a></li>
+    <li><a class="dropdown-item" href="../articles/feature_extraction.html">Feature Extraction for CN Signatures</a></li>
     <li><a class="dropdown-item" href="../articles/foreground.html">Copy Number 'Foreground'</a></li>
     <li><a class="dropdown-item" href="../articles/heatmaps.html">Flexible Heatmaps</a></li>
     <li><a class="dropdown-item" href="../articles/pairwise-differences.html">Pairwise Differences Between Cells</a></li>
@@ -97,6 +98,18 @@
 
         </dt>
         <dd>add parent node labels to a dataframe of cell ids with states</dd>
+      </dl><dl><dt>
+
+          <code><a href="add_wu_change_shape.html">add_wu_change_shape()</a></code>
+
+        </dt>
+        <dd>see dlptools::extract_wu_features</dd>
+      </dl><dl><dt>
+
+          <code><a href="add_wu_seg_state_bins.html">add_wu_seg_state_bins()</a></code>
+
+        </dt>
+        <dd>see dlptools::extract_wu_features</dd>
       </dl><dl><dt>
 
           <code><a href="basic_tile_plot.html">basic_tile_plot()</a></code>
@@ -229,6 +242,18 @@
 
         </dt>
         <dd>For a given length, create bins of a given size</dd>
+      </dl><dl><dt>
+
+          <code><a href="extract_sigminer_wang_features.html">extract_sigminer_wang_features()</a></code>
+
+        </dt>
+        <dd>thin wrapper around sigminer feature tally</dd>
+      </dl><dl><dt>
+
+          <code><a href="extract_wu_features.html">extract_wu_features()</a></code>
+
+        </dt>
+        <dd>Extract CN features following Wu et al</dd>
       </dl><dl><dt>
 
           <code><a href="factor_column_mixedsort.html">factor_column_mixedsort()</a></code>

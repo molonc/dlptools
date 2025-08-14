@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.13</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.14</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,6 +36,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/basic_plots.html">Basic Exploratory Plots</a></li>
+    <li><a class="dropdown-item" href="../articles/feature_extraction.html">Feature Extraction for CN Signatures</a></li>
     <li><a class="dropdown-item" href="../articles/foreground.html">Copy Number 'Foreground'</a></li>
     <li><a class="dropdown-item" href="../articles/heatmaps.html">Flexible Heatmaps</a></li>
     <li><a class="dropdown-item" href="../articles/pairwise-differences.html">Pairwise Differences Between Cells</a></li>
@@ -387,7 +388,6 @@ bins, etc.).</p>
 <span><span class="co"># into a single bin. Of course, bins are no longer of equal size.</span></span>
 <span><span class="va">ex_segs</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 6</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># Groups:   cell_id, chr [1]</span></span></span>
 <span><span class="co">#&gt;   cell_id                  chr      start      end state seg_width</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AT23998-A138956A-R03-C34 1            1 41<span style="text-decoration: underline;">000</span>000     4  40<span style="text-decoration: underline;">999</span>999</span></span>
@@ -410,7 +410,6 @@ have dropped bins from your dataframe.</p>
 <span></span>
 <span><span class="va">rebinned_reads</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 10</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># Groups:   cell_id, chr [1]</span></span></span>
 <span><span class="co">#&gt;   cell_id         chr   seg_start seg_end state seg_width  start   end short_seg</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>    </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AT23998-A13895… 1             1   4.1<span style="color: #949494;">e</span>7     4  41<span style="text-decoration: underline;">000</span>000 1   <span style="color: #949494;">e</span>0 5  <span style="color: #949494;">e</span>5 FALSE    </span></span>

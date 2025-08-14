@@ -3,6 +3,7 @@
 <url><loc>https://molonc.github.io/dlptools/LICENSE-text.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/LICENSE.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/articles/basic_plots.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/articles/feature_extraction.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/articles/foreground.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/articles/heatmaps.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/articles/index.html</loc></url>
@@ -20,6 +21,8 @@
 <url><loc>https://molonc.github.io/dlptools/reference/add_centromere_locations.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/add_missing_bins_for_cells.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/add_tip_ancestors_to_df.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/add_wu_change_shape.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/add_wu_seg_state_bins.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/basic_tile_plot.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/bme_vec.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/build_left_annot.html</loc></url>
@@ -42,6 +45,8 @@
 <url><loc>https://molonc.github.io/dlptools/reference/create_expected_bins.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/does_palette_cover_plot_vals.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/expand_length_to_bins.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/extract_sigminer_wang_features.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/extract_wu_features.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/factor_column_mixedsort.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/fetch_continuous_color_ramp.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/fetch_heatmap_color_palette.html</loc></url>
