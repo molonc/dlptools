@@ -173,3 +173,41 @@ add_wu_seg_state_bins <- function(
 
   return(segs_df)
 }
+
+
+#' thin wrapper around sigminer feature tally
+#'
+#' Features are based on the paper:
+#'
+#' Wang et al. Copy number signature analysis tool and its application in
+#' prostate cancer reveals distinct mutational processes and clinical outcomes.
+#' PLOS Genetics. 2021.
+#'
+#' https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1009557
+#'
+#' Some issues, I Ben Furman, have with it are:
+#'
+#' * any oscillations of CN count as an oscillation, including something like
+#' 2 - 500 - 2. Oscilations are supposed to reflect potential chromothripsis,
+#' which a pattern like that is not likely to be from.
+#' * segment sizes are binned based on log10 values. This means there are a lot
+#' of CN size bins < 1 Mb, and DLP starts at 500Kb (and segments that small
+#' should probably be filtered anyway). So many of the segment size bins are
+#' not used with DLP. This isn't a sigminer issue, but an issue with the scale
+#' of DLP data
+#'
+#' Just reshapes our typical dataframes into one sigminer is happy with
+#' and runs sigminer::sig_tally with the "W" method.
+#' @param segs_df dataframe of CN segments.
+#' @return matrix of feature counts.
+#' @export
+extract_sigminer_wang_features <- function(segs_df) {
+  sm_tally <- sigminer::read_copynumber(
+    dplyr::select(segs_df, cell_id, chr, start, end, state),
+    seg_cols = c("chr", "start", "end", "state"),
+    samp_col = "cell_id"
+  ) |>
+    sigminer::sig_tally(method = "W")
+
+  return(sm_tally$nmf_matrix)
+}
