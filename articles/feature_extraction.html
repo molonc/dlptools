@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.15</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -101,7 +101,7 @@ your liking.</p>
 <span>  <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/fill_state_from_neighbours.html">fill_state_from_neighbours</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/reads_to_segs.html">reads_to_segs</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span></span>
-<span>    <span class="va">seg_width</span> <span class="op">&gt;</span> <span class="fl">1.5e7</span></span>
+<span>    <span class="va">seg_width</span> <span class="op">&gt;</span> <span class="fl">1.5e6</span></span>
 <span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/segs_to_reads.html">segs_to_reads</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/add_missing_bins_for_cells.html">add_missing_bins_for_cells</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -111,13 +111,13 @@ your liking.</p>
 <span></span>
 <span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span><span class="va">segs_df</span>, n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 6</span></span></span>
-<span><span class="co">#&gt;   cell_id                  chr       start       end state seg_width</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AT21352-A144173A-R03-C12 1             1  57<span style="text-decoration: underline;">500</span>000     4  57<span style="text-decoration: underline;">499</span>999</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AT21352-A144173A-R03-C12 1      57<span style="text-decoration: underline;">500</span>001 104<span style="text-decoration: underline;">500</span>000     5  46<span style="text-decoration: underline;">999</span>999</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> AT21352-A144173A-R03-C12 1     104<span style="text-decoration: underline;">500</span>001 150<span style="text-decoration: underline;">000</span>000     7  45<span style="text-decoration: underline;">499</span>999</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> AT21352-A144173A-R03-C12 1     150<span style="text-decoration: underline;">000</span>001 175<span style="text-decoration: underline;">000</span>000     6  24<span style="text-decoration: underline;">999</span>999</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> AT21352-A144173A-R03-C12 1     175<span style="text-decoration: underline;">000</span>001 224<span style="text-decoration: underline;">500</span>000     3  49<span style="text-decoration: underline;">499</span>999</span></span></code></pre></div>
+<span><span class="co">#&gt;   cell_id                  chr      start      end state seg_width</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AT21352-A144173A-R03-C12 1            1 10<span style="text-decoration: underline;">000</span>000     4   9<span style="text-decoration: underline;">999</span>999</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AT21352-A144173A-R03-C12 1     10<span style="text-decoration: underline;">000</span>001 21<span style="text-decoration: underline;">500</span>000     5  11<span style="text-decoration: underline;">499</span>999</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> AT21352-A144173A-R03-C12 1     21<span style="text-decoration: underline;">500</span>001 39<span style="text-decoration: underline;">000</span>000     4  17<span style="text-decoration: underline;">499</span>999</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> AT21352-A144173A-R03-C12 1     39<span style="text-decoration: underline;">000</span>001 45<span style="text-decoration: underline;">000</span>000     5   5<span style="text-decoration: underline;">999</span>999</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> AT21352-A144173A-R03-C12 1     45<span style="text-decoration: underline;">000</span>001 57<span style="text-decoration: underline;">500</span>000     4  12<span style="text-decoration: underline;">499</span>999</span></span></code></pre></div>
 <p><br><br></p>
 <p>For extracting Wu et al. features:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -131,7 +131,7 @@ your liking.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AT21352-A144173A-R03-C12 S0-1   S       AA         LL            0</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AT21352-A144173A-R03-C12 S0-1   S       AA         HH            0</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> AT21352-A144173A-R03-C12 S0-1   S       AA         OT            0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> AT21352-A144173A-R03-C12 S0-1   S       BB         LL            0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> AT21352-A144173A-R03-C12 S0-1   S       BB         LL            1</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> AT21352-A144173A-R03-C12 S0-1   S       BB         HH            0</span></span></code></pre></div>
 <p><br><br></p>
 <p>There are other options, like annotating the input dataframe, or
@@ -144,24 +144,25 @@ returning a matrix for subsequent signature extraction:</p>
 <span></span>
 <span><span class="va">feat_mtx</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                          S:LL:S0-1:AA S:HH:S0-1:AA S:OT:S0-1:AA S:LL:S0-1:BB</span></span>
-<span><span class="co">#&gt; AT21352-A144173A-R03-C12            0            0            0            0</span></span>
-<span><span class="co">#&gt; AT21352-A144173A-R03-C32            0            0            0            0</span></span>
+<span><span class="co">#&gt; AT21352-A144173A-R03-C12            0            0            0            1</span></span>
+<span><span class="co">#&gt; AT21352-A144173A-R03-C32            0            0            0            1</span></span>
 <span><span class="co">#&gt; AT21352-A144173A-R03-C33            0            0            0            0</span></span>
 <span><span class="co">#&gt; AT21352-A144173A-R03-C35            0            0            0            0</span></span></code></pre></div>
 <p><br></p>
 <p>see <code><a href="../reference/extract_wu_features.html">?dlptools::extract_wu_features</a></code> for more.</p>
 <p><br><br><br></p>
 <p>Alternatively, we can get Wang et al. features. Though if going this
-route, it would be a good idea to look more at sigminer itself:</p>
+route, it would be a good idea to look more at <a href="https://github.com/ShixiangWang/sigminer?tab=readme-ov-file" class="external-link">sigminer</a>
+itself:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sig_feats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract_sigminer_wang_features.html">extract_sigminer_wang_features</a></span><span class="op">(</span><span class="va">segs_df</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">sig_feats</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                          BP10MB[0] BP10MB[1] BP10MB[2] BP10MB[3]</span></span>
-<span><span class="co">#&gt; AT21352-A144173A-R03-C12       291        31         0         0</span></span>
-<span><span class="co">#&gt; AT21352-A144173A-R03-C32       299        23         0         0</span></span>
-<span><span class="co">#&gt; AT21352-A144173A-R03-C33       283        39         0         0</span></span>
-<span><span class="co">#&gt; AT21352-A144173A-R03-C35       301        21         0         0</span></span></code></pre></div>
+<span><span class="co">#&gt; AT21352-A144173A-R03-C12       216        89        14         3</span></span>
+<span><span class="co">#&gt; AT21352-A144173A-R03-C32       231        73        15         3</span></span>
+<span><span class="co">#&gt; AT21352-A144173A-R03-C33       217        89        15         0</span></span>
+<span><span class="co">#&gt; AT21352-A144173A-R03-C35       241        67        11         3</span></span></code></pre></div>
 <p><br><br><br></p>
   </main>
 </div>
