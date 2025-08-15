@@ -1,12 +1,3 @@
-# idea is to use fill up/down
-# would like to work in the concept of perhaps splitting large gaps, not sure
-# how to handle that.
-# but could specify splitting over the centromere gap. Basically, split by
-# cell + chrom for filling, but can then optionally further split by being
-# within the centromere buffer and then can do a downup fill to split the gap
-# ...or can I? How would I tell it where to split? Would need to calculate the
-# mid point of the centromere.
-
 #' loading UCSC chromosome length files
 #' @param version default "hg19", can also load "hg38"
 #' @return tibgble of chromosome, total length, etc.

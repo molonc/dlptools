@@ -1,5 +1,6 @@
 #' Extract CN features following Wu et al
 #'
+#'
 #' This function extracts copy number features in the style of the paper:
 #'
 #'  Wu et al. 2025. Single-cell copy number alteration signature analysis
@@ -7,10 +8,10 @@
 #'
 #'  https://www.biorxiv.org/content/10.1101/2025.03.02.641098v1
 #'
-#' They employ 4 base features, that then then cross for 90 categories:
+#' They employ 4 base features, that they cross for 90 categories:
 #' 1. CN states: 5 bins, 0-1, 2, 3, 4, 5+
 #' 2. segment size: 3 bins, <5 MB, 5-10Mb, 10Mb,
-#' 3. segment shape: 3 bins, LL (low left, low right segment), HH, OT (other)
+#' 3. segment shape: 3 bins, LL (low left, low right segment), HH (high left, high right segment), OT (other)
 #' 4. segment change: 2 bins: AA (difference between surrounding segments <=
 #' some critical value), or BB
 #'
@@ -19,8 +20,8 @@
 #' * chromosomes need to have at least 3 changes to be truly reflected in these
 #' categories. Those with fewer are backfilled based on hardcoded rules
 #' * for segment change, the paper says they considered changes > 2 as BB, but
-#' the actual code is set to 1. This function follows their code, but can be
-#' altered.
+#' in their actual code is set to 1. This function follows their code, but can
+#' be altered.
 #'
 #' @param segs_df a dataframe of CN segments
 #' @param state_bin_max int. Maximum CN to consider for bins. All CNs of this
@@ -94,7 +95,10 @@ add_wu_change_shape <- function(segs_df, change_split_val = 1) {
       next_state = dplyr::lead(state),
       prev_state = dplyr::lag(state),
       seg_change = dplyr::case_when(
-        abs(state - next_state) > change_split_val | abs(state - prev_state) > change_split_val ~ "BB",
+        (
+          abs(state - next_state) > change_split_val |
+            abs(state - prev_state) > change_split_val ~ "BB"
+        ),
         # backfill start
         is.na(prev_state) ~ dplyr::if_else(
           abs(state - next_state) <= change_split_val,
@@ -177,6 +181,9 @@ add_wu_seg_state_bins <- function(
 
 #' thin wrapper around sigminer feature tally
 #'
+#' Reshapes/renames our typical dataframes into one sigminer is happy with
+#' and runs sigminer::sig_tally with the "W" method.
+#'
 #' Features are based on the paper:
 #'
 #' Wang et al. Copy number signature analysis tool and its application in
@@ -185,19 +192,17 @@ add_wu_seg_state_bins <- function(
 #'
 #' https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1009557
 #'
-#' Some issues, I Ben Furman, have with it are:
+#' Some issues, I, Ben Furman, have with it are:
 #'
 #' * any oscillations of CN count as an oscillation, including something like
-#' 2 - 500 - 2. Oscilations are supposed to reflect potential chromothripsis,
+#' 2 - 500 - 2. Oscillations are supposed to reflect potential chromothripsis,
 #' which a pattern like that is not likely to be from.
 #' * segment sizes are binned based on log10 values. This means there are a lot
 #' of CN size bins < 1 Mb, and DLP starts at 500Kb (and segments that small
-#' should probably be filtered anyway). So many of the segment size bins are
+#' should probably be filtered anyway). Thus, many of the segment size bins are
 #' not used with DLP. This isn't a sigminer issue, but an issue with the scale
-#' of DLP data
+#' of DLP data.
 #'
-#' Just reshapes our typical dataframes into one sigminer is happy with
-#' and runs sigminer::sig_tally with the "W" method.
 #' @param segs_df dataframe of CN segments.
 #' @return matrix of feature counts.
 #' @export

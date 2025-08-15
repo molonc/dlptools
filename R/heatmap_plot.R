@@ -1,4 +1,4 @@
-# This script is inspired from and directly lifts some code from other versions
+# This module is inspired from and directly lifts some code from other versions
 # of this script. Primarily inspired by a script passed to me by Hoa Tran, and
 # other versions given to me by Daniel Lai, and the R package Signals.
 
