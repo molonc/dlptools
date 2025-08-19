@@ -23,7 +23,10 @@ other.}
 \item{min_seg_length}{double. This is the minium length of matching segment
 bins to use when measuring similarity.}
 
-\item{return_pairs_matrix}{boolean. If TRUE, returns a pairwise matrix object of distances. This is useful to then pass to functions like hclust() and so forth. Can also do afterwards with dlptools::convert_dists_to_pairwise()}
+\item{return_pairs_matrix}{boolean. If TRUE, returns a pairwise matrix
+object of distances. This is useful to then pass to functions like hclust()
+and so forth. Can also do afterwards with
+dlptools::convert_dists_to_pairwise()}
 }
 \value{
 tibble of cell pairs and metrics about their differences.
