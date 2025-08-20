@@ -7,7 +7,7 @@
 extract_wu_features(
   segs_df,
   state_bin_max = 5,
-  bin_breaks = c(5e+06, 1e+07 + 1),
+  bin_breaks = NA,
   annotate_input = FALSE,
   return_matrix = FALSE,
   ...
@@ -20,7 +20,9 @@ extract_wu_features(
 value and higher are grouped together. Default of 5 follows paper.}
 
 \item{bin_breaks}{floats, how to break up segment sizes. Bins will be one
-more than breaks. Defaults follow paper.}
+more than breaks. Defaults follow paper. Default is < 5Mb, 5--10Mb, > 10Mb
+specified as c(5e6, 10e6 + 1). Internally, base::cut() is used, so 2 splits
+produces 3 bins.}
 
 \item{annotate_input}{boolean. return input dataframe annotating each segment with the feature categories it falls into.}
 

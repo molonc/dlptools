@@ -27,14 +27,21 @@
 #' @param state_bin_max int. Maximum CN to consider for bins. All CNs of this
 #' value and higher are grouped together. Default of 5 follows paper.
 #' @param bin_breaks floats, how to break up segment sizes. Bins will be one
-#' more than breaks. Defaults follow paper.
+#' more than breaks. Defaults follow paper. Default is < 5Mb, 5--10Mb, > 10Mb
+#' specified as c(5e6, 10e6 + 1). Internally, base::cut() is used, so 2 splits
+#' produces 3 bins.
 #' @param annotate_input boolean. return input dataframe annotating each segment with the feature categories it falls into.
 #' @param return_matrix boolean. Return a cell-by-feature matrix of counts.
 #' @param ... can pass change_split_val to alter critical value for AA/BB split
 #' @return default return is a tibble of feature counts for each cell id.
 #' @export
-extract_wu_features <- function(segs_df, state_bin_max = 5, bin_breaks = c(5e6, 10e6 + 1), annotate_input = FALSE, return_matrix = FALSE, ...) {
+extract_wu_features <- function(segs_df, state_bin_max = 5, bin_breaks = NA, annotate_input = FALSE, return_matrix = FALSE, ...) {
   # paper code: https://github.com/XSLiuLab/single-cell-CNA-signature/blob/main/code/divide_feature.R
+
+  # default segment size breakpoints
+  if (is.na(bin_breaks)) {
+    bin_breaks <- c(5e6, 10e6 + 1)
+  }
 
   segs_df <- add_wu_seg_state_bins(
     segs_df = segs_df,
@@ -58,44 +65,20 @@ extract_wu_features <- function(segs_df, state_bin_max = 5, bin_breaks = c(5e6, 
       .drop = FALSE
     ) |>
     dplyr::count() |>
-    dplyr::ungroup()
+    dplyr::ungroup() |>
+    dplyr::mutate(
+      feat_cat = stringr::str_c(
+        seg_bin, seg_shape, cn_bin, seg_change,
+        sep = ":"
+      )
+    )
 
   if (return_matrix) {
-    feat_mtx <- wu_features_to_matrix(feat_count)
+    feat_mtx <- make_cellid_matrix(feat_count, "feat_cat", "n")
     return(feat_mtx)
   }
 
   return(feat_count)
-}
-
-#' convert feature counts based on Wu et al. to a matrix of crossed features.
-#'
-#' Takes the count matrix from [extract_wu_features()] and returns a matrix
-#' object. [extract_wu_features()] offers to return a matrix, but sometimes
-#' you don't want to redo the extraction.
-#'
-#' @param feat_count default count dataframe output of [extract_wu_features()].
-#' @return matrix object of counts. Columns are crossed feature categories,
-#' rows are cell ids.
-#' @export
-wu_features_to_matrix <- function(feat_count) {
-  feat_trans <- feat_count |>
-    dplyr::mutate(
-      comb_feat = stringr::str_c(
-        seg_bin, seg_shape, cn_bin, seg_change,
-        sep = ":"
-      )
-    ) |>
-    dplyr::select(cell_id, comb_feat, n) |>
-    tidyr::pivot_wider(
-      id_cols = cell_id,
-      names_from = comb_feat,
-      values_from = n
-    )
-
-  feat_mtx <- dplyr::select(feat_trans, -cell_id) |> as.matrix()
-  rownames(feat_mtx) <- dplyr::pull(feat_trans, cell_id)
-  return(feat_mtx)
 }
 
 #' see dlptools::extract_wu_features

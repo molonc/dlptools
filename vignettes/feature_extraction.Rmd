@@ -81,6 +81,10 @@ feat_mtx <- dlptools::extract_wu_features(
 )
 
 feat_mtx[1:4, 1:4]
+
+# alternatively, there is a generic dlptools::make_cellid_matrix() than can
+# pivot out and make the matrix if you already have the count dataframe and
+# don't want to redo the feature extraction
 ```
 
 <br>

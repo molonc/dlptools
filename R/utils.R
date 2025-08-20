@@ -184,3 +184,42 @@ get_package_file_path <- function(file_name) {
 
   return(mask_f)
 }
+
+#' pivot a cell_id dataframe to a wide matrix.
+#'
+#' Different functions may produce a dataframe of counts or something per
+#' cell_id for various attributes. This converts it to a matrix with rownames
+#' of cell_id and columns of some feature of interest from the dataframe that
+#' can be pivoted out.
+#'
+#' @examples
+#' cell_df <- data.frame(
+#'   cell_id = c("cell_1", "cell_1", "cell_1"),
+#'   some_col = c("A", "B", "C"),
+#'   some_val = 1:3
+#' )
+#'
+#' make_cellid_matrix(cell_df, name_col = "some_col", val_col = "some_val")
+#'
+#' #       A B C
+#' # cell_1 1 2 3
+#'
+#' @param cell_df some dataframe with a column of cell_id and values for each
+#' of those cells.
+#' @param name_col the column to be pivoted out
+#' @param val_col the column to use as values in the matrix
+#' @return matrix
+#' @export
+make_cellid_matrix <- function(cell_df, name_col, val_col) {
+  cell_mtx_init <- cell_df |>
+    dplyr::select(cell_id, .data[[name_col]], .data[[val_col]]) |>
+    tidyr::pivot_wider(
+      id_cols = cell_id,
+      names_from = .data[[name_col]],
+      values_from = .data[[val_col]]
+    )
+
+  cell_mtx <- dplyr::select(cell_mtx_init, -cell_id) |> as.matrix()
+  rownames(cell_mtx) <- dplyr::pull(cell_mtx_init, cell_id)
+  return(cell_mtx)
+}
