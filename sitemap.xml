@@ -74,6 +74,7 @@
 <url><loc>https://molonc.github.io/dlptools/reference/load_chrom_info_file.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/load_mask_file.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/load_ucsc_centromeres.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/make_cellid_matrix.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/make_clone_palette.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/make_corrupt_tree_heatmap.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/make_tree_plot_obj.html</loc></url>
@@ -98,6 +99,5 @@
 <url><loc>https://molonc.github.io/dlptools/reference/segs_to_reads.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/sort_df_by_cell_order.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/weighted_ploidy.html</loc></url>
-<url><loc>https://molonc.github.io/dlptools/reference/wu_features_to_matrix.html</loc></url>
 </urlset>
 

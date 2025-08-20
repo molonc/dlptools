@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.16</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.17</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -125,14 +125,14 @@ your liking.</p>
 <span>  segs_df <span class="op">=</span> <span class="va">segs_df</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 6</span></span></span>
-<span><span class="co">#&gt;   cell_id                  cn_bin seg_bin seg_change seg_shape     n</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AT21352-A144173A-R03-C12 S0-1   S       AA         LL            0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AT21352-A144173A-R03-C12 S0-1   S       AA         HH            0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> AT21352-A144173A-R03-C12 S0-1   S       AA         OT            0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> AT21352-A144173A-R03-C12 S0-1   S       BB         LL            1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> AT21352-A144173A-R03-C12 S0-1   S       BB         HH            0</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 7</span></span></span>
+<span><span class="co">#&gt;   cell_id                  cn_bin seg_bin seg_change seg_shape     n feat_cat   </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AT21352-A144173A-R03-C12 S0-1   S       AA         LL            0 S:LL:S0-1:…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AT21352-A144173A-R03-C12 S0-1   S       AA         HH            0 S:HH:S0-1:…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> AT21352-A144173A-R03-C12 S0-1   S       AA         OT            0 S:OT:S0-1:…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> AT21352-A144173A-R03-C12 S0-1   S       BB         LL            1 S:LL:S0-1:…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> AT21352-A144173A-R03-C12 S0-1   S       BB         HH            0 S:HH:S0-1:…</span></span></code></pre></div>
 <p><br><br></p>
 <p>There are other options, like annotating the input dataframe, or
 returning a matrix for subsequent signature extraction:</p>
@@ -147,7 +147,11 @@ returning a matrix for subsequent signature extraction:</p>
 <span><span class="co">#&gt; AT21352-A144173A-R03-C12            0            0            0            1</span></span>
 <span><span class="co">#&gt; AT21352-A144173A-R03-C32            0            0            0            1</span></span>
 <span><span class="co">#&gt; AT21352-A144173A-R03-C33            0            0            0            0</span></span>
-<span><span class="co">#&gt; AT21352-A144173A-R03-C35            0            0            0            0</span></span></code></pre></div>
+<span><span class="co">#&gt; AT21352-A144173A-R03-C35            0            0            0            0</span></span>
+<span></span>
+<span><span class="co"># alternatively, there is a generic dlptools::make_cellid_matrix() than can</span></span>
+<span><span class="co"># pivot out and make the matrix if you already have the count dataframe and</span></span>
+<span><span class="co"># don't want to redo the feature extraction</span></span></code></pre></div>
 <p><br></p>
 <p>see <code><a href="../reference/extract_wu_features.html">?dlptools::extract_wu_features</a></code> for more.</p>
 <p><br><br><br></p>

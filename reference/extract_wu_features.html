@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.16</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.17</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,7 +50,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">extract_wu_features</span><span class="op">(</span></span>
 <span>  <span class="va">segs_df</span>,</span>
 <span>  state_bin_max <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>  bin_breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5e+06</span>, <span class="fl">1e+07</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  bin_breaks <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  annotate_input <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  return_matrix <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -72,7 +72,9 @@ value and higher are grouped together. Default of 5 follows paper.</p></dd>
 
 <dt id="arg-bin-breaks">bin_breaks<a class="anchor" aria-label="anchor" href="#arg-bin-breaks"></a></dt>
 <dd><p>floats, how to break up segment sizes. Bins will be one
-more than breaks. Defaults follow paper.</p></dd>
+more than breaks. Defaults follow paper. Default is &lt; 5Mb, 5–10Mb, &gt; 10Mb
+specified as c(5e6, 10e6 + 1). Internally, base::cut() is used, so 2 splits
+produces 3 bins.</p></dd>
 
 
 <dt id="arg-annotate-input">annotate_input<a class="anchor" aria-label="anchor" href="#arg-annotate-input"></a></dt>
