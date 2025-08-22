@@ -40,3 +40,33 @@ weighted_ploidy <- function(
 
   return(sample_ploidy)
 }
+
+
+#' find the mode CN per chromosome, then mode across the chromosomes
+#'
+#' Done per chromosome first so that large chromosomes don't dominate the
+#' result. It is critical that the input be even bin level data, or this makes
+#' no sense to do. Measures of the copy number states need to be done in evenly
+#' sized bins.
+#'
+#' @param bin_df dataframe of bin level data
+#' @param sample_col string column name identifying samples
+#' @param cn_col string column name for copy number states
+#' @param chrom_col string column name for chromosomes
+#' @return tibble/dataframe of results by cell_id/sample
+mode_ploidy <- function(
+    bin_df,
+    sample_col = "cell_id",
+    cn_col = "state",
+    chrom_col = "chr") {
+  bin_df |>
+    dplyr::group_by(.data[[sample_col]], .data[[chrom_col]]) |>
+    dplyr::summarise(
+      chr_mode = cust_mode(.data[[cn_col]])
+    ) |>
+    dplyr::group_by(.data[[sample_col]]) |>
+    dplyr::summarise(
+      mode_ploidy = cust_mode(chr_mode)
+    ) |>
+    dplyr::ungroup()
+}

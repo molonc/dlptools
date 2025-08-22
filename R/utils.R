@@ -223,3 +223,20 @@ make_cellid_matrix <- function(cell_df, name_col, val_col) {
   rownames(cell_mtx) <- dplyr::pull(cell_mtx_init, cell_id)
   return(cell_mtx)
 }
+
+
+#' find most common element in a vector
+#'
+#' For ties, just the first one in the list is returned.
+#'
+#' @param x vector of values
+#' @return most common element of input vector
+#' @export
+cust_mode <- function(x, na.rm = FALSE) {
+  if (na.rm) {
+    x <- x[!is.na(x)]
+  }
+
+  ux <- unique(x)
+  return(ux[which.max(tabulate(match(x, ux)))])
+}

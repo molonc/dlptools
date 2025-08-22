@@ -283,6 +283,9 @@ filt_reads <- ex_reads |>
 c(filt_reads = nrow(filt_reads), input_reads = nrow(ex_reads))
 ```
 
+<br>
+<br>
+<br>
 
 ## Ploidy of samples
 
@@ -294,7 +297,19 @@ We can get an idea of the ploidy of a sample by taking the mean of the copy numb
 This function does that:
 
 ```{r}
-weighted_ploidy(ex_segs) |>
+dlptools::weighted_ploidy(ex_segs) |>
+  dplyr::slice_head(n = 5)
+```
+
+<br>
+
+Alternative, if you want integers, is to get the mode ploidy. The should only be done for evenly sized bins, or the mode wouldn't make much sense.
+
+```{r}
+dlptools::mode_ploidy(
+  ex_reads,
+  sample_col = "cell_id"
+) |>
   dplyr::slice_head(n = 5)
 ```
 
