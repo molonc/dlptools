@@ -25,12 +25,12 @@ can be pivoted out.
 }
 \examples{
 cell_df <- data.frame(
-   cell_id = c("cell_1", "cell_1", "cell_1"),
-   some_col = c("A", "B", "C"),
-   some_val = 1:3
+  cell_id = c("cell_1", "cell_1", "cell_1"),
+  some_col = c("A", "B", "C"),
+  some_val = 1:3
 )
 
-make_cellid_matrix(cell_df, name_col="some_col", val_col="some_val")
+make_cellid_matrix(cell_df, name_col = "some_col", val_col = "some_val")
 
 #       A B C
 # cell_1 1 2 3

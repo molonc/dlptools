@@ -214,3 +214,55 @@ extract_sigminer_wang_features <- function(segs_df) {
 
   return(sm_tally$nmf_matrix)
 }
+
+
+#' Could changes of state relative to ploidy.
+#'
+#' Marks CN segments as a gain or loss, relative to the mode ploidy of the
+#' sample.
+#'
+#' @param segs_df a dataframe of CN segments
+#' @param annotate_input boolean. return input dataframe annotating each
+#' @param return_matrix boolean. Return a cell-by-feature matrix of counts.
+#' @return tibble/dataframe of counts
+#' @export
+ploidy_relative_cn_state <- function(
+    segs_df,
+    sample_col = "cell_id",
+    annotate_input = FALSE,
+    return_matrix = FALSE) {
+  sample_mode_ploidy <- segs_df |>
+    reads_to_segs() |>
+    mode_ploidy(sample_col = sample_col)
+
+  segs_df <- dplyr::left_join(
+    segs_df,
+    sample_mode_ploidy,
+    by = sample_col
+  )
+
+  segs_df <- segs_df |>
+    dplyr::mutate(
+      cn_v_ploidy = dplyr::case_when(
+        state < mode_ploidy ~ "ploidy-loss",
+        state > mode_ploidy ~ "ploidy-gain",
+        state == mode_ploidy ~ "ploidy-match"
+      )
+    )
+
+  if (annotate_input) {
+    return(segs_df)
+  }
+
+  feat_count <- segs_df |>
+    dplyr::group_by(.data[[sample_col]], .drop = FALSE) |>
+    dplyr::count(cn_v_ploidy) |>
+    dplyr::ungroup()
+
+  if (return_matrix) {
+    feat_mtx <- make_cellid_matrix(feat_count, "cn_v_ploidy", "n")
+    return(feat_mtx)
+  }
+
+  return(feat_count)
+}
