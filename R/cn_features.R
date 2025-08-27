@@ -232,7 +232,7 @@ ploidy_relative_cn_state <- function(
     annotate_input = FALSE,
     return_matrix = FALSE) {
   sample_mode_ploidy <- segs_df |>
-    reads_to_segs() |>
+    segs_to_reads() |>
     mode_ploidy(sample_col = sample_col)
 
   segs_df <- dplyr::left_join(

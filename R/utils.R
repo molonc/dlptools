@@ -240,3 +240,11 @@ cust_mode <- function(x, na.rm = FALSE) {
   ux <- unique(x)
   return(ux[which.max(tabulate(match(x, ux)))])
 }
+
+
+#' detect if chromosomes labels include "chr"
+#' @param chrom_vec vector of chromosome labels, probably pulled from a
+#' dataframe of cn information.
+is_chr_used_in_chroms <- function(chrom_vec) {
+  return(any(stringr::str_detect(unique(chrom_vec), "chr")))
+}

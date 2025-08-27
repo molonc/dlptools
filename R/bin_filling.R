@@ -1,31 +1,3 @@
-#' loading UCSC chromosome length files
-#' @param version default "hg19", can also load "hg38"
-#' @return tibgble of chromosome, total length, etc.
-#' @export
-load_chrom_info_file <- function(version = c("hg19", "hg38")) {
-  version <- match.arg(version)
-
-  chrom_files <- list(
-    hg19 = "hg19_chromInfo.txt.gz",
-    hg38 = "hg19_chromInfo.txt.gz"
-  )
-
-  chrom_info <- get_package_file_path(chrom_files[version]) |>
-    vroom::vroom(
-      col_names = c("chr", "total_length", "misc"),
-      show_col_types = FALSE
-    ) |>
-    dplyr::filter(
-      # remove the unnecessary chromosomes
-      stringr::str_detect(chr, "_|M", negate = TRUE)
-    ) |>
-    dplyr::mutate(
-      chr = stringr::str_replace(chr, "chr", "")
-    )
-
-  return(chrom_info)
-}
-
 #' For a given length, create bins of a given size
 #'
 #' e.g., length = 10, bin = 5, will get bins: 1-5, 6-10
@@ -128,7 +100,7 @@ add_missing_bins_for_cells <- function(
 #' other states to fill in.
 #'
 #' @param state_df dataframe of state data with NAs for some bins that need
-#' to be filled in. E.g., after dlptools::running add_missing_bins_for_cells()
+#' to be filled in. E.g., after dlptools::add_missing_bins_for_cells()
 #' @export
 #' @importFrom rlang .data
 fill_state_from_neighbours <- function(state_df, cols_to_fill = c("state")) {

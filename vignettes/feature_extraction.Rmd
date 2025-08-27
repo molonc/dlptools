@@ -106,3 +106,25 @@ sig_feats[1:4, 1:4]
 <br>
 <br>
 <br>
+
+## More Features: ploidy informed CN change
+
+CN change relative to ploidy might be interesting to have a feature. Here we can mark 3 types of events for segments:
+
+1. CN is a gain relative to mode ploidy of sample/cell
+2. CN is a loss relative to mode ploidy of sample/cell
+3. CN is a match to mode ploidy
+
+Employs the function dlptools::mode_ploidy() to calculate mode ploidy of each sample/cell.
+
+```{r}
+dlptools::ploidy_relative_cn_state(
+  segs_df,
+  # with option just to annotate the input df
+  # annotate_input = TRUE
+  # or, alternatively, return a count matrix
+  # return_matrix = TRUE
+) |>
+  dplyr::slice_head(n = 6)
+```
+
