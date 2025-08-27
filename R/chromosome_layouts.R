@@ -1,3 +1,13 @@
+#' global of event labels for [dlptools::mark_segs_chromosome_span()]
+#'
+#' Set as a global, as useful in other contexts
+#' @export
+SEG_CHROM_EVENT_LABELS <- c(
+  arm = "arm", whole = "whole-chrom", telo = "telo-bound", centro = "centro-bound",
+  inter = "inter"
+)
+
+
 #' loading UCSC chromosome length files
 #' @param version default "hg19", can also load "hg38"
 #' @return tibgble of chromosome, total length, etc.
@@ -54,26 +64,27 @@ add_chromosome_length <- function(cn_df, version = c("hg19", "hg38"), chrom_col 
 #'
 #' See dlptools::read_and_prep_ucsg_cenrtomeres() for details of file origins.
 #'
+#' @param cn_df dataframe of cn states for read bins or segments
 #' @param centro_file NULL or string to the path if you download yourself
 #' @param hg19 boolean to target hg19 for loading
 #' @param hg38 boolean to target hg38 for loading
 #' @return input table with centromere information added by chromosome
 #' @export
 add_centromere_locations <- function(
-    reads_df, centro_file = NULL, version = c("hg19", "hg38")) {
+    cn_df, centro_file = NULL, version = c("hg19", "hg38")) {
   version_choice <- match.arg(version)
 
   centros <- load_ucsc_centromeres(
     centro_file = centro_file, version = version_choice
   )
 
-  reads_df <- dplyr::left_join(
-    reads_df,
+  cn_df <- dplyr::left_join(
+    cn_df,
     centros,
     by = dplyr::join_by(chr == chrom)
   )
 
-  return(reads_df)
+  return(cn_df)
 }
 
 #' add boolean if bin overlaps with a centromere.
@@ -316,11 +327,10 @@ add_telomere_positions <- function(cn_df, version = c("hg19", "hg38")) {
 #' either feature. Meaning, if the segment (end - start)/arm_length is at least
 #' 90% of the arm_length, the segment is considered an "arm" spanning segment.
 #'
-#' This input dataframe requires several columns to be pregenerated. Users need
-#' to run [dlptools::add_chromosome_length()],
+#' This function runs several other functions including:
+#' [dlptools::add_chromosome_length()],
 #' [dlptools::add_centromere_locations()], and
-#' [dlptools::add_telomere_positions()]. See the the [features vignette](https://molonc.github.io/dlptools/articles/feature_extraction.html) for more
-#' details
+#' [dlptools::add_telomere_positions()].
 #'
 #' @param segs_df dataframe of CN segments
 #' @param min_bound_distance integer. Distance to adjacent feature to be
@@ -329,6 +339,7 @@ add_telomere_positions <- function(cn_df, version = c("hg19", "hg38")) {
 #' arm segment.
 #' @param min_span_of_chrom float. Proportion of the chromosome to cover to be
 #' considered a whole chromosome segment.
+#' @param version string. hg19 (default) or hg38
 #' @param acro_fix_whole_chrom. boolean. Whether to reset acrocentric
 #' chromosome CN segments to "whole-chrom" if they span futher than the Q arm.
 #' Honestly, probably not useful
@@ -340,20 +351,12 @@ mark_segs_chromosome_span <- function(
     min_bound_distance = 5e5, # given scale of DLP, this should probably be 1 bin width, at least
     min_span_of_chrom = 0.9,
     min_span_of_arm = 0.9,
+    version = c("hg19", "hg38"),
     acro_fix_whole_chrom = FALSE) {
-  required_cols <- c("teloend_p", "telostart_q", "centro_start", "centro_end", "total_length")
-  if (!all(required_cols %in% colnames(segs_df))) {
-    stop(
-      paste(
-        "required columns missing! Need:",
-        paste(required_cols, collapse = ", "),
-        "see functions: dlptools::add_chromosome_length, dlptools::add_centromere_locations, dlptools::add_telomere_positions",
-        sep = "\n"
-      )
-    )
-  }
-
   segs_df <- segs_df |>
+    add_chromosome_length(version = version) |>
+    add_centromere_locations(version = version) |>
+    add_telomere_positions(version = version) |>
     dplyr::mutate(
       # find closest telomere to the CN event
       telo_p_dist = start - teloend_p,
@@ -399,12 +402,12 @@ mark_segs_chromosome_span <- function(
       # trying to be simple and Shih et al. 2023 10.1038/s41586-023-06266-3
       # inspired
       seg_span_event = dplyr::case_when(
-        spans_chrom ~ "whole-chrom",
-        centro_bound & telo_bound & !spans_centro ~ "arm",
-        !telo_bound & !centro_bound & !spans_chrom & spans_arm ~ "arm",
-        telo_bound & !centro_bound & !spans_chrom ~ "telo-bound",
-        centro_bound | spans_centro ~ "centro-bound",
-        .default = "inter"
+        spans_chrom ~ SEG_CHROM_EVENT_LABELS["whole"], # "whole-chrom",
+        centro_bound & telo_bound & !spans_centro ~ SEG_CHROM_EVENT_LABELS["arm"],
+        !telo_bound & !centro_bound & !spans_chrom & spans_arm ~ SEG_CHROM_EVENT_LABELS["arm"],
+        telo_bound & !centro_bound & !spans_chrom ~ SEG_CHROM_EVENT_LABELS["telo"], # "telo-bound",
+        centro_bound | spans_centro ~ SEG_CHROM_EVENT_LABELS["centro"], # "centro-bound"
+        .default = SEG_CHROM_EVENT_LABELS["inter"]
       )
     )
 
@@ -423,11 +426,19 @@ mark_segs_chromosome_span <- function(
         ),
         seg_span_event = dplyr::case_when(
           !(chr %in% acro_chroms) ~ seg_span_event,
-          acro_span >= q_span ~ "whole-chrom",
+          acro_span >= q_span ~ SEG_CHROM_EVENT_LABELS["whole"],
           .default = seg_span_event
         )
       )
   }
+
+  segs_df <- dplyr::mutate(
+    segs_df,
+    seg_span_event = factor(
+      seg_span_event,
+      levels = unname(SEG_CHROM_EVENT_LABELS)
+    )
+  )
 
   return(segs_df)
 }

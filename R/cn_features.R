@@ -23,7 +23,8 @@
 #' in their actual code is set to 1. This function follows their code, but can
 #' be altered.
 #'
-#' @param segs_df a dataframe of CN segments
+#' @param segs_df dataframe. CN segments
+#' @param sample_col string. Name of the column with cell_id/other sample name
 #' @param state_bin_max int. Maximum CN to consider for bins. All CNs of this
 #' value and higher are grouped together. Default of 5 follows paper.
 #' @param bin_breaks floats, how to break up segment sizes. Bins will be one
@@ -35,7 +36,7 @@
 #' @param ... can pass change_split_val to alter critical value for AA/BB split
 #' @return default return is a tibble of feature counts for each cell id.
 #' @export
-extract_wu_features <- function(segs_df, state_bin_max = 5, bin_breaks = NA, annotate_input = FALSE, return_matrix = FALSE, ...) {
+extract_wu_features <- function(segs_df, sample_col = "cell_id", state_bin_max = 5, bin_breaks = NA, annotate_input = FALSE, return_matrix = FALSE, ...) {
   # paper code: https://github.com/XSLiuLab/single-cell-CNA-signature/blob/main/code/divide_feature.R
 
   # default segment size breakpoints
@@ -61,7 +62,7 @@ extract_wu_features <- function(segs_df, state_bin_max = 5, bin_breaks = NA, ann
       !dplyr::if_any(c(cn_bin, seg_bin, seg_change, seg_shape), is.na)
     ) |>
     dplyr::group_by(
-      cell_id, cn_bin, seg_bin, seg_change, seg_shape,
+      .data[[sample_col]], cn_bin, seg_bin, seg_change, seg_shape,
       .drop = FALSE
     ) |>
     dplyr::count() |>
@@ -221,12 +222,13 @@ extract_sigminer_wang_features <- function(segs_df) {
 #' Marks CN segments as a gain or loss, relative to the mode ploidy of the
 #' sample.
 #'
-#' @param segs_df a dataframe of CN segments
+#' @param segs_df dataframe. CN segments
+#' @param sample_col string. Name of the column with cell_id/other sample name
 #' @param annotate_input boolean. return input dataframe annotating each
 #' @param return_matrix boolean. Return a cell-by-feature matrix of counts.
 #' @return tibble/dataframe of counts
 #' @export
-ploidy_relative_cn_state <- function(
+extract_ploidy_cn_feature <- function(
     segs_df,
     sample_col = "cell_id",
     annotate_input = FALSE,
@@ -265,4 +267,47 @@ ploidy_relative_cn_state <- function(
   }
 
   return(feat_count)
+}
+
+
+#' count the segment-span-on-chromosome event types.
+#'
+#' Critical to this fuction is [dlptools::mark_segs_chromosome_span()]. It is
+#' important to read and understand that function and its arguments.
+#'
+#' This function basically just calls [dlptools::mark_segs_chromosome_span()]
+#' and summarizes the results. Arguments can be passed to that underlying
+#' function. Passing no arguments means you are happy with the defaults. See
+#' [dlptools::mark_segs_chromosome_span()] to understand what the defaults are.
+#'
+#' @param segs_df dataframe of CN segments
+#' @param sample_col string. Name of the column with cell_id/other sample name
+#' @param annotate_input boolean. return input dataframe annotating each
+#' segment.
+#' @param return_matrix boolean. Return a cell-by-feature matrix of counts.
+#' @return tibble/dataframe of counts
+#' @export
+extract_segment_position_feature <- function(
+    segs_df,
+    sample_col = "cell_id",
+    annotate_input = FALSE,
+    return_matrix = FALSE,
+    ...) {
+  segs_df <- mark_segs_chromosome_span(segs_df, ...)
+
+  if (annotate_input) {
+    return(segs_df)
+  }
+
+  seg_span_counts <- segs_df |>
+    dplyr::group_by(.data[[sample_col]], .drop = FALSE) |>
+    dplyr::count(seg_span_event) |>
+    dplyr::ungroup()
+
+  if (return_matrix) {
+    feat_mtx <- make_cellid_matrix(seg_span_counts, "seg_span_event", "n")
+    return(feat_mtx)
+  }
+
+  return(seg_span_counts)
 }

@@ -118,7 +118,7 @@ CN change relative to ploidy might be interesting to have a feature. Here we can
 Employs the function dlptools::mode_ploidy() to calculate mode ploidy of each sample/cell.
 
 ```{r}
-dlptools::ploidy_relative_cn_state(
+dlptools::extract_ploidy_cn_feature(
   segs_df,
   # with option just to annotate the input df
   # annotate_input = TRUE

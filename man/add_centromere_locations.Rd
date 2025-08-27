@@ -5,12 +5,14 @@
 \title{add centromere information to reads by chromosome}
 \usage{
 add_centromere_locations(
-  reads_df,
+  cn_df,
   centro_file = NULL,
   version = c("hg19", "hg38")
 )
 }
 \arguments{
+\item{cn_df}{dataframe of cn states for read bins or segments}
+
 \item{centro_file}{NULL or string to the path if you download yourself}
 
 \item{hg19}{boolean to target hg19 for loading}

@@ -9,6 +9,7 @@ mark_segs_chromosome_span(
   min_bound_distance = 5e+05,
   min_span_of_chrom = 0.9,
   min_span_of_arm = 0.9,
+  version = c("hg19", "hg38"),
   acro_fix_whole_chrom = FALSE
 )
 }
@@ -23,6 +24,8 @@ considered a whole chromosome segment.}
 
 \item{min_span_of_arm}{float. Proportion of arm to cover to be considered an
 arm segment.}
+
+\item{version}{string. hg19 (default) or hg38}
 
 \item{acro_fix_whole_chrom.}{boolean. Whether to reset acrocentric
 chromosome CN segments to "whole-chrom" if they span futher than the Q arm.
@@ -59,9 +62,8 @@ needs to span to be considered either category. Default is spaning 90\% of
 either feature. Meaning, if the segment (end - start)/arm_length is at least
 90\% of the arm_length, the segment is considered an "arm" spanning segment.
 
-This input dataframe requires several columns to be pregenerated. Users need
-to run \code{\link[=add_chromosome_length]{add_chromosome_length()}},
+This function runs several other functions including:
+\code{\link[=add_chromosome_length]{add_chromosome_length()}},
 \code{\link[=add_centromere_locations]{add_centromere_locations()}}, and
-\code{\link[=add_telomere_positions]{add_telomere_positions()}}. See the the \href{https://molonc.github.io/dlptools/articles/feature_extraction.html}{features vignette} for more
-details
+\code{\link[=add_telomere_positions]{add_telomere_positions()}}.
 }
