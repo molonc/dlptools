@@ -18,7 +18,6 @@ knitr::opts_chunk$set(
 
 
 ```{r, warning=FALSE, message=FALSE, echo=FALSE}
-library(tidyverse)
 library(vroom)
 library(dlptools)
 ```
@@ -370,34 +369,34 @@ seg_locations$chr <- factor(
   levels = gtools::mixedsort(unique(seg_locations$chr))
 )
 
-ggplot(
+ggplot2::ggplot(
   dplyr::filter(seg_locations, cell_id %in% some_cells & chr %in% targ_chrs)
 ) +
-  geom_vline(
+  ggplot2::geom_vline(
     # add genome features. Hm, maybe just do as vlines
     data = dplyr::filter(chr_attrs, chr %in% targ_chrs),
     # aes(xmin=start, xmax=end, ymin=-1, ymax=-2, fill=section_id)
-    aes(xintercept = value),
+    ggplot2::aes(xintercept = value),
     color = "black"
   ) +
-  geom_segment(
-    aes(x = start, xend = end, y = state, color = seg_span_event),
+  ggplot2::geom_segment(
+    ggplot2::aes(x = start, xend = end, y = state, color = seg_span_event),
     linewidth = 3
   ) +
-  facet_grid(
+  ggplot2::facet_grid(
     cell_id ~ chr,
     scales = "free",
     space = "free_x",
     switch = "x",
     axes = "all_x",
   ) +
-  theme_classic() +
-  theme(
-    axis.text.x = element_blank(),
+  ggplot2::theme_classic() +
+  ggplot2::theme(
+    axis.text.x = ggplot2::element_blank(),
     strip.placement = "outside",
-    strip.background = element_blank()
+    strip.background = ggplot2::element_blank()
   ) +
-  scale_color_manual(values = dlptools::GEN_PLOT_COLS)
+  ggplot2::scale_color_manual(values = dlptools::GEN_PLOT_COLS)
 ```
 
 

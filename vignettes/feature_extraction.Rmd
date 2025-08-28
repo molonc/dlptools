@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup, message=FALSE, warning=FALSE}
-library(tidyverse)
+library(ggplot2)
 library(dlptools)
 ```
 
@@ -217,7 +217,7 @@ Then, we can just count each category and leave the counts per cell per feature 
 <!-- Seeing NA in AA/BB for this dataset...track down! -->
 
 
-```{r, fig.width=8, fig.height=4, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE}
 feat_cols <- c(
   "seg_bin", "cn_bin", "seg_change", "seg_shape", "cn_v_ploidy",
   "seg_span_event"
@@ -234,9 +234,9 @@ total_counts <- purrr::map(feat_cols, \(feat_col) {
     dplyr::relocate(cell_id, feature, category)
 }) |>
   purrr::list_rbind()
+```
 
-
-
+```{r, echo=FALSE, fig.width=8, fig.height=4}
 ggplot(
   dplyr::filter(total_counts, cell_id %in% unique(total_counts$cell_id)
   [1:4]),
@@ -256,7 +256,6 @@ ggplot(
     strip.placement = "outside"
   )
 ```
-
 
 <br>
 <br>
@@ -298,7 +297,7 @@ Also, probably want to ask if crossing the category actually makes sense and add
 
 But, forging ahead bravely:
 
-```{r, fig.width=8, fig.height=4}
+```{r}
 # collect all possible feature labels
 
 crossed_counts <- feat_anno_segs |>
@@ -316,8 +315,9 @@ crossed_counts <- feat_anno_segs |>
       sep = ":"
     )
   )
+```
 
-
+```{r, echo=FALSE, fig.width=8, fig.height=4}
 ggplot(
   dplyr::filter(crossed_counts, cell_id %in% unique(total_counts$cell_id)
   [1:4]),
@@ -333,12 +333,13 @@ ggplot(
   xlab("Crossed Feature")
 ```
 
+
 <br>
 <br>
 
 Or, you could do some sort of combination of cross and uncrossed? I don't know. This whole signature field is the wild west and people do all kinds of things.
 
-```{r, fig.width=8, fig.height=4, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE}
 # count the Wu features as crossed: 90 feature categories
 wu_crossed_counts <- dlptools::extract_wu_features(segs_df) |>
   dplyr::select(cell_id, feat_cat, n) |>
@@ -367,22 +368,29 @@ all_feat_counts <- purrr::list_rbind(list(
   dplyr::mutate(
     feature_group = factor(feature_group, levels = unique(feature_group))
   )
+```
 
-ggplot(
+
+```{r, echo=FALSE, fig.width=8, fig.height=4}
+ggplot2::ggplot(
   dplyr::filter(all_feat_counts, cell_id %in% unique(total_counts$cell_id)
   [1:4]),
-  aes(x = feat_cat, y = n, fill = feature_group)
+  ggplot2::aes(x = feat_cat, y = n, fill = feature_group)
 ) +
-  geom_col(show.legend = FALSE) +
-  facet_grid(cell_id ~ feature_group, axes = "all_x", scales = "free_x", space = "free") +
-  scale_fill_manual(values = dlptools::GEN_PLOT_COLS) +
-  theme_classic() +
-  theme(
-    axis.text.x = element_blank(),
-    axis.ticks.x = element_blank(),
+  ggplot2::geom_col(show.legend = FALSE) +
+  ggplot2::facet_grid(
+    cell_id ~ feature_group,
+    axes = "all_x", scales = "free_x", space = "free"
   ) +
-  xlab("Mixed Features")
+  ggplot2::scale_fill_manual(values = dlptools::GEN_PLOT_COLS) +
+  ggplot2::theme_classic() +
+  ggplot2::theme(
+    axis.text.x = ggplot2::element_blank(),
+    axis.ticks.x = ggplot2::element_blank(),
+  ) +
+  ggplot2::xlab("Mixed Features")
 ```
+
 
 <br>
 <br>
