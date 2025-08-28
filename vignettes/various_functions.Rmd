@@ -17,8 +17,8 @@ knitr::opts_chunk$set(
 ```
 
 
-```{r}
-library(dplyr)
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+library(tidyverse)
 library(vroom)
 library(dlptools)
 ```
@@ -52,8 +52,10 @@ vroom::vroom(
 )
 ```
 
+<br>
+<br>
 
-## Marking Centromere Locations
+## Marking Centromere and Telomere Locations
 
 Centromeres are problematic for DLP data, the state calls are often inflated and highly inconsistent between adjacent bins. It's a messy region that we often want to omit. The default masking file (above) pretty much captures these regions, but sometimes we may want to be more specific. 
 
@@ -79,7 +81,7 @@ Alternatively, this can be done in parts:
 ```{r}
 # e.g., just adding the centromere information by chromosome
 dlptools::add_centromere_locations(
-  reads_df = ex_reads,
+  cn_df = ex_reads,
   version = "hg19" # default, don't need to specify. Alternative is "hg38"
 ) |>
   dplyr::select(
@@ -90,6 +92,23 @@ dlptools::add_centromere_locations(
 # dlptools::load_ucsc_centromeres()
 ```
 
+
+Also available is telomere marking, but see `?dlptools::import_telos_file` for why this isn't the most in-depth or accurate thing:
+
+```{r}
+dlptools::add_telomere_positions(
+  ex_reads
+  # version = "hg19" is the default
+) |>
+  dplyr::relocate(
+    # added columns
+    telostart_p, teloend_p, telostart_q, teloend_q
+  ) |>
+  dplyr::slice_head(n = 5)
+```
+
+<br>
+<br>
 
 ## Information From Cell IDs
 
@@ -125,6 +144,8 @@ ex_reads |>
   dplyr::slice_sample(n = 5)
 ```
 
+<br>
+<br>
 
 ## Inferring Missing Bin Data
 
@@ -235,6 +256,8 @@ dlptools::load_chrom_info_file(
 ```
 
 
+<br>
+<br>
 
 ## Reads to Segments
 
@@ -250,6 +273,9 @@ ex_segs[1:4, ]
 
 
 *warning:* this function will leave some unexpected gaps when dataframes have been filtered and bins removed. Inspect carfully if you have dropped bins from your dataframe.
+
+<br>
+<br>
 
 ## Segments to Reads
 
@@ -285,6 +311,98 @@ c(filt_reads = nrow(filt_reads), input_reads = nrow(ex_reads))
 
 <br>
 <br>
+
+## Where Segments Occur
+
+Useful to know is where segments occur relative to chromosome features like the centromere and telomeres.
+
+There are a few key arguments to this function, like setting distances for how close segments need to be to telomeres and centromeres to be consider "bound", and minimum spans of arms/chromosomes. 
+
+Please see `?dlptools::mark_segs_chromosome_span` for more information on how this works:
+
+```{r}
+seg_locations <- dlptools::mark_segs_chromosome_span(
+  ex_segs,
+  # version = "hg19" assumed, but hg38 possible too.
+)
+
+dplyr::relocate(
+  seg_locations,
+  # key added columns, more present too
+  seg_span_event, telo_bound, centro_bound, spans_chrom, spans_arm
+)
+```
+
+
+Visually, this is what we're doing:
+
+```{r, echo = FALSE, fig.width=8, fig.height=6, fig.cap="Labels of CN segments on chromosomes. Vertical lines indicate locations of telomeres and centromeres."}
+chr_attrs <- dplyr::left_join(
+  dlptools::load_ucsc_centromeres(),
+  dlptools::import_telos_file(),
+  by = dplyr::join_by(chrom == chr)
+) |>
+  dplyr::rename(
+    chr = chrom
+  ) |>
+  dplyr::select(chr, centro_start, centro_end, dplyr::contains("telo")) |>
+  tidyr::pivot_longer(cols = -chr) |>
+  dplyr::mutate(
+    plot_name = dplyr::case_when(
+      stringr::str_detect(name, "start") ~ "start",
+      stringr::str_detect(name, "end") ~ "end",
+    ),
+    section_id = dplyr::case_when(
+      stringr::str_detect(name, "centro") ~ "centro",
+      stringr::str_detect(name, "telo.*p") ~ "telo-p",
+      stringr::str_detect(name, "telo.*q") ~ "telo-q"
+    )
+  ) |>
+  dplyr::select(chr, section_id, plot_name, value)
+
+
+targ_chrs <- c(1, 2, 8, 13, 14)
+
+some_cells <- unique(seg_locations$cell_id)[1:5]
+
+seg_locations$chr <- factor(
+  seg_locations$chr,
+  levels = gtools::mixedsort(unique(seg_locations$chr))
+)
+
+ggplot(
+  dplyr::filter(seg_locations, cell_id %in% some_cells & chr %in% targ_chrs)
+) +
+  geom_vline(
+    # add genome features. Hm, maybe just do as vlines
+    data = dplyr::filter(chr_attrs, chr %in% targ_chrs),
+    # aes(xmin=start, xmax=end, ymin=-1, ymax=-2, fill=section_id)
+    aes(xintercept = value),
+    color = "black"
+  ) +
+  geom_segment(
+    aes(x = start, xend = end, y = state, color = seg_span_event),
+    linewidth = 3
+  ) +
+  facet_grid(
+    cell_id ~ chr,
+    scales = "free",
+    space = "free_x",
+    switch = "x",
+    axes = "all_x",
+  ) +
+  theme_classic() +
+  theme(
+    axis.text.x = element_blank(),
+    strip.placement = "outside",
+    strip.background = element_blank()
+  ) +
+  scale_color_manual(values = dlptools::GEN_PLOT_COLS)
+```
+
+
+
+<br>
 <br>
 
 ## Ploidy of samples
@@ -313,7 +431,24 @@ dlptools::mode_ploidy(
   dplyr::slice_head(n = 5)
 ```
 
+<br>
 
+Related, we can also infer if a CN change is a gain or loss, relative to ploidy:
+
+```{r}
+dlptools::mark_cn_relative_to_ploidy(
+  ex_reads, # or can pass segments df
+  df_type = "reads" # df_type = "segs"
+) |>
+  dplyr::relocate(
+    # key added columns
+    mode_ploidy, cn_v_ploidy
+  ) |>
+  dplyr::slice_head(n = 5)
+```
+
+<br>
+<br>
 
 ## Long to Wide Reads (or segments)
 
@@ -359,58 +494,8 @@ dlptools::ASCN_PHASE_COLORS
 # dlptools::BAF_COLORS
 ```
 
-## Data Importing
-
-If you've followed a semi-standard approach for downloading such as this:
-
-```bash
-# bash
-cd where/to/save/my_dlp/
-
-ticket="SC-8382"
-azcopy copy https://singlecellresults.blob.core.windows.net/results/${ticket}/results/annotation/ ${ticket} --recursive
-azcopy copy https://singlecellresults.blob.core.windows.net/results/${ticket}/results/hmmcopy/ ${ticket} --recursive
-
-```
-
-which produces a directory with this sort of structure:
-
-```bash
-├── SC-8382
-│   ├── annotation
-│   │   ├── metrics.csv.gz
-│   │   ├── #[...other files ...]
-│   └── hmmcopy
-│   │   ├── #[...other files ...]
-│       ├── reads.csv.gz
-│       ├── segments.csv.gz
-├── SC-8408
-│   ├── annotation
-│   │   ├── metrics.csv.gz
-│   │   ├── #[...other files ...]
-│   └── hmmcopy
-│   │   ├── #[...other files ...]
-│       ├── reads.csv.gz
-│       ├── segments.csv.gz
-├── SC-8650
-```
-
-then there are some functions that can help with loading data from these into a consistent dataframe:
-
-```{r, eval=FALSE}
-dlp_dir <- "/where/to/save/my_dlp/"
-
-# loading metrics
-metrics <- dlptools::import_dlp_files(dlp_dir, "metrics")
-
-# loading reads
-reads_df <- dlptools::import_dlp_files(dlp_dir, "reads")
-
-# loading segments...but generally this isn't a great idea
-# segs_df <- dlptools::import_dlp_files(dlp_dir, "segments")
-```
-
-
+<br>
+<br>
 
 ## Other
 

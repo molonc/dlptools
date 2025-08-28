@@ -217,10 +217,11 @@ extract_sigminer_wang_features <- function(segs_df) {
 }
 
 
-#' Could changes of state relative to ploidy.
+#' Count changes of state relative to ploidy.
 #'
 #' Marks CN segments as a gain or loss, relative to the mode ploidy of the
-#' sample.
+#' sample. Internally using [dlptools::mark_cn_relative_to_ploidy]. See that
+#' function for argument details.
 #'
 #' @param segs_df dataframe. CN segments
 #' @param sample_col string. Name of the column with cell_id/other sample name
@@ -229,28 +230,15 @@ extract_sigminer_wang_features <- function(segs_df) {
 #' @return tibble/dataframe of counts
 #' @export
 extract_ploidy_cn_feature <- function(
-    segs_df,
+    segs_df = NA,
     sample_col = "cell_id",
     annotate_input = FALSE,
     return_matrix = FALSE) {
-  sample_mode_ploidy <- segs_df |>
-    segs_to_reads() |>
-    mode_ploidy(sample_col = sample_col)
-
-  segs_df <- dplyr::left_join(
-    segs_df,
-    sample_mode_ploidy,
-    by = sample_col
+  segs_df <- mark_cn_relative_to_ploidy(
+    in_df = segs_df,
+    df_type = "segs",
+    sample_col = sample_col
   )
-
-  segs_df <- segs_df |>
-    dplyr::mutate(
-      cn_v_ploidy = dplyr::case_when(
-        state < mode_ploidy ~ "ploidy-loss",
-        state > mode_ploidy ~ "ploidy-gain",
-        state == mode_ploidy ~ "ploidy-match"
-      )
-    )
 
   if (annotate_input) {
     return(segs_df)

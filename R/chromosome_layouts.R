@@ -1,13 +1,3 @@
-#' global of event labels for [dlptools::mark_segs_chromosome_span()]
-#'
-#' Set as a global, as useful in other contexts
-#' @export
-SEG_CHROM_EVENT_LABELS <- c(
-  arm = "arm", whole = "whole-chrom", telo = "telo-bound", centro = "centro-bound",
-  inter = "inter"
-)
-
-
 #' loading UCSC chromosome length files
 #' @param version default "hg19", can also load "hg38"
 #' @return tibgble of chromosome, total length, etc.
@@ -121,7 +111,7 @@ mark_bins_overlapping_centromeres <- function(
       ". If that is not correct, set version to 'hg38')."
     ))
 
-    reads_df <- add_centromere_locations(reads_df = reads_df)
+    reads_df <- add_centromere_locations(cn_df = reads_df)
   }
 
   reads_df <- reads_df |>
@@ -314,7 +304,7 @@ add_telomere_positions <- function(cn_df, version = c("hg19", "hg38")) {
 #' 3. arm (arm) - segment spans a whole are (*with conditions)
 #' 4. whole chromosome (whole-chrom) - segment spans the entire chromosome
 #' (*with conditions)
-#' 5. intersitial (inert) - occuring within the chromosome, not touching the
+#' 5. intersitial (inter) - occuring within the chromosome, not touching the
 #' centromere, telomeres, and not big enough to be an entire arm.
 #'
 #' You can set a min_bound_distance which reflects how close a feature needs to
@@ -353,6 +343,11 @@ mark_segs_chromosome_span <- function(
     min_span_of_arm = 0.9,
     version = c("hg19", "hg38"),
     acro_fix_whole_chrom = FALSE) {
+  event_labels <- c(
+    arm = "arm", whole = "whole-chrom", telo = "telo-bound",
+    centro = "centro-bound", inter = "inter"
+  )
+
   segs_df <- segs_df |>
     add_chromosome_length(version = version) |>
     add_centromere_locations(version = version) |>
@@ -402,12 +397,12 @@ mark_segs_chromosome_span <- function(
       # trying to be simple and Shih et al. 2023 10.1038/s41586-023-06266-3
       # inspired
       seg_span_event = dplyr::case_when(
-        spans_chrom ~ SEG_CHROM_EVENT_LABELS["whole"], # "whole-chrom",
-        centro_bound & telo_bound & !spans_centro ~ SEG_CHROM_EVENT_LABELS["arm"],
-        !telo_bound & !centro_bound & !spans_chrom & spans_arm ~ SEG_CHROM_EVENT_LABELS["arm"],
-        telo_bound & !centro_bound & !spans_chrom ~ SEG_CHROM_EVENT_LABELS["telo"], # "telo-bound",
-        centro_bound | spans_centro ~ SEG_CHROM_EVENT_LABELS["centro"], # "centro-bound"
-        .default = SEG_CHROM_EVENT_LABELS["inter"]
+        spans_chrom ~ event_labels["whole"], # "whole-chrom",
+        centro_bound & telo_bound & !spans_centro ~ event_labels["arm"],
+        !telo_bound & !centro_bound & !spans_chrom & spans_arm ~ event_labels["arm"],
+        telo_bound & !centro_bound & !spans_chrom ~ event_labels["telo"], # "telo-bound",
+        centro_bound | spans_centro ~ event_labels["centro"], # "centro-bound"
+        .default = event_labels["inter"]
       )
     )
 
@@ -426,7 +421,7 @@ mark_segs_chromosome_span <- function(
         ),
         seg_span_event = dplyr::case_when(
           !(chr %in% acro_chroms) ~ seg_span_event,
-          acro_span >= q_span ~ SEG_CHROM_EVENT_LABELS["whole"],
+          acro_span >= q_span ~ event_labels["whole"],
           .default = seg_span_event
         )
       )
@@ -436,7 +431,7 @@ mark_segs_chromosome_span <- function(
     segs_df,
     seg_span_event = factor(
       seg_span_event,
-      levels = unname(SEG_CHROM_EVENT_LABELS)
+      levels = unname(event_labels)
     )
   )
 

@@ -54,6 +54,7 @@ weighted_ploidy <- function(
 #' @param cn_col string column name for copy number states
 #' @param chrom_col string column name for chromosomes
 #' @return tibble/dataframe of results by cell_id/sample
+#' @export
 mode_ploidy <- function(
     bin_df,
     sample_col = "cell_id",
@@ -69,4 +70,63 @@ mode_ploidy <- function(
       mode_ploidy = cust_mode(chr_mode)
     ) |>
     dplyr::ungroup()
+}
+
+#' Mark if CN states are gains or losses relative to cell ploidy
+#'
+#' CNs > 2 are not necessarily amplifications, and CNs < 2 are not necessarily
+#' the only states of losses. Ploidy of samples may not be diploid. This
+#' function will give you an idea if the CN you see is a gain or loss relative
+#' to the ploidy of a sample. For example, if the sample has a ploidy of 4,
+#' then a CN of 3 is a loss.
+#'
+#' Ploidy is inferred by mode CN state using [dlptools::mode_ploidy()] and
+#' states > ploidy are marked as gains, states < ploidy losses, and states
+#' matching ploidy as matched.
+#'
+#' @param in_df dataframe of CN states.
+#' @param df_type string. "reads" (default) or "segs" for CN segments, which
+#' will internally converted to bin based for mode calculation.
+#' reads in order to infer mode ploidy.
+#' @param sample_col string. Name of the column with cell_id/other sample name
+#' @return input dataframe, with new columns of information.
+#' @export
+mark_cn_relative_to_ploidy <- function(
+    in_df,
+    df_type = c("reads", "segs"),
+    sample_col = "cell_id",
+    ...) {
+  df_type <- match.arg(df_type)
+
+  event_labels <- c(
+    gain = "ploidy-gain",
+    match = "ploidy-match",
+    loss = "ploidy-loss"
+  )
+
+  if (df_type == "segs") {
+    reads_df <- segs_to_reads(in_df, ...)
+  } else if (df_type == "reads") {
+    reads_df <- in_df
+  }
+
+  sample_mode_ploidy <- mode_ploidy(reads_df, sample_col = sample_col, ...)
+
+  in_df <- dplyr::left_join(
+    in_df,
+    sample_mode_ploidy,
+    by = sample_col
+  )
+
+  in_df <- in_df |>
+    dplyr::mutate(
+      cn_v_ploidy = dplyr::case_when(
+        state < mode_ploidy ~ event_labels["loss"],
+        state > mode_ploidy ~ event_labels["gain"],
+        state == mode_ploidy ~ event_labels["match"]
+      ),
+      cn_v_ploidy = factor(cn_v_ploidy, levels = unname(event_labels))
+    )
+
+  return(in_df)
 }

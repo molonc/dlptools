@@ -2,10 +2,10 @@
 % Please edit documentation in R/cn_features.R
 \name{extract_ploidy_cn_feature}
 \alias{extract_ploidy_cn_feature}
-\title{Could changes of state relative to ploidy.}
+\title{Count changes of state relative to ploidy.}
 \usage{
 extract_ploidy_cn_feature(
-  segs_df,
+  segs_df = NA,
   sample_col = "cell_id",
   annotate_input = FALSE,
   return_matrix = FALSE
@@ -25,5 +25,6 @@ tibble/dataframe of counts
 }
 \description{
 Marks CN segments as a gain or loss, relative to the mode ploidy of the
-sample.
+sample. Internally using \link{mark_cn_relative_to_ploidy}. See that
+function for argument details.
 }

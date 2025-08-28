@@ -48,7 +48,7 @@ centromere
 \item arm (arm) - segment spans a whole are (*with conditions)
 \item whole chromosome (whole-chrom) - segment spans the entire chromosome
 (*with conditions)
-\item intersitial (inert) - occuring within the chromosome, not touching the
+\item intersitial (inter) - occuring within the chromosome, not touching the
 centromere, telomeres, and not big enough to be an entire arm.
 }
 
