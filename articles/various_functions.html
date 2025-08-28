@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.17</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.18</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,10 +71,6 @@
 
     
     
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://vroom.r-lib.org" class="external-link">vroom</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://molonc.github.io/dlptools/">dlptools</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="various-functions-dlptools">Various Functions dlptools<a class="anchor" aria-label="anchor" href="#various-functions-dlptools"></a>
 </h2>
@@ -83,7 +79,7 @@
 </h3>
 <p>Masking regions that are bad for DLP, mostly the consequence of low
 mappability.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># assuming some sort of reads or segments DF with: chr, start, end</span></span>
 <span><span class="va">ex_reads</span> <span class="op">&lt;-</span> <span class="fu">vroom</span><span class="fu">::</span><span class="fu"><a href="https://vroom.r-lib.org/reference/vroom.html" class="external-link">vroom</a></span><span class="op">(</span><span class="st">"data/example_reads.tsv.gz"</span><span class="op">)</span></span>
 <span></span>
@@ -104,7 +100,7 @@ mappability.</p>
 <p>The default masking file is one constructed by Daniel Lai, and can be
 viewed at the <a href="https://github.com/molonc/dlptools/tree/dev/inst/extdata" class="external-link">package
 source</a> or by loading:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">vroom</span><span class="fu">::</span><span class="fu"><a href="https://vroom.r-lib.org/reference/vroom.html" class="external-link">vroom</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"blacklist_2023.07.17.txt"</span>, package <span class="op">=</span> <span class="st">"dlptools"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
@@ -122,9 +118,10 @@ source</a> or by loading:</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 9         38<span style="text-decoration: underline;">500</span>001  71<span style="text-decoration: underline;">000</span>000 32<span style="text-decoration: underline;">500</span>000</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 10        38<span style="text-decoration: underline;">500</span>001  52<span style="text-decoration: underline;">000</span>000 13<span style="text-decoration: underline;">500</span>000</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 16 more rows</span></span></span></code></pre></div>
+<p><br><br></p>
 </div>
 <div class="section level3">
-<h3 id="marking-centromere-locations">Marking Centromere Locations<a class="anchor" aria-label="anchor" href="#marking-centromere-locations"></a>
+<h3 id="marking-centromere-and-telomere-locations">Marking Centromere and Telomere Locations<a class="anchor" aria-label="anchor" href="#marking-centromere-and-telomere-locations"></a>
 </h3>
 <p>Centromeres are problematic for DLP data, the state calls are often
 inflated and highly inconsistent between adjacent bins. It’s a messy
@@ -135,7 +132,7 @@ specific.</p>
 centromeres to include in filtering too.</p>
 <p>The files loaded to mark centromeres come from <a href="https://hgdownload.soe.ucsc.edu/downloads.html" class="external-link">UCSC</a> cytoband
 files of hg19 and hg38 releases.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># easiest way is to just explictly mark whether bins are in centromeres</span></span>
 <span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/mark_bins_overlapping_centromeres.html">mark_bins_overlapping_centromeres</a></span><span class="op">(</span></span>
 <span>  reads_df <span class="op">=</span> <span class="va">ex_reads</span>,</span>
@@ -155,10 +152,10 @@ files of hg19 and hg38 releases.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> AT23998-A138956A-R05-C42 FALSE            <span style="text-decoration: underline;">5</span>685</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> AT23998-A138956A-R05-C42 TRUE              521</span></span></code></pre></div>
 <p>Alternatively, this can be done in parts:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># e.g., just adding the centromere information by chromosome</span></span>
 <span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/add_centromere_locations.html">add_centromere_locations</a></span><span class="op">(</span></span>
-<span>  reads_df <span class="op">=</span> <span class="va">ex_reads</span>,</span>
+<span>  cn_df <span class="op">=</span> <span class="va">ex_reads</span>,</span>
 <span>  version <span class="op">=</span> <span class="st">"hg19"</span> <span class="co"># default, don't need to specify. Alternative is "hg38"</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span></span>
@@ -181,6 +178,30 @@ files of hg19 and hg38 releases.</p>
 <span></span>
 <span><span class="co"># internally this function is used to retrieve chromosome locations</span></span>
 <span><span class="co"># dlptools::load_ucsc_centromeres()</span></span></code></pre></div>
+<p>Also available is telomere marking, but see
+<code><a href="../reference/import_telos_file.html">?dlptools::import_telos_file</a></code> for why this isn’t the most
+in-depth or accurate thing:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/add_telomere_positions.html">add_telomere_positions</a></span><span class="op">(</span></span>
+<span>  <span class="va">ex_reads</span></span>
+<span>  <span class="co"># version = "hg19" is the default</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/relocate.html" class="external-link">relocate</a></span><span class="op">(</span></span>
+<span>    <span class="co"># added columns</span></span>
+<span>    <span class="va">telostart_p</span>, <span class="va">teloend_p</span>, <span class="va">telostart_q</span>, <span class="va">teloend_q</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 16</span></span></span>
+<span><span class="co">#&gt;   telostart_p teloend_p telostart_q teloend_q cell_id   chr    start   end state</span></span>
+<span><span class="co">#&gt;         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>           0     <span style="text-decoration: underline;">10</span>000   249<span style="text-decoration: underline;">240</span>621 249<span style="text-decoration: underline;">250</span>621 AT23998-… 1     1   <span style="color: #949494;">e</span>0 5  <span style="color: #949494;">e</span>5     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>           0     <span style="text-decoration: underline;">10</span>000   249<span style="text-decoration: underline;">240</span>621 249<span style="text-decoration: underline;">250</span>621 AT23998-… 1     5.00<span style="color: #949494;">e</span>5 1  <span style="color: #949494;">e</span>6     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>           0     <span style="text-decoration: underline;">10</span>000   249<span style="text-decoration: underline;">240</span>621 249<span style="text-decoration: underline;">250</span>621 AT23998-… 1     1.00<span style="color: #949494;">e</span>6 1.5<span style="color: #949494;">e</span>6     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>           0     <span style="text-decoration: underline;">10</span>000   249<span style="text-decoration: underline;">240</span>621 249<span style="text-decoration: underline;">250</span>621 AT23998-… 1     1.50<span style="color: #949494;">e</span>6 2  <span style="color: #949494;">e</span>6     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>           0     <span style="text-decoration: underline;">10</span>000   249<span style="text-decoration: underline;">240</span>621 249<span style="text-decoration: underline;">250</span>621 AT23998-… 1     2.00<span style="color: #949494;">e</span>6 2.5<span style="color: #949494;">e</span>6     4</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 7 more variables: gc &lt;dbl&gt;, ideal &lt;lgl&gt;, map &lt;dbl&gt;, reads &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   valid &lt;lgl&gt;, is_low_mappability &lt;lgl&gt;, mask &lt;lgl&gt;</span></span></span></code></pre></div>
+<p><br><br></p>
 </div>
 <div class="section level3">
 <h3 id="information-from-cell-ids">Information From Cell IDs<a class="anchor" aria-label="anchor" href="#information-from-cell-ids"></a>
@@ -228,6 +249,7 @@ files of hg19 and hg38 releases.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> AT28335-A143820B-R46-… 21    2.90<span style="color: #949494;">e</span>7 2.95<span style="color: #949494;">e</span>7     6 0.361 TRUE  0.995   128 TRUE </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 4 more variables: is_low_mappability &lt;lgl&gt;, mask &lt;lgl&gt;, sample_id &lt;chr&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   library_id &lt;chr&gt;</span></span></span></code></pre></div>
+<p><br><br></p>
 </div>
 <div class="section level3">
 <h3 id="inferring-missing-bin-data">Inferring Missing Bin Data<a class="anchor" aria-label="anchor" href="#inferring-missing-bin-data"></a>
@@ -375,6 +397,7 @@ specify any of the columns you want filled:</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 3        198<span style="text-decoration: underline;">022</span>430 /gbdb/hg19/hg19.2bit</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 4        191<span style="text-decoration: underline;">154</span>276 /gbdb/hg19/hg19.2bit</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 5        180<span style="text-decoration: underline;">915</span>260 /gbdb/hg19/hg19.2bit</span></span></code></pre></div>
+<p><br><br></p>
 </div>
 <div class="section level3">
 <h3 id="reads-to-segments">Reads to Segments<a class="anchor" aria-label="anchor" href="#reads-to-segments"></a>
@@ -397,6 +420,7 @@ bins, etc.).</p>
 <p><em>warning:</em> this function will leave some unexpected gaps when
 dataframes have been filtered and bins removed. Inspect carfully if you
 have dropped bins from your dataframe.</p>
+<p><br><br></p>
 </div>
 <div class="section level3">
 <h3 id="segments-to-reads">Segments to Reads<a class="anchor" aria-label="anchor" href="#segments-to-reads"></a>
@@ -433,6 +457,57 @@ have dropped bins from your dataframe.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>filt_reads <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">filt_reads</span><span class="op">)</span>, input_reads <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">ex_reads</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  filt_reads input_reads </span></span>
 <span><span class="co">#&gt;      619787      620600</span></span></code></pre></div>
+<p><br><br></p>
+</div>
+<div class="section level3">
+<h3 id="where-segments-occur">Where Segments Occur<a class="anchor" aria-label="anchor" href="#where-segments-occur"></a>
+</h3>
+<p>Useful to know is where segments occur relative to chromosome
+features like the centromere and telomeres.</p>
+<p>There are a few key arguments to this function, like setting
+distances for how close segments need to be to telomeres and centromeres
+to be consider “bound”, and minimum spans of arms/chromosomes.</p>
+<p>Please see <code><a href="../reference/mark_segs_chromosome_span.html">?dlptools::mark_segs_chromosome_span</a></code> for more
+information on how this works:</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">seg_locations</span> <span class="op">&lt;-</span> <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/mark_segs_chromosome_span.html">mark_segs_chromosome_span</a></span><span class="op">(</span></span>
+<span>  <span class="va">ex_segs</span>,</span>
+<span>  <span class="co"># version = "hg19" assumed, but hg38 possible too.</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/relocate.html" class="external-link">relocate</a></span><span class="op">(</span></span>
+<span>  <span class="va">seg_locations</span>,</span>
+<span>  <span class="co"># key added columns, more present too</span></span>
+<span>  <span class="va">seg_span_event</span>, <span class="va">telo_bound</span>, <span class="va">centro_bound</span>, <span class="va">spans_chrom</span>, <span class="va">spans_arm</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 12,151 × 33</span></span></span>
+<span><span class="co">#&gt;    seg_span_event telo_bound centro_bound spans_chrom spans_arm cell_id    chr  </span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> telo-bound     TRUE       FALSE        FALSE       FALSE     AT23998-A… 1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> inter          FALSE      FALSE        FALSE       FALSE     AT23998-A… 1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> inter          FALSE      FALSE        FALSE       FALSE     AT23998-A… 1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> inter          FALSE      FALSE        FALSE       FALSE     AT23998-A… 1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> inter          FALSE      FALSE        FALSE       FALSE     AT23998-A… 1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> centro-bound   FALSE      TRUE         FALSE       FALSE     AT23998-A… 1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> inter          FALSE      FALSE        FALSE       FALSE     AT23998-A… 1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> inter          FALSE      FALSE        FALSE       FALSE     AT23998-A… 1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> inter          FALSE      FALSE        FALSE       FALSE     AT23998-A… 1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> inter          FALSE      FALSE        FALSE       FALSE     AT23998-A… 1    </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 12,141 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 26 more variables: start &lt;dbl&gt;, end &lt;dbl&gt;, state &lt;dbl&gt;, seg_width &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   total_length &lt;dbl&gt;, misc &lt;chr&gt;, centro_start &lt;dbl&gt;, centro_end &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   centro_span &lt;dbl&gt;, start_p &lt;dbl&gt;, start_q &lt;dbl&gt;, end_p &lt;dbl&gt;, end_q &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   telostart_p &lt;dbl&gt;, teloend_p &lt;dbl&gt;, telostart_q &lt;dbl&gt;, teloend_q &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   telo_p_dist &lt;dbl&gt;, telo_q_dist &lt;dbl&gt;, telo_dist &lt;dbl&gt;, centro_p_dist &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   centro_q_dist &lt;dbl&gt;, centro_dist &lt;dbl&gt;, spans_centro &lt;lgl&gt;, …</span></span></span></code></pre></div>
+<p>Visually, this is what we’re doing:</p>
+<div class="figure">
+<img src="various_functions_files/figure-html/unnamed-chunk-21-1.png" alt="Labels of CN segments on chromosomes. Vertical lines indicate locations of telomeres and centromeres." width="768"><p class="caption">
+Labels of CN segments on chromosomes. Vertical lines indicate locations
+of telomeres and centromeres.
+</p>
+</div>
+<p><br><br></p>
 </div>
 <div class="section level3">
 <h3 id="ploidy-of-samples">Ploidy of samples<a class="anchor" aria-label="anchor" href="#ploidy-of-samples"></a>
@@ -446,8 +521,8 @@ the ploidy than small segments</li>
 so that each chromosome contributes equally.</li>
 </ul>
 <p>This function does that:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/weighted_ploidy.html">weighted_ploidy</a></span><span class="op">(</span><span class="va">ex_segs</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/weighted_ploidy.html">weighted_ploidy</a></span><span class="op">(</span><span class="va">ex_segs</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 2</span></span></span>
 <span><span class="co">#&gt;   cell_id                  ploidy</span></span>
@@ -457,6 +532,48 @@ so that each chromosome contributes equally.</li>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> AT23998-A138956A-R05-C42   4.18</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> AT23998-A138956A-R05-C64   4.17</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> AT23998-A138956A-R06-C31   4.12</span></span></code></pre></div>
+<p><br></p>
+<p>Alternative, if you want integers, is to get the mode ploidy. The
+should only be done for evenly sized bins, or the mode wouldn’t make
+much sense.</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/mode_ploidy.html">mode_ploidy</a></span><span class="op">(</span></span>
+<span>  <span class="va">ex_reads</span>,</span>
+<span>  sample_col <span class="op">=</span> <span class="st">"cell_id"</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 2</span></span></span>
+<span><span class="co">#&gt;   cell_id                  mode_ploidy</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AT23998-A138956A-R03-C34           4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AT23998-A138956A-R04-C58           4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> AT23998-A138956A-R05-C42           4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> AT23998-A138956A-R05-C64           5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> AT23998-A138956A-R06-C31           4</span></span></code></pre></div>
+<p><br></p>
+<p>Related, we can also infer if a CN change is a gain or loss, relative
+to ploidy:</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/mark_cn_relative_to_ploidy.html">mark_cn_relative_to_ploidy</a></span><span class="op">(</span></span>
+<span>  <span class="va">ex_reads</span>, <span class="co"># or can pass segments df</span></span>
+<span>  df_type <span class="op">=</span> <span class="st">"reads"</span> <span class="co"># df_type = "segs"</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/relocate.html" class="external-link">relocate</a></span><span class="op">(</span></span>
+<span>    <span class="co"># key added columns</span></span>
+<span>    <span class="va">mode_ploidy</span>, <span class="va">cn_v_ploidy</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 14</span></span></span>
+<span><span class="co">#&gt;   mode_ploidy cn_v_ploidy  cell_id   chr    start   end state     gc ideal   map</span></span>
+<span><span class="co">#&gt;         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>           4 ploidy-match AT23998-… 1     1   <span style="color: #949494;">e</span>0 5  <span style="color: #949494;">e</span>5     4 -<span style="color: #BB0000;">1</span>     FALSE 0.349</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>           4 ploidy-match AT23998-… 1     5.00<span style="color: #949494;">e</span>5 1  <span style="color: #949494;">e</span>6     4 -<span style="color: #BB0000;">1</span>     FALSE 0.770</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>           4 ploidy-match AT23998-… 1     1.00<span style="color: #949494;">e</span>6 1.5<span style="color: #949494;">e</span>6     4  0.598 FALSE 0.982</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>           4 ploidy-match AT23998-… 1     1.50<span style="color: #949494;">e</span>6 2  <span style="color: #949494;">e</span>6     4  0.539 TRUE  0.963</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>           4 ploidy-match AT23998-… 1     2.00<span style="color: #949494;">e</span>6 2.5<span style="color: #949494;">e</span>6     4  0.595 TRUE  0.997</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 4 more variables: reads &lt;dbl&gt;, valid &lt;lgl&gt;, is_low_mappability &lt;lgl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   mask &lt;lgl&gt;</span></span></span></code></pre></div>
+<p><br><br></p>
 </div>
 <div class="section level3">
 <h3 id="long-to-wide-reads-or-segments">Long to Wide Reads (or segments)<a class="anchor" aria-label="anchor" href="#long-to-wide-reads-or-segments"></a>
@@ -464,7 +581,7 @@ so that each chromosome contributes equally.</li>
 <p>Some functions require read state information to be in wide format vs
 long, with cell_ids as rows and chr_start_end as columns, and the states
 as cells.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ex_reads_w</span> <span class="op">&lt;-</span> <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/convert_long_reads_to_wide.html">convert_long_reads_to_wide</a></span><span class="op">(</span><span class="va">ex_reads</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ex_reads_w</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span>
@@ -483,15 +600,15 @@ as cells.</p>
 <p>This plot is a simplified alternative to the methods described in <a href="https://molonc.github.io/dlptools/articles/heatmaps.html">the
 heatmaps vignette</a>. There are no additions, like trees and
 annotations, but works for a variety of quick inspections.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/basic_tile_plot.html">basic_tile_plot</a></span><span class="op">(</span></span>
 <span>  <span class="co"># just filtering to make the plot smaller for this demonstration</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">ex_reads</span>, <span class="va">chr</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">7</span><span class="op">:</span><span class="fl">9</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="various_functions_files/figure-html/unnamed-chunk-21-1.png" width="75%" height="75%"></p>
+<p><img src="various_functions_files/figure-html/unnamed-chunk-26-1.png" width="75%" height="75%"></p>
 <p>To help with plotting, a variety of commonly use color palettes are
 available:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># standard state colors</span></span>
 <span><span class="fu">dlptools</span><span class="fu">::</span><span class="va"><a href="../reference/CNV_COLOURS.html">CNV_COLOURS</a></span></span>
 <span><span class="co">#&gt;         0         1         2         3         4         5         6         7 </span></span>
@@ -516,49 +633,7 @@ available:</p>
 <span><span class="co"># typically BAF scale is a circlize::colorRamp2 spanning</span></span>
 <span><span class="co"># standard green-grey-purple used for ASCN colors</span></span>
 <span><span class="co"># dlptools::BAF_COLORS</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="data-importing">Data Importing<a class="anchor" aria-label="anchor" href="#data-importing"></a>
-</h3>
-<p>If you’ve followed a semi-standard approach for downloading such as
-this:</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="co"># bash</span></span>
-<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a><span class="bu">cd</span> where/to/save/my_dlp/</span>
-<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a></span>
-<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a><span class="va">ticket</span><span class="op">=</span><span class="st">"SC-8382"</span></span>
-<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a><span class="ex">azcopy</span> copy https://singlecellresults.blob.core.windows.net/results/<span class="va">${ticket}</span>/results/annotation/ <span class="va">${ticket}</span> <span class="at">--recursive</span></span>
-<span id="cb22-6"><a href="#cb22-6" tabindex="-1"></a><span class="ex">azcopy</span> copy https://singlecellresults.blob.core.windows.net/results/<span class="va">${ticket}</span>/results/hmmcopy/ <span class="va">${ticket}</span> <span class="at">--recursive</span></span></code></pre></div>
-<p>which produces a directory with this sort of structure:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="ex">├──</span> SC-8382</span>
-<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a><span class="ex">│</span>   ├── annotation</span>
-<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a><span class="ex">│</span>   │   ├── metrics.csv.gz</span>
-<span id="cb23-4"><a href="#cb23-4" tabindex="-1"></a><span class="ex">│</span>   │   ├── <span class="co">#[...other files ...]</span></span>
-<span id="cb23-5"><a href="#cb23-5" tabindex="-1"></a><span class="ex">│</span>   └── hmmcopy</span>
-<span id="cb23-6"><a href="#cb23-6" tabindex="-1"></a><span class="ex">│</span>   │   ├── <span class="co">#[...other files ...]</span></span>
-<span id="cb23-7"><a href="#cb23-7" tabindex="-1"></a><span class="ex">│</span>       ├── reads.csv.gz</span>
-<span id="cb23-8"><a href="#cb23-8" tabindex="-1"></a><span class="ex">│</span>       ├── segments.csv.gz</span>
-<span id="cb23-9"><a href="#cb23-9" tabindex="-1"></a><span class="ex">├──</span> SC-8408</span>
-<span id="cb23-10"><a href="#cb23-10" tabindex="-1"></a><span class="ex">│</span>   ├── annotation</span>
-<span id="cb23-11"><a href="#cb23-11" tabindex="-1"></a><span class="ex">│</span>   │   ├── metrics.csv.gz</span>
-<span id="cb23-12"><a href="#cb23-12" tabindex="-1"></a><span class="ex">│</span>   │   ├── <span class="co">#[...other files ...]</span></span>
-<span id="cb23-13"><a href="#cb23-13" tabindex="-1"></a><span class="ex">│</span>   └── hmmcopy</span>
-<span id="cb23-14"><a href="#cb23-14" tabindex="-1"></a><span class="ex">│</span>   │   ├── <span class="co">#[...other files ...]</span></span>
-<span id="cb23-15"><a href="#cb23-15" tabindex="-1"></a><span class="ex">│</span>       ├── reads.csv.gz</span>
-<span id="cb23-16"><a href="#cb23-16" tabindex="-1"></a><span class="ex">│</span>       ├── segments.csv.gz</span>
-<span id="cb23-17"><a href="#cb23-17" tabindex="-1"></a><span class="ex">├──</span> SC-8650</span></code></pre></div>
-<p>then there are some functions that can help with loading data from
-these into a consistent dataframe:</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dlp_dir</span> <span class="op">&lt;-</span> <span class="st">"/where/to/save/my_dlp/"</span></span>
-<span></span>
-<span><span class="co"># loading metrics</span></span>
-<span><span class="va">metrics</span> <span class="op">&lt;-</span> <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/import_dlp_files.html">import_dlp_files</a></span><span class="op">(</span><span class="va">dlp_dir</span>, <span class="st">"metrics"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># loading reads</span></span>
-<span><span class="va">reads_df</span> <span class="op">&lt;-</span> <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/import_dlp_files.html">import_dlp_files</a></span><span class="op">(</span><span class="va">dlp_dir</span>, <span class="st">"reads"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># loading segments...but generally this isn't a great idea</span></span>
-<span><span class="co"># segs_df &lt;- dlptools::import_dlp_files(dlp_dir, "segments")</span></span></code></pre></div>
+<p><br><br></p>
 </div>
 <div class="section level3">
 <h3 id="other">Other<a class="anchor" aria-label="anchor" href="#other"></a>

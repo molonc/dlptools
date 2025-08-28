@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.17</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.18</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,8 +72,12 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://molonc.github.io/dlptools/">dlptools</a></span><span class="op">)</span></span></code></pre></div>
-<p>dlptools offers two feature extraction types:</p>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://molonc.github.io/dlptools/">dlptools</a></span><span class="op">)</span></span></code></pre></div>
+<div class="section level2">
+<h2 id="features-defined-by-other-publications">Features Defined by Other Publications<a class="anchor" aria-label="anchor" href="#features-defined-by-other-publications"></a>
+</h2>
+<p>dlptools offers two externally defined feature extraction types:</p>
 <ol style="list-style-type: decimal">
 <li>Wu et al. <a href="https://www.biorxiv.org/content/10.1101/2025.03.02.641098v1" class="external-link uri">https://www.biorxiv.org/content/10.1101/2025.03.02.641098v1</a>
 </li>
@@ -168,7 +172,286 @@ itself:</p>
 <span><span class="co">#&gt; AT21352-A144173A-R03-C33       217        89        15         0</span></span>
 <span><span class="co">#&gt; AT21352-A144173A-R03-C35       241        67        11         3</span></span></code></pre></div>
 <p><br><br><br></p>
-  </main>
+</div>
+<div class="section level2">
+<h2 id="ploidy-informed-cn-change">ploidy informed CN change<a class="anchor" aria-label="anchor" href="#ploidy-informed-cn-change"></a>
+</h2>
+<p>CN change relative to ploidy might be interesting to have a feature.
+Here we can mark 3 types of events for segments:</p>
+<ol style="list-style-type: decimal">
+<li>CN is a gain relative to mode ploidy of sample/cell</li>
+<li>CN is a loss relative to mode ploidy of sample/cell</li>
+<li>CN is a match to mode ploidy</li>
+</ol>
+<p>Employs the function dlptools::mode_ploidy() to calculate mode ploidy
+of each sample/cell.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_ploidy_cn_feature.html">extract_ploidy_cn_feature</a></span><span class="op">(</span></span>
+<span>  <span class="va">segs_df</span>,</span>
+<span>  <span class="co"># with option just to annotate the input df</span></span>
+<span>  <span class="co"># annotate_input = TRUE</span></span>
+<span>  <span class="co"># or, alternatively, return a count matrix</span></span>
+<span>  <span class="co"># return_matrix = TRUE</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 3</span></span></span>
+<span><span class="co">#&gt;   cell_id                  cn_v_ploidy      n</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AT21352-A144173A-R03-C12 ploidy-gain     88</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AT21352-A144173A-R03-C12 ploidy-match    35</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> AT21352-A144173A-R03-C12 ploidy-loss     27</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> AT21352-A144173A-R03-C32 ploidy-gain     61</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> AT21352-A144173A-R03-C32 ploidy-match    31</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> AT21352-A144173A-R03-C32 ploidy-loss     44</span></span></code></pre></div>
+<p><br><br><br></p>
+</div>
+<div class="section level2">
+<h2 id="segment-span-types">Segment Span Types<a class="anchor" aria-label="anchor" href="#segment-span-types"></a>
+</h2>
+<p>It might be useful to know where segments sit on chromosomes and how
+much of a chromosome they cover. We can label segments based on 5
+categories:</p>
+<ol style="list-style-type: decimal">
+<li>telomere bound (<code>telo-bound</code>) - segment touches a
+telomere</li>
+<li>centromere bound (<code>centro-bound</code>) - segment touches or
+crosses the centromere</li>
+<li>arm (<code>arm</code>) - segment spans a whole are (*with
+conditions)</li>
+<li>whole chromosome (<code>whole-chrom</code>) - segment spans the
+entire chromosome (*with conditions)</li>
+<li>intersitial (<code>inter</code>) - occuring within the chromosome,
+not touching the centromere, telomeres, and not big enough to be an
+entire arm.</li>
+</ol>
+<p>See <code><a href="../reference/mark_segs_chromosome_span.html">?dlptools::mark_segs_chromosome_span</a></code> for more
+details about this marking, as there are various options to tweak these
+definitions, such as:</p>
+<ul>
+<li>how much of an arm a CN needs to cover to be considered an
+“arm-level” event</li>
+<li>how much of a chromosome a segment needs to cover to be a
+“whole-chromosome” event</li>
+<li>how close a seg needs to be to a telo/centromere to be considered
+“touching”</li>
+</ul>
+<p>We can mark a dataframe with the information:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/mark_segs_chromosome_span.html">mark_segs_chromosome_span</a></span><span class="op">(</span></span>
+<span>  <span class="va">segs_df</span>,</span>
+<span>  <span class="co"># see ?dlptools::mark_segs_chromosome_span for more args</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/relocate.html" class="external-link">relocate</a></span><span class="op">(</span></span>
+<span>    <span class="co"># key added columns</span></span>
+<span>    <span class="va">seg_span_event</span>, <span class="va">telo_bound</span>, <span class="va">centro_bound</span>, <span class="va">spans_chrom</span>, <span class="va">spans_arm</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 33</span></span></span>
+<span><span class="co">#&gt;   seg_span_event telo_bound centro_bound spans_chrom spans_arm cell_id     chr  </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> telo-bound     TRUE       FALSE        FALSE       FALSE     AT21352-A1… 1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> inter          FALSE      FALSE        FALSE       FALSE     AT21352-A1… 1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> inter          FALSE      FALSE        FALSE       FALSE     AT21352-A1… 1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> inter          FALSE      FALSE        FALSE       FALSE     AT21352-A1… 1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> inter          FALSE      FALSE        FALSE       FALSE     AT21352-A1… 1    </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 26 more variables: start &lt;dbl&gt;, end &lt;dbl&gt;, state &lt;dbl&gt;, seg_width &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   total_length &lt;dbl&gt;, misc &lt;chr&gt;, centro_start &lt;dbl&gt;, centro_end &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   centro_span &lt;dbl&gt;, start_p &lt;dbl&gt;, start_q &lt;dbl&gt;, end_p &lt;dbl&gt;, end_q &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   telostart_p &lt;dbl&gt;, teloend_p &lt;dbl&gt;, telostart_q &lt;dbl&gt;, teloend_q &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   telo_p_dist &lt;dbl&gt;, telo_q_dist &lt;dbl&gt;, telo_dist &lt;dbl&gt;, centro_p_dist &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   centro_q_dist &lt;dbl&gt;, centro_dist &lt;dbl&gt;, spans_centro &lt;lgl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   p_arm_length &lt;dbl&gt;, q_arm_length &lt;dbl&gt;</span></span></span></code></pre></div>
+<p><br><br></p>
+<p>More useful in the “feature” context, is to directly extract and
+count them up. This function bascially just calls the one above, with
+counting added:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_segment_position_feature.html">extract_segment_position_feature</a></span><span class="op">(</span></span>
+<span>  <span class="va">segs_df</span></span>
+<span>  <span class="co"># with option just to annotate the input df</span></span>
+<span>  <span class="co"># annotate_input = TRUE</span></span>
+<span>  <span class="co"># or, alternatively, return a count matrix</span></span>
+<span>  <span class="co"># return_matrix = TRUE</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 3</span></span></span>
+<span><span class="co">#&gt;   cell_id                  seg_span_event     n</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AT21352-A144173A-R03-C12 arm                1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AT21352-A144173A-R03-C12 whole-chrom        3</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> AT21352-A144173A-R03-C12 telo-bound        36</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> AT21352-A144173A-R03-C12 centro-bound      21</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> AT21352-A144173A-R03-C12 inter             89</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> AT21352-A144173A-R03-C32 arm                0</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="feature-combinations">Feature Combinations<a class="anchor" aria-label="anchor" href="#feature-combinations"></a>
+</h2>
+<p>With some of these feature sets, we can combine them into one monster
+feature set. Is this a good idea? A bad idea? Is the output even
+interpretable? Are all ov these even useful? You’ll have to decide
+that.</p>
+<p>The feature sets of:</p>
+<ol style="list-style-type: decimal">
+<li><code><a href="../reference/extract_wu_features.html">dlptools::extract_wu_features</a></code></li>
+<li><code><a href="../reference/extract_ploidy_cn_feature.html">dlptools::extract_ploidy_cn_feature</a></code></li>
+<li><code><a href="../reference/extract_segment_position_feature.html">dlptools::extract_segment_position_feature</a></code></li>
+</ol>
+<p>are all “atomic”, in that they describe aspects of individual
+segments.</p>
+<p>First, we can collect labels all all features for the segments:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">feat_anno_segs</span> <span class="op">&lt;-</span> <span class="va">segs_df</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_wu_features.html">extract_wu_features</a></span><span class="op">(</span>annotate_input <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_ploidy_cn_feature.html">extract_ploidy_cn_feature</a></span><span class="op">(</span>annotate_input <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_segment_position_feature.html">extract_segment_position_feature</a></span><span class="op">(</span>annotate_input <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span></span>
+<span>    <span class="va">cell_id</span>, <span class="va">chr</span>, <span class="va">start</span>, <span class="va">end</span>,</span>
+<span>    <span class="co"># these are then the feature columns</span></span>
+<span>    <span class="va">seg_bin</span>, <span class="va">cn_bin</span>, <span class="va">seg_change</span>, <span class="va">seg_shape</span>, <span class="va">cn_v_ploidy</span>, <span class="va">seg_span_event</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span><span class="va">feat_anno_segs</span>, n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 10</span></span></span>
+<span><span class="co">#&gt;   cell_id    chr    start    end seg_bin cn_bin seg_change seg_shape cn_v_ploidy</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AT21352-A… 1     1   <span style="color: #949494;">e</span>0 1   <span style="color: #949494;">e</span>7 M1      S4     AA         LL        ploidy-gain</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AT21352-A… 1     1.00<span style="color: #949494;">e</span>7 2.15<span style="color: #949494;">e</span>7 L       S5+    AA         HH        ploidy-gain</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> AT21352-A… 1     2.15<span style="color: #949494;">e</span>7 3.90<span style="color: #949494;">e</span>7 L       S4     AA         LL        ploidy-gain</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> AT21352-A… 1     3.90<span style="color: #949494;">e</span>7 4.50<span style="color: #949494;">e</span>7 M1      S5+    AA         HH        ploidy-gain</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> AT21352-A… 1     4.50<span style="color: #949494;">e</span>7 5.75<span style="color: #949494;">e</span>7 L       S4     AA         LL        ploidy-gain</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1 more variable: seg_span_event &lt;fct&gt;</span></span></span></code></pre></div>
+<p>Then, we can just count each category and leave the counts per cell
+per feature as our feature set for signature extraction. This would
+yield a 21 feature set (6 core feature types with: 5, 3, 3, 2, 3, 5
+categories across them)</p>
+<!-- Seeing NA in AA/BB for this dataset...track down! -->
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">feat_cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"seg_bin"</span>, <span class="st">"cn_bin"</span>, <span class="st">"seg_change"</span>, <span class="st">"seg_shape"</span>, <span class="st">"cn_v_ploidy"</span>,</span>
+<span>  <span class="st">"seg_span_event"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">total_counts</span> <span class="op">&lt;-</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">feat_cols</span>, \<span class="op">(</span><span class="va">feat_col</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">feat_anno_segs</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">cell_id</span>, <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pick.html" class="external-link">pick</a></span><span class="op">(</span><span class="va">feat_col</span><span class="op">)</span>, .drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>      feature <span class="op">=</span> <span class="va">feat_col</span></span>
+<span>    <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>category <span class="op">=</span> <span class="va">feat_col</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/relocate.html" class="external-link">relocate</a></span><span class="op">(</span><span class="va">cell_id</span>, <span class="va">feature</span>, <span class="va">category</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/list_c.html" class="external-link">list_rbind</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="feature_extraction_files/figure-html/unnamed-chunk-11-1.png" width="768"></p>
+<p><br><br></p>
+<p>We could opt to cross all of the features into a “mega-feature-set”.
+But, this would be:</p>
+<ul>
+<li>4 features (containing 3, 5, 2, 3 categories across them) with from
+<code><a href="../reference/extract_wu_features.html">dlptools::extract_wu_features</a></code>
+</li>
+<li>1 feature with 3 features categories from
+<code><a href="../reference/extract_ploidy_cn_feature.html">dlptools::extract_ploidy_cn_feature</a></code>
+</li>
+<li>1 feature with 5 feature categories from
+<code><a href="../reference/extract_segment_position_feature.html">dlptools::extract_segment_position_feature</a></code>
+</li>
+</ul>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">all_feat_labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">feat_anno_segs</span><span class="op">$</span><span class="va">seg_bin</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">feat_anno_segs</span><span class="op">$</span><span class="va">cn_bin</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">feat_anno_segs</span><span class="op">$</span><span class="va">seg_change</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">feat_anno_segs</span><span class="op">$</span><span class="va">seg_shape</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">feat_anno_segs</span><span class="op">$</span><span class="va">cn_v_ploidy</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">feat_anno_segs</span><span class="op">$</span><span class="va">seg_span_event</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">crossed_labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span><span class="va">all_feat_labels</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">crossed_labels</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span>
+<span><span class="co">#&gt;   Var1 Var2 Var3 Var4        Var5 Var6</span></span>
+<span><span class="co">#&gt; 1    S S0-1   AA   LL ploidy-gain  arm</span></span>
+<span><span class="co">#&gt; 2   M1 S0-1   AA   LL ploidy-gain  arm</span></span>
+<span><span class="co">#&gt; 3    L S0-1   AA   LL ploidy-gain  arm</span></span>
+<span><span class="co">#&gt; 4    S   S2   AA   LL ploidy-gain  arm</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">crossed_labels</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 1350</span></span></code></pre></div>
+<p>making for a cross feature set with 1350 possible categories. That
+might be too detailed, and you should check if most categories are 0 for
+your data, indicating useless features.</p>
+<p><br></p>
+<p>Also, probably want to ask if crossing the category actually makes
+sense and adds biological information. For example, here, you can’t even
+have a small sized (&lt; 5Mb) arm event (smallest arm is &gt;10 Mb), so
+crossing size and chromosome location doesn’t actually lead to fully
+crossed features or any gain in information (and these two are somewhat
+redundant). Or, does it matter if the segment shape parameter is a
+ploidy-gain or a ploidy-loss? Does knowing that distinguish processes or
+teach you anything biologically? (and that’s only two parameters being
+crossed).</p>
+<p><br></p>
+<p>But, forging ahead bravely:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># collect all possible feature labels</span></span>
+<span></span>
+<span><span class="va">crossed_counts</span> <span class="op">&lt;-</span> <span class="va">feat_anno_segs</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span></span>
+<span>    <span class="co"># sample ID column</span></span>
+<span>    <span class="va">cell_id</span>,</span>
+<span>    <span class="co"># feature columns</span></span>
+<span>    <span class="va">seg_bin</span>, <span class="va">cn_bin</span>, <span class="va">seg_change</span>, <span class="va">seg_shape</span>, <span class="va">cn_v_ploidy</span>, <span class="va">seg_span_event</span>,</span>
+<span>    .drop <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    cross_feat <span class="op">=</span> <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_c.html" class="external-link">str_c</a></span><span class="op">(</span></span>
+<span>      <span class="va">seg_bin</span>, <span class="va">cn_bin</span>, <span class="va">seg_change</span>, <span class="va">seg_shape</span>, <span class="va">cn_v_ploidy</span>, <span class="va">seg_span_event</span>,</span>
+<span>      sep <span class="op">=</span> <span class="st">":"</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
+<p><img src="feature_extraction_files/figure-html/unnamed-chunk-15-1.png" width="768"></p>
+<p><br><br></p>
+<p>Or, you could do some sort of combination of cross and uncrossed? I
+don’t know. This whole signature field is the wild west and people do
+all kinds of things.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># count the Wu features as crossed: 90 feature categories</span></span>
+<span><span class="va">wu_crossed_counts</span> <span class="op">&lt;-</span> <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_wu_features.html">extract_wu_features</a></span><span class="op">(</span><span class="va">segs_df</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">cell_id</span>, <span class="va">feat_cat</span>, <span class="va">n</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    feature_group <span class="op">=</span> <span class="st">"Wu-crossed"</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="co"># do ploidy_cn_change and segment placement as uncrossed?</span></span>
+<span><span class="va">ploidy_counts</span> <span class="op">&lt;-</span> <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_ploidy_cn_feature.html">extract_ploidy_cn_feature</a></span><span class="op">(</span><span class="va">segs_df</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>feat_cat <span class="op">=</span> <span class="va">cn_v_ploidy</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    feature_group <span class="op">=</span> <span class="st">"ploidy"</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="va">seg_pos_counts</span> <span class="op">&lt;-</span> <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_segment_position_feature.html">extract_segment_position_feature</a></span><span class="op">(</span><span class="va">segs_df</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>feat_cat <span class="op">=</span> <span class="va">seg_span_event</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    feature_group <span class="op">=</span> <span class="st">"position"</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="va">all_feat_counts</span> <span class="op">&lt;-</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/list_c.html" class="external-link">list_rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  <span class="va">wu_crossed_counts</span>, <span class="va">ploidy_counts</span>, <span class="va">seg_pos_counts</span></span>
+<span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">cell_id</span>, <span class="va">feature_group</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    feature_group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">feature_group</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">feature_group</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
+<p><img src="feature_extraction_files/figure-html/unnamed-chunk-17-1.png" width="768"></p>
+<p><br><br><br></p>
+</div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 

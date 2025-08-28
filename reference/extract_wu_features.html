@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.17</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.18</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,6 +49,7 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">extract_wu_features</span><span class="op">(</span></span>
 <span>  <span class="va">segs_df</span>,</span>
+<span>  sample_col <span class="op">=</span> <span class="st">"cell_id"</span>,</span>
 <span>  state_bin_max <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  bin_breaks <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  annotate_input <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -62,7 +63,11 @@
 
 
 <dl><dt id="arg-segs-df">segs_df<a class="anchor" aria-label="anchor" href="#arg-segs-df"></a></dt>
-<dd><p>a dataframe of CN segments</p></dd>
+<dd><p>dataframe. CN segments</p></dd>
+
+
+<dt id="arg-sample-col">sample_col<a class="anchor" aria-label="anchor" href="#arg-sample-col"></a></dt>
+<dd><p>string. Name of the column with cell_id/other sample name</p></dd>
 
 
 <dt id="arg-state-bin-max">state_bin_max<a class="anchor" aria-label="anchor" href="#arg-state-bin-max"></a></dt>

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.17</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.18</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,10 +88,22 @@
         <dd>add centromere information to reads by chromosome</dd>
       </dl><dl><dt>
 
+          <code><a href="add_chromosome_length.html">add_chromosome_length()</a></code>
+
+        </dt>
+        <dd>add chromosome lengths to a cn dataframe</dd>
+      </dl><dl><dt>
+
           <code><a href="add_missing_bins_for_cells.html">add_missing_bins_for_cells()</a></code>
 
         </dt>
         <dd>Add back chr, start, end of bins missing from cells</dd>
+      </dl><dl><dt>
+
+          <code><a href="add_telomere_positions.html">add_telomere_positions()</a></code>
+
+        </dt>
+        <dd>add telomere positions to a CN df</dd>
       </dl><dl><dt>
 
           <code><a href="add_tip_ancestors_to_df.html">add_tip_ancestors_to_df()</a></code>
@@ -232,6 +244,12 @@
         <dd>create bins of given size for a genome</dd>
       </dl><dl><dt>
 
+          <code><a href="cust_mode.html">cust_mode()</a></code>
+
+        </dt>
+        <dd>find most common element in a vector</dd>
+      </dl><dl><dt>
+
           <code><a href="does_palette_cover_plot_vals.html">does_palette_cover_plot_vals()</a></code>
 
         </dt>
@@ -242,6 +260,18 @@
 
         </dt>
         <dd>For a given length, create bins of a given size</dd>
+      </dl><dl><dt>
+
+          <code><a href="extract_ploidy_cn_feature.html">extract_ploidy_cn_feature()</a></code>
+
+        </dt>
+        <dd>Count changes of state relative to ploidy.</dd>
+      </dl><dl><dt>
+
+          <code><a href="extract_segment_position_feature.html">extract_segment_position_feature()</a></code>
+
+        </dt>
+        <dd>count the segment-span-on-chromosome event types.</dd>
       </dl><dl><dt>
 
           <code><a href="extract_sigminer_wang_features.html">extract_sigminer_wang_features()</a></code>
@@ -376,10 +406,22 @@
         <dd>generic function to import dlp files</dd>
       </dl><dl><dt>
 
+          <code><a href="import_telos_file.html">import_telos_file()</a></code>
+
+        </dt>
+        <dd>load UCSC gap files for telomeres</dd>
+      </dl><dl><dt>
+
           <code><a href="import_tree.html">import_tree()</a></code>
 
         </dt>
         <dd>read a tree from a file in newick format</dd>
+      </dl><dl><dt>
+
+          <code><a href="is_chr_used_in_chroms.html">is_chr_used_in_chroms()</a></code>
+
+        </dt>
+        <dd>detect if chromosomes labels include "chr"</dd>
       </dl><dl><dt>
 
           <code><a href="is_not_numeric_lacks_order.html">is_not_numeric_lacks_order()</a></code>
@@ -448,16 +490,34 @@
         <dd>add boolean if bin overlaps with a centromere.</dd>
       </dl><dl><dt>
 
+          <code><a href="mark_cn_relative_to_ploidy.html">mark_cn_relative_to_ploidy()</a></code>
+
+        </dt>
+        <dd>Mark if CN states are gains or losses relative to cell ploidy</dd>
+      </dl><dl><dt>
+
           <code><a href="mark_mask_regions.html">mark_mask_regions()</a></code>
 
         </dt>
         <dd>add a mask column to a dataframe</dd>
       </dl><dl><dt>
 
+          <code><a href="mark_segs_chromosome_span.html">mark_segs_chromosome_span()</a></code>
+
+        </dt>
+        <dd>label CN segments based on relative chromosomal positions</dd>
+      </dl><dl><dt>
+
           <code><a href="medicc_profiles_to_foreground.html">medicc_profiles_to_foreground()</a></code>
 
         </dt>
         <dd>medicc profiles files to foreground assessment</dd>
+      </dl><dl><dt>
+
+          <code><a href="mode_ploidy.html">mode_ploidy()</a></code>
+
+        </dt>
+        <dd>find the mode CN per chromosome, then mode across the chromosomes</dd>
       </dl><dl><dt>
 
           <code><a href="pairwise_bin_difference.html">pairwise_bin_difference()</a></code>
