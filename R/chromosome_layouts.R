@@ -222,7 +222,7 @@ import_telos_file <- function(version = c("hg19", "hg38")) {
   # col names by inspection and checking against here by looking up gap table
   # data format description
   # https://genome.ucsc.edu/cgi-bin/hgTables?hgsid=2018561924_ZAtdZC9CFEJw8BKiYeUjd2ImvhS7&clade=mammal&org=Human&db=hg19&hgta_group=allTables&hgta_track=hg19&hgta_table=gap&hgta_regionType=genome&position=chr7%3A155%2C592%2C223-155%2C605%2C565&hgta_outputType=primaryTable&hgta_outFileName=
-  telos <- readr::read_tsv(
+  telos <- vroom::vroom(
     telos_file,
     col_names = c(
       "bin", "chrom", "telostart", "teloend", "ix", "n", "size", "feat_type", "bridge"
