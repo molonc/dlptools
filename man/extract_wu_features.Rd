@@ -6,6 +6,7 @@
 \usage{
 extract_wu_features(
   segs_df,
+  sample_col = "cell_id",
   state_bin_max = 5,
   bin_breaks = NA,
   annotate_input = FALSE,
@@ -14,7 +15,9 @@ extract_wu_features(
 )
 }
 \arguments{
-\item{segs_df}{a dataframe of CN segments}
+\item{segs_df}{dataframe. CN segments}
+
+\item{sample_col}{string. Name of the column with cell_id/other sample name}
 
 \item{state_bin_max}{int. Maximum CN to consider for bins. All CNs of this
 value and higher are grouped together. Default of 5 follows paper.}

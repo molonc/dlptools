@@ -14,11 +14,14 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, message=FALSE, warning=FALSE}
+library(ggplot2)
 library(dlptools)
 ```
 
-dlptools offers two feature extraction types:
+## Features Defined by Other Publications
+
+dlptools offers two externally defined feature extraction types:
 
 1. Wu et al. https://www.biorxiv.org/content/10.1101/2025.03.02.641098v1
 2. Wang et al. https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1009557
@@ -102,6 +105,292 @@ sig_feats <- extract_sigminer_wang_features(segs_df)
 
 sig_feats[1:4, 1:4]
 ```
+
+<br>
+<br>
+<br>
+
+## ploidy informed CN change
+
+CN change relative to ploidy might be interesting to have a feature. Here we can mark 3 types of events for segments:
+
+1. CN is a gain relative to mode ploidy of sample/cell
+2. CN is a loss relative to mode ploidy of sample/cell
+3. CN is a match to mode ploidy
+
+Employs the function dlptools::mode_ploidy() to calculate mode ploidy of each sample/cell.
+
+```{r}
+dlptools::extract_ploidy_cn_feature(
+  segs_df,
+  # with option just to annotate the input df
+  # annotate_input = TRUE
+  # or, alternatively, return a count matrix
+  # return_matrix = TRUE
+) |>
+  dplyr::slice_head(n = 6)
+```
+
+<br>
+<br>
+<br>
+
+## Segment Span Types
+
+It might be useful to know where segments sit on chromosomes and how much of a chromosome they cover. We can label segments based on 5 categories:
+
+1. telomere bound (`telo-bound`) - segment touches a telomere
+2. centromere bound (`centro-bound`) - segment touches or crosses the centromere
+3. arm (`arm`) - segment spans a whole are (*with conditions)
+4. whole chromosome (`whole-chrom`) - segment spans the entire chromosome (*with conditions)
+5. intersitial (`inter`) - occuring within the chromosome, not touching the centromere, telomeres, and not big enough to be an entire arm.
+
+See `?dlptools::mark_segs_chromosome_span` for more details about this marking, as there are various options to tweak these definitions, such as:
+
+* how much of an arm a CN needs to cover to be considered an "arm-level" event
+* how much of a chromosome a segment needs to cover to be a "whole-chromosome" event
+* how close a seg needs to be to a telo/centromere to be considered "touching"
+
+We can mark a dataframe with the information:
+
+```{r, message=FALSE, warning=FALSE}
+dlptools::mark_segs_chromosome_span(
+  segs_df,
+  # see ?dlptools::mark_segs_chromosome_span for more args
+) |>
+  dplyr::relocate(
+    # key added columns
+    seg_span_event, telo_bound, centro_bound, spans_chrom, spans_arm
+  ) |>
+  dplyr::slice_head(n = 5)
+```
+
+<br>
+<br>
+
+More useful in the "feature" context, is to directly extract and count them up. This function bascially just calls the one above, with counting added:
+
+```{r, message=FALSE, warning=FALSE}
+dlptools::extract_segment_position_feature(
+  segs_df
+  # with option just to annotate the input df
+  # annotate_input = TRUE
+  # or, alternatively, return a count matrix
+  # return_matrix = TRUE
+) |>
+  dplyr::slice_head(n = 6)
+```
+
+
+## Feature Combinations
+
+With some of these feature sets, we can combine them into one monster feature set. Is this a good idea? A bad idea? Is the output even interpretable? Are all ov these even useful? You'll have to decide that.
+
+The feature sets of:
+
+1. `dlptools::extract_wu_features`
+2. `dlptools::extract_ploidy_cn_feature`
+3. `dlptools::extract_segment_position_feature`
+
+are all "atomic", in that they describe aspects of individual segments.
+
+First, we can collect labels all all features for the segments:
+
+```{r, message=FALSE, warning=FALSE}
+feat_anno_segs <- segs_df |>
+  dlptools::extract_wu_features(annotate_input = TRUE) |>
+  dlptools::extract_ploidy_cn_feature(annotate_input = TRUE) |>
+  dlptools::extract_segment_position_feature(annotate_input = TRUE) |>
+  dplyr::select(
+    cell_id, chr, start, end,
+    # these are then the feature columns
+    seg_bin, cn_bin, seg_change, seg_shape, cn_v_ploidy, seg_span_event
+  )
+
+
+dplyr::slice_head(feat_anno_segs, n = 5)
+```
+
+
+Then, we can just count each category and leave the counts per cell per feature as our feature set for signature extraction. This would yield a 21 feature set (6 core feature types with: 5, 3, 3, 2, 3, 5 categories across them)
+
+<!-- Seeing NA in AA/BB for this dataset...track down! -->
+
+
+```{r, message=FALSE, warning=FALSE}
+feat_cols <- c(
+  "seg_bin", "cn_bin", "seg_change", "seg_shape", "cn_v_ploidy",
+  "seg_span_event"
+)
+
+total_counts <- purrr::map(feat_cols, \(feat_col) {
+  feat_anno_segs |>
+    dplyr::group_by(cell_id, dplyr::pick(feat_col), .drop = FALSE) |>
+    dplyr::count() |>
+    dplyr::mutate(
+      feature = feat_col
+    ) |>
+    dplyr::rename(category = feat_col) |>
+    dplyr::relocate(cell_id, feature, category)
+}) |>
+  purrr::list_rbind()
+```
+
+```{r, echo=FALSE, fig.width=8, fig.height=4}
+ggplot(
+  dplyr::filter(total_counts, cell_id %in% unique(total_counts$cell_id)
+  [1:4]),
+  aes(x = category, y = n, fill = feature)
+) +
+  geom_col(show.legend = FALSE) +
+  facet_grid(
+    cell_id ~ feature,
+    scales = "free",
+    axes = "all_x",
+    switch = "x"
+  ) +
+  theme_classic() +
+  theme(
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    strip.placement = "outside"
+  )
+```
+
+<br>
+<br>
+
+We could opt to cross all of the features into a "mega-feature-set". But, this would be:
+
+* 4 features (containing 3, 5, 2, 3 categories across them) with from `dlptools::extract_wu_features`
+* 1 feature with 3 features categories from `dlptools::extract_ploidy_cn_feature`
+* 1 feature with 5 feature categories from `dlptools::extract_segment_position_feature`
+
+```{r}
+all_feat_labels <- list(
+  levels(feat_anno_segs$seg_bin),
+  levels(feat_anno_segs$cn_bin),
+  levels(feat_anno_segs$seg_change),
+  levels(feat_anno_segs$seg_shape),
+  levels(feat_anno_segs$cn_v_ploidy),
+  levels(feat_anno_segs$seg_span_event)
+)
+
+crossed_labels <- expand.grid(all_feat_labels)
+
+crossed_labels[1:4, ]
+```
+
+
+```{r}
+nrow(crossed_labels)
+```
+
+
+making for a cross feature set with 1350 possible categories. That might be too detailed, and you should check if most categories are 0 for your data, indicating useless features. 
+
+<br>
+
+Also, probably want to ask if crossing the category actually makes sense and adds biological information. For example, here, you can't even have a small sized (< 5Mb) arm event (smallest arm is >10 Mb), so crossing size and chromosome location doesn't actually lead to fully crossed features or any gain in information (and these two are somewhat redundant). Or, does it matter if the segment shape parameter is a ploidy-gain or a ploidy-loss? Does knowing that distinguish processes or teach you anything biologically? (and that's only two parameters being crossed).
+
+<br>
+
+But, forging ahead bravely:
+
+```{r}
+# collect all possible feature labels
+
+crossed_counts <- feat_anno_segs |>
+  dplyr::group_by(
+    # sample ID column
+    cell_id,
+    # feature columns
+    seg_bin, cn_bin, seg_change, seg_shape, cn_v_ploidy, seg_span_event,
+    .drop = FALSE
+  ) |>
+  dplyr::count() |>
+  dplyr::mutate(
+    cross_feat = stringr::str_c(
+      seg_bin, cn_bin, seg_change, seg_shape, cn_v_ploidy, seg_span_event,
+      sep = ":"
+    )
+  )
+```
+
+```{r, echo=FALSE, fig.width=8, fig.height=4}
+ggplot(
+  dplyr::filter(crossed_counts, cell_id %in% unique(total_counts$cell_id)
+  [1:4]),
+  aes(x = cross_feat, y = n)
+) +
+  geom_col() +
+  facet_grid(cell_id ~ ., axes = "all_x") +
+  theme_classic() +
+  theme(
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+  ) +
+  xlab("Crossed Feature")
+```
+
+
+<br>
+<br>
+
+Or, you could do some sort of combination of cross and uncrossed? I don't know. This whole signature field is the wild west and people do all kinds of things.
+
+```{r, message=FALSE, warning=FALSE}
+# count the Wu features as crossed: 90 feature categories
+wu_crossed_counts <- dlptools::extract_wu_features(segs_df) |>
+  dplyr::select(cell_id, feat_cat, n) |>
+  dplyr::mutate(
+    feature_group = "Wu-crossed"
+  )
+
+# do ploidy_cn_change and segment placement as uncrossed?
+ploidy_counts <- dlptools::extract_ploidy_cn_feature(segs_df) |>
+  dplyr::rename(feat_cat = cn_v_ploidy) |>
+  dplyr::mutate(
+    feature_group = "ploidy"
+  )
+
+
+seg_pos_counts <- dlptools::extract_segment_position_feature(segs_df) |>
+  dplyr::rename(feat_cat = seg_span_event) |>
+  dplyr::mutate(
+    feature_group = "position"
+  )
+
+all_feat_counts <- purrr::list_rbind(list(
+  wu_crossed_counts, ploidy_counts, seg_pos_counts
+)) |>
+  dplyr::arrange(cell_id, feature_group) |>
+  dplyr::mutate(
+    feature_group = factor(feature_group, levels = unique(feature_group))
+  )
+```
+
+
+```{r, echo=FALSE, fig.width=8, fig.height=4}
+ggplot2::ggplot(
+  dplyr::filter(all_feat_counts, cell_id %in% unique(total_counts$cell_id)
+  [1:4]),
+  ggplot2::aes(x = feat_cat, y = n, fill = feature_group)
+) +
+  ggplot2::geom_col(show.legend = FALSE) +
+  ggplot2::facet_grid(
+    cell_id ~ feature_group,
+    axes = "all_x", scales = "free_x", space = "free"
+  ) +
+  ggplot2::scale_fill_manual(values = dlptools::GEN_PLOT_COLS) +
+  ggplot2::theme_classic() +
+  ggplot2::theme(
+    axis.text.x = ggplot2::element_blank(),
+    axis.ticks.x = ggplot2::element_blank(),
+  ) +
+  ggplot2::xlab("Mixed Features")
+```
+
 
 <br>
 <br>

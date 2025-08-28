@@ -8,7 +8,7 @@ fill_state_from_neighbours(state_df, cols_to_fill = c("state"))
 }
 \arguments{
 \item{state_df}{dataframe of state data with NAs for some bins that need
-to be filled in. E.g., after dlptools::running add_missing_bins_for_cells()}
+to be filled in. E.g., after dlptools::add_missing_bins_for_cells()}
 }
 \description{
 This function fills in NAs of columns with the information from an upstream

@@ -72,6 +72,7 @@ RAW_COPY_COLORS <- circlize::colorRamp2(
   CNV_COLOURS[1:(length(CNV_COLOURS) - 1)]
 )
 
+#' @export
 GEN_PLOT_COLS <- c(
   "#4269D0FF", "#3CA951FF", "#FF725CFF",
   "#EFB118FF", "#A463F2FF",
@@ -79,6 +80,7 @@ GEN_PLOT_COLS <- c(
   "#9498A0FF", "#6CC5B0FF"
 )
 
+#' @export
 BASE_PLOT_THEME <- list(
   ggplot2::theme_minimal() +
     ggplot2::theme(
