@@ -320,14 +320,17 @@ extract_process_features <- function(segs_df) {
 #' [dlptools::extract_breakpoints]
 #'
 #' @param segs_df dataframe. copy number segments for samples.
+#' @param sample_col string. Name of column with cell/sample names
 #' @return dataframe. sample ids and all observed segment sizes.
 #' @export
-extract_segment_sizes <- function(segs_df) {
+extract_segment_sizes <- function(
+    segs_df,
+    sample_col = "cell_id") {
   confirm_cols_present(c("start", "end"), segs_df)
 
   seg_sizes <- segs_df |>
     dplyr::mutate(seg_size = end - start + 1) |>
-    dplyr::select(cell_id, seg_size)
+    dplyr::select(.data[[sample_col]], seg_size)
 
   return(seg_sizes)
 }
