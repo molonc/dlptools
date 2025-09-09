@@ -260,7 +260,7 @@ extract_ploidy_cn_feature <- function(
 
 #' count the segment-span-on-chromosome event types.
 #'
-#' Critical to this fuction is [dlptools::mark_segs_chromosome_span()]. It is
+#' Critical to this function is [dlptools::mark_segs_chromosome_span()]. It is
 #' important to read and understand that function and its arguments.
 #'
 #' This function basically just calls [dlptools::mark_segs_chromosome_span()]
@@ -298,4 +298,238 @@ extract_segment_position_feature <- function(
   }
 
   return(seg_span_counts)
+}
+
+
+extract_process_features <- function(segs_df) {
+
+}
+
+#' sizes of the segments
+#'
+#' This function is as simple as it sounds, end - start.
+#'
+#' Used as a setup for extracting process based features *á la*:
+#' * Macintyre et al. 2018
+#' * Drews et al. 2018
+#'
+#' Really, something like this should be used to generate values that then you
+#' define categories for to count occurrences.
+#'
+#' Related functions include: [dlptools::extract_extract_changepoint] and
+#' [dlptools::extract_breakpoints]
+#'
+#' @param segs_df dataframe. copy number segments for samples.
+#' @return dataframe. sample ids and all observed segment sizes.
+#' @export
+extract_segment_sizes <- function(segs_df) {
+  confirm_cols_present(c("start", "end"), segs_df)
+
+  seg_sizes <- segs_df |>
+    dplyr::mutate(seg_size = end - start + 1) |>
+    dplyr::select(cell_id, seg_size)
+
+  return(seg_sizes)
+}
+
+#' extract the CN change between adjacent segments.
+#'
+#' Change points are the change in copy number state between adjacent segments.
+#' If one segment is 4 and the adjacent segment is 1, the change point is 3.
+#'
+#' Change points are based on the difference to the "left" adjacent segment,
+#' when moving from BP 1 to the end of a chromosome. So if there are 3
+#' segments: 4 - 1 - 2, the change points would be:
+#' |1 - 4| and |2 - 1| resulting in: 3, 1
+#'
+#' For the first segment on a chromosome,
+#' \href{Drews et al.}{https://www.nature.com/articles/s41586-022-04789-9}
+#' compared it to a hypothetical diploid. So if the first segment on a
+#' chromosome is 5, the change point would be 5 - 2 = 3. That's fine if the
+#' base genome is diploid, but doesn't work so well for other ploidies, or
+#' cases where you don't want to assume a diploid base case.
+#'
+#' `first_seg_correction` provides options over what to do. "diploid" for Drews
+#' solution, "cn_mode" to compare to sample ploidy estimate based on mode, or
+#' "ignore" to not count anything for first segments.
+#'
+#' @param segs_df dataframe. Sample copy number segments.
+#' first_seg_correction
+#' @param sample_col string. Name of column with cell/sample names
+#' @param chrom_col string. Name of column with chromosome names
+#' @param cn_col string. Name of column with segment copy number states.
+#' @param ... can pass arguments to [dlptools::segs_to_reads]
+#' @return dataframe. Sample IDs and the observed breakpoint counts per scope.
+extract_changepoint <- function(
+    segs_df,
+    first_seg_correction = c("cn_mode", "diploid", "ignore"),
+    sample_col = "cell_id",
+    chrom_col = "chr",
+    cn_col = "state",
+    ...) {
+  first_seg_correction <- match.arg(first_seg_correction)
+
+  if (first_seg_correction == "cn_mode") {
+    mode_ploidies <- segs_to_reads(segs_df, ...) |>
+      mode_ploidy(
+        sample_col = sample_col,
+        cn_col = cn_col, chrom_col = chrom_col
+      )
+
+    segs_df <- dplyr::left_join(
+      segs_df, mode_ploidies,
+      by = sample_col
+    ) |>
+      dplyr::rename(
+        first_seg_comp_val = mode_ploidy
+      )
+  } else if (first_seg_correction == "diploid") {
+    segs_df <- dplyr::mutate(segs_df, first_seg_comp_val = 2)
+  } else if (first_seg_correction == "ignore") {
+    segs_df <- dplyr::mutate(segs_df, first_seg_comp_val = NA)
+  }
+
+  change_points <- segs_df |>
+    dplyr::group_by(.data[[sample_col]], .data[[chrom_col]]) |>
+    dplyr::mutate(
+      left_seg = dplyr::lag(.data[[cn_col]]),
+      left_seg = dplyr::if_else(
+        is.na(left_seg),
+        first_seg_comp_val,
+        left_seg
+      ),
+      cn_change = abs(.data[[cn_col]] - left_seg)
+    ) |>
+    dplyr::ungroup() |>
+    dplyr::filter(!is.na(cn_change)) |>
+    dplyr::select(.data[[sample_col]], cn_change)
+
+  return(change_points)
+}
+
+#' convenience function to extracting breakpoints per window size
+#'
+#' just calling the generic [dlptools::extract_breakpoints], with some
+#' pre-loaded options. See that function for details.
+#' @return dataframe. Sample IDs and the observed breakpoint counts observed in
+#' the specified window size.
+#' @export
+extract_bp_per_window <- function(
+    segs_df,
+    window_size = 10e6, # 10Mb is standard for most of these papers
+    sample_col = "cell_id",
+    chrom_col = "chr",
+    genome_version = c("hg19", "hg38")) {
+  extract_breakpoints(
+    segs_df = segs_df,
+    scope = "windows",
+    window_size = window_size,
+    genome_version = genome_version,
+    sample_col = sample_col,
+    chrom_col = chrom_col,
+  )
+}
+
+#' convenience function to extracting breakpoints per chromosome arm
+#'
+#' just calling the generic [dlptools::extract_breakpoints], with some
+#' pre-loaded options. See that function for details.
+#' @return dataframe. Sample IDs and the observed breakpoint counts on
+#' chromosome arms.
+#' @export
+extract_bp_per_arm <- function(
+    segs_df,
+    sample_col = "cell_id",
+    chrom_col = "chr",
+    genome_version = c("hg19", "hg38")) {
+  extract_breakpoints(
+    segs_df = segs_df,
+    scope = "arms",
+    genome_version = genome_version,
+    sample_col = sample_col,
+    chrom_col = chrom_col,
+  )
+}
+
+#' extracting counts of breakpoints per user-defined scope
+#'
+#' Counting the number of breakpoints (i.e., transitions between copy number
+#' segments) per arm or per window (typically 10Mb).
+#'
+#' @param segs_df dataframe. Copy number segments for samples
+#' @param scope string. "windows" (default) or "arms", i.e., what to target for
+#' counting
+#' @param genome_version string. "hg19" (default) or "hg38"
+#' @param window_size integer. How big of a window to use, if extracting counts
+#' per a "windows" scope. Most publications use 10Mb, which is the default
+#' (10e6)
+#' @param sample_col string. Name of column with cell/sample names
+#' @param chrom_col string. Name of column with chromosome names
+#' @return dataframe. Sample IDs and the observed breakpoint counts per scope.
+#' @export
+extract_breakpoints <- function(
+    segs_df,
+    scope = c("windows", "arms"),
+    genome_version = c("hg19", "hg38"),
+    window_size = 10e6, # 10Mb is standard for most of these papers
+    sample_col = "cell_id",
+    chrom_col = "chr") {
+  scope <- match.arg(scope)
+
+  genome_version <- match.arg(genome_version)
+
+  confirm_cols_present("end", segs_df)
+
+  chr_info <- suppressWarnings(load_chrom_info_file(version = genome_version))
+
+  # DLP can output bins longer than the chromosome to maintain it's 500Kb
+  # bin size
+  segs_df_p <- dplyr::left_join(
+    segs_df, chr_info,
+    by = setNames(chrom_col, "chr")
+  ) |>
+    dplyr::mutate(
+      end = dplyr::if_else(end > total_length, total_length, end)
+    )
+
+  # set up chromosome intervals, could then generalize to arms?
+  if (scope == "windows") {
+    intervals <- create_chrom_window_intervals(
+      window_size = window_size,
+      genome_version = genome_version
+    )
+  } else if (scope == "arms") {
+    intervals <- create_chrom_arm_intervals(
+      genome_version = genome_version
+    )
+  }
+
+  to_process <- dplyr::distinct(
+    segs_df,
+    sample = .data[[sample_col]],
+    chrom = .data[[chrom_col]]
+  )
+
+  bp_counts <- purrr::map2_df(
+    to_process$sample,
+    to_process$chrom,
+    \(sample, chrom) {
+      ends <- segs_df_p |>
+        dplyr::filter(
+          .data[[sample_col]] == sample &
+            .data[[chrom_col]] == chrom
+        ) |>
+        dplyr::pull(end)
+
+      counts <- table(cut(ends, breaks = intervals[[chrom]]))
+
+      tibble::tibble(
+        !!sample_col := sample,
+        chrom = chrom,
+        breakpoints = unname(counts)
+      )
+    }
+  )
+
+  return(bp_counts)
 }

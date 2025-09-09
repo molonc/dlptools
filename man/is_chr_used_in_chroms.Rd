@@ -10,6 +10,9 @@ is_chr_used_in_chroms(chrom_vec)
 \item{chrom_vec}{vector of chromosome labels, probably pulled from a
 dataframe of cn information.}
 }
+\value{
+boolean. TRUE if "chr" found in the strings.
+}
 \description{
 detect if chromosomes labels include "chr"
 }

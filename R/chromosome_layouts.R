@@ -21,7 +21,8 @@ load_chrom_info_file <- function(version = c("hg19", "hg38")) {
     ) |>
     dplyr::mutate(
       chr = stringr::str_replace(chr, "chr", "")
-    )
+    ) |>
+    dplyr::select(-misc)
 
   return(chrom_info)
 }
@@ -436,4 +437,65 @@ mark_segs_chromosome_span <- function(
   )
 
   return(segs_df)
+}
+
+#' break a chromosome up into intervals of a defined window size
+#'
+#' @param window_size integer. The size of window to split the chromosome into.
+#' @param genome_version string. "hg19" (default) or "hg38"
+#' @return list. Named by chromosome, vectors of window starts.
+#' @export
+create_chrom_window_intervals <- function(
+    window_size,
+    genome_version = c("hg19", "hg38")) {
+  genome_version <- match.arg(genome_version)
+
+  chr_info <- suppressWarnings(
+    chr_info <- load_chrom_info_file(version = genome_version)
+  )
+  intervals <- purrr::map(chr_info$total_length, \(total_length) {
+    max_end <- total_length + window_size
+    intervals <- seq(1, max_end, window_size)
+    intervals
+  })
+  names(intervals) <- chr_info$chr
+  return(intervals)
+}
+
+#' create a list of intervals spanning chromosome arms
+#'
+#' Splits a chromosome at the middle of the centromere. Sets up intervals for
+#' splitting each chromosome arm.
+#'
+#' @param genome_version string. "hg19" (default) or "hg38"
+#' @return list. Named by chromosome, vectors of how to break a chromsome into
+#' intervals of arms.
+#' @export
+create_chrom_arm_intervals <- function(genome_version = c("hg19", "hg38")) {
+  chrom_layouts <- suppressWarnings(
+    load_ucsc_centromeres(version = genome_version)
+  )
+  chrom_lengths <- suppressWarnings(
+    load_chrom_info_file(version = genome_version)
+  )
+
+  chrom_info <- dplyr::left_join(
+    chrom_lengths,
+    chrom_layouts,
+    by = dplyr::join_by("chr" == "chrom")
+  )
+
+  intervals <- purrr::pmap(
+    dplyr::select(
+      chrom_info,
+      total_length, centro_start, centro_end
+    ),
+    \(total_length, centro_start, centro_end) {
+      middle_centro <- centro_start + round(((centro_end - centro_start) / 2))
+      c(1, middle_centro, total_length + 1)
+    }
+  )
+  names(intervals) <- chrom_info$chr
+
+  return(intervals)
 }
