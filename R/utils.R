@@ -224,7 +224,6 @@ make_cellid_matrix <- function(cell_df, name_col, val_col) {
   return(cell_mtx)
 }
 
-
 #' find most common element in a vector
 #'
 #' For ties, just the first one in the list is returned.
@@ -241,10 +240,25 @@ cust_mode <- function(x, na.rm = FALSE) {
   return(ux[which.max(tabulate(match(x, ux)))])
 }
 
-
 #' detect if chromosomes labels include "chr"
+#'
 #' @param chrom_vec vector of chromosome labels, probably pulled from a
 #' dataframe of cn information.
+#' @return boolean. TRUE if "chr" found in the strings.
 is_chr_used_in_chroms <- function(chrom_vec) {
   return(any(stringr::str_detect(unique(chrom_vec), "chr")))
+}
+
+#' confirm if columns exist in dataframe
+#'
+#' @param cols vector of strings. Names of columns you are searching for in the
+#' dataframe.
+#' @param df. The dataframe to look in for the columns
+#' @return TRUE or raises a stop
+confirm_cols_present <- function(cols, df) {
+  if (!all(cols %in% colnames(df))) {
+    col_names <- paste(cols, collapse = ", ")
+    stop(paste0("need all columns: ", col_names))
+  }
+  return(TRUE)
 }

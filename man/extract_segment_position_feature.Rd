@@ -26,7 +26,7 @@ segment.}
 tibble/dataframe of counts
 }
 \description{
-Critical to this fuction is \code{\link[=mark_segs_chromosome_span]{mark_segs_chromosome_span()}}. It is
+Critical to this function is \code{\link[=mark_segs_chromosome_span]{mark_segs_chromosome_span()}}. It is
 important to read and understand that function and its arguments.
 }
 \details{
