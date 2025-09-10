@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.18</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.20</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -83,7 +83,8 @@ produces 3 bins.</p></dd>
 
 
 <dt id="arg-annotate-input">annotate_input<a class="anchor" aria-label="anchor" href="#arg-annotate-input"></a></dt>
-<dd><p>boolean. return input dataframe annotating each segment with the feature categories it falls into.</p></dd>
+<dd><p>boolean. return input dataframe annotating each
+segment with the feature categories it falls into.</p></dd>
 
 
 <dt id="arg-return-matrix">return_matrix<a class="anchor" aria-label="anchor" href="#arg-return-matrix"></a></dt>
@@ -105,7 +106,8 @@ reveals masked patterns and potential biomarkers for cancer. bioRxiv.</p>
 <p>https://www.biorxiv.org/content/10.1101/2025.03.02.641098v1</p>
 <p>They employ 4 base features, that they cross for 90 categories:</p><ol><li><p>CN states: 5 bins, 0-1, 2, 3, 4, 5+</p></li>
 <li><p>segment size: 3 bins, &lt;5 MB, 5-10Mb, 10Mb,</p></li>
-<li><p>segment shape: 3 bins, LL (low left, low right segment), HH (high left, high right segment), OT (other)</p></li>
+<li><p>segment shape: 3 bins, LL (low left, low right segment), HH (high left,
+high right segment), OT (other)</p></li>
 <li><p>segment change: 2 bins: AA (difference between surrounding segments &lt;=
 some critical value), or BB</p></li>
 </ol><p>Some issues:</p><ul><li><p>whole chromosome amplifications/losses not captured</p></li>

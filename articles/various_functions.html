@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.18</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.20</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -389,14 +389,14 @@ specify any of the columns you want filled:</p>
 <span>  version <span class="op">=</span> <span class="st">"hg19"</span> <span class="co"># default, or "hg38"</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 3</span></span></span>
-<span><span class="co">#&gt;   chr   total_length misc                </span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 1        249<span style="text-decoration: underline;">250</span>621 /gbdb/hg19/hg19.2bit</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 2        243<span style="text-decoration: underline;">199</span>373 /gbdb/hg19/hg19.2bit</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 3        198<span style="text-decoration: underline;">022</span>430 /gbdb/hg19/hg19.2bit</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 4        191<span style="text-decoration: underline;">154</span>276 /gbdb/hg19/hg19.2bit</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 5        180<span style="text-decoration: underline;">915</span>260 /gbdb/hg19/hg19.2bit</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 2</span></span></span>
+<span><span class="co">#&gt;   chr   total_length</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 1        249<span style="text-decoration: underline;">250</span>621</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 2        243<span style="text-decoration: underline;">199</span>373</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 3        198<span style="text-decoration: underline;">022</span>430</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 4        191<span style="text-decoration: underline;">154</span>276</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 5        180<span style="text-decoration: underline;">915</span>260</span></span></code></pre></div>
 <p><br><br></p>
 </div>
 <div class="section level3">
@@ -480,7 +480,7 @@ information on how this works:</p>
 <span>  <span class="co"># key added columns, more present too</span></span>
 <span>  <span class="va">seg_span_event</span>, <span class="va">telo_bound</span>, <span class="va">centro_bound</span>, <span class="va">spans_chrom</span>, <span class="va">spans_arm</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 12,151 × 33</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 12,151 × 32</span></span></span>
 <span><span class="co">#&gt;    seg_span_event telo_bound centro_bound spans_chrom spans_arm cell_id    chr  </span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> telo-bound     TRUE       FALSE        FALSE       FALSE     AT23998-A… 1    </span></span>
@@ -494,8 +494,8 @@ information on how this works:</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> inter          FALSE      FALSE        FALSE       FALSE     AT23998-A… 1    </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> inter          FALSE      FALSE        FALSE       FALSE     AT23998-A… 1    </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 12,141 more rows</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 26 more variables: start &lt;dbl&gt;, end &lt;dbl&gt;, state &lt;dbl&gt;, seg_width &lt;dbl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   total_length &lt;dbl&gt;, misc &lt;chr&gt;, centro_start &lt;dbl&gt;, centro_end &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 25 more variables: start &lt;dbl&gt;, end &lt;dbl&gt;, state &lt;dbl&gt;, seg_width &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   total_length &lt;dbl&gt;, centro_start &lt;dbl&gt;, centro_end &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   centro_span &lt;dbl&gt;, start_p &lt;dbl&gt;, start_q &lt;dbl&gt;, end_p &lt;dbl&gt;, end_q &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   telostart_p &lt;dbl&gt;, teloend_p &lt;dbl&gt;, telostart_q &lt;dbl&gt;, teloend_q &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   telo_p_dist &lt;dbl&gt;, telo_q_dist &lt;dbl&gt;, telo_dist &lt;dbl&gt;, centro_p_dist &lt;dbl&gt;,</span></span></span>
