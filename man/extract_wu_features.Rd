@@ -27,7 +27,8 @@ more than breaks. Defaults follow paper. Default is < 5Mb, 5--10Mb, > 10Mb
 specified as c(5e6, 10e6 + 1). Internally, base::cut() is used, so 2 splits
 produces 3 bins.}
 
-\item{annotate_input}{boolean. return input dataframe annotating each segment with the feature categories it falls into.}
+\item{annotate_input}{boolean. return input dataframe annotating each
+segment with the feature categories it falls into.}
 
 \item{return_matrix}{boolean. Return a cell-by-feature matrix of counts.}
 
