@@ -29,6 +29,28 @@ dlptools offers two externally defined feature extraction types:
 The Wang et al features are just a thin wrapper around [sigminer](https://github.com/ShixiangWang/sigminer?tab=readme-ov-file) functions. Check out that package for more tools and actual signature extraction.
 
 <br>
+
+As well, dlptools offers functions to extract the standard "**process based**" features, defines/inspired by:
+
+* Macintyre et al. 2018
+* Maclachlan et al. 2021
+* Drews et al. 2022
+* and others
+
+<br>
+
+These features include:
+
+* segment size
+* copy number change points
+* breakpoint counts per arm or MB window
+* length of oscillating copy number changes
+
+Often, extracting these features is a starting point, and they are further summarized into categories. These categories are either set by hand, or informed by mixture models.
+
+Some publications also include the actual CN of the segments (in categories) as a feature, but I haven't included a function for that...presumably you can pull that out of your data.
+
+<br>
 <br>
 
 A likely starting point of this exercise might be some read bin data, or some segment data. It's probably good that it's been cleaned up to your liking.
@@ -39,6 +61,7 @@ Perhaps the workflow would look something like this:
 reads_df <- vroom::vroom("data/example_full_reads.tsv.gz")
 
 segs_df <- reads_df |>
+  dplyr::filter(!chr %in% c("X", "Y")) |>
   dlptools::mark_mask_regions() |>
   dlptools::mark_bins_overlapping_centromeres(padding = 3e6) |>
   dplyr::filter(
@@ -63,6 +86,8 @@ dplyr::slice_head(segs_df, n = 5)
 
 <br>
 <br>
+
+### Wu et al.
 
 For extracting Wu et al. features:
 
@@ -98,6 +123,8 @@ see `?dlptools::extract_wu_features` for more.
 <br>
 <br>
 
+### Wang et al., aka Sigminer
+
 Alternatively, we can get Wang et al. features. Though if going this route, it would be a good idea to look more at [sigminer](https://github.com/ShixiangWang/sigminer?tab=readme-ov-file) itself:
 
 ```{r, warning=FALSE, message = FALSE}
@@ -110,7 +137,140 @@ sig_feats[1:4, 1:4]
 <br>
 <br>
 
-## ploidy informed CN change
+## Process-Based Features
+
+1. segment lengths. 
+
+This is as simple as it sounds, and the function is unnecessary. These lengths would need to be subsequently categorized somehow.
+
+```{r}
+dlptools::extract_segment_sizes(
+  segs_df = segs_df
+) |>
+  dplyr::slice_head(n = 10)
+```
+
+<br>
+
+2. Copy number change points
+
+These are the values of the change in copy number from segment to segment. E.g., 2-5 would yield a 3.
+
+See `?dlptools::extract_changepoint()` for an important discussion of the `first_seg_correction` parameter.
+
+```{r}
+dlptools::extract_changepoint(
+  segs_df = segs_df
+) |>
+  dplyr::slice_head(n = 10)
+```
+
+<br>
+
+3. Extracting number of breakpoints per chromosome arm
+
+A breakpoint is a change in the copy number.
+
+```{r}
+dlptools::extract_breakpoints(
+  segs_df = segs_df,
+  scope = "arms"
+) |>
+  dplyr::slice_head(n = 10)
+
+# there is an alias of: dlptools::extract_bp_per_arm()
+```
+
+<br>
+
+4. Extract breakpoints per MB window
+
+Typically, publications have used 10Mb.
+
+```{r}
+dlptools::extract_breakpoints(
+  segs_df = segs_df,
+  scope = "windows"
+  # window_size = 10e6 # default
+) |>
+  dplyr::slice_head(n = 10)
+
+# there is an alias of: dlptools::extract_bp_per_window()
+```
+
+<br>
+
+5. lengths of copy number oscillations
+
+
+Overall, this is a bit of a funny feature. But basically, chromosomes are assessed in 3-segment sets to determine if it counts as an oscillation. If there are more than one oscillations in a row, they are added up. If the 3-segment set is not an oscillation, it gets a 0.
+
+<br>
+
+* 1-2-3 is not an oscillation, length 0
+* 2-3-2 is an oscillation of length 1
+* 2-3-2-3 is an oscillation of length 2
+* 2-3-2-3-5 is an oscillation of length 2 followed by a 0 for the non-oscillating component
+* 1-2-3-4-5 has no oscillations, and returns 0 0 0 for the 3 possible 3-set segments
+
+<br>
+
+I have dissected the code for various publications and packages that count this feature and they all work differently, some have outright bugs, and others lack some internal consistency in how they assess 0s. So, please read `?dlptools::extract_oscillations` for a long discussion of how exactly this is working.
+
+<br>
+
+Overall, 0s are typically abundant, and should maybe be considered for removal...? I don't know, they just tend to overwhelm. Again, all publications using this feature have done so differently, so it's the wild west. Do what feels right.
+
+```{r}
+dlptools::extract_oscillations(
+  segs_df = segs_df
+  # important arguments are:
+  # middle_bound = 2 # default
+  # ends_bound = 0 # default
+  # see function documentation for what these are
+) |>
+  dplyr::slice_head(n = 10)
+```
+
+<br>
+
+You can also play directly with `dlptools::count_oscillations` on vectors to see how the inernals of this function are working:
+
+```{r}
+dlptools::count_oscillations(1:3)
+
+dlptools::count_oscillations(c(2, 3, 2))
+
+dlptools::count_oscillations(c(2, 3, 2, 3))
+
+dlptools::count_oscillations(c(2, 3, 2, 3, 8, 5, 4, 5))
+
+# most other publications/package do not care about the middle value
+dlptools::count_oscillations(
+  c(5, 1000, 5),
+  middle_bound = Inf
+)
+
+# some publications would allow this as counting as an oscillation. Where the
+# first and last segments are allowed to be within a certain distance of one
+# another, and the middle value doesn't matter.
+dlptools::count_oscillations(
+  c(5, 1000, 6),
+  middle_bound = Inf,
+  ends_bound = 1
+)
+```
+
+
+<br>
+<br>
+<br>
+
+## Other vaguely feature like things
+
+These could be considered features, maybe only within certain contexts. Maybe they are just more useful as descriptions of the data as a whole.
+
+### ploidy informed CN change
 
 CN change relative to ploidy might be interesting to have a feature. Here we can mark 3 types of events for segments:
 
@@ -132,10 +292,8 @@ dlptools::extract_ploidy_cn_feature(
 ```
 
 <br>
-<br>
-<br>
 
-## Segment Span Types
+### Segment Span Types
 
 It might be useful to know where segments sit on chromosomes and how much of a chromosome they cover. We can label segments based on 5 categories:
 
@@ -182,7 +340,7 @@ dlptools::extract_segment_position_feature(
 ```
 
 
-## Feature Combinations
+## Feature Combinations...?
 
 With some of these feature sets, we can combine them into one monster feature set. Is this a good idea? A bad idea? Is the output even interpretable? Are all ov these even useful? You'll have to decide that.
 
@@ -337,7 +495,7 @@ ggplot(
 <br>
 <br>
 
-Or, you could do some sort of combination of cross and uncrossed? I don't know. This whole signature field is the wild west and people do all kinds of things.
+Or, you could do some sort of combination of cross and uncrossed? I don't know. Again, this whole signature field is the wild west and people do all kinds of things.
 
 ```{r, message=FALSE, warning=FALSE}
 # count the Wu features as crossed: 90 feature categories

@@ -50,7 +50,8 @@ They employ 4 base features, that they cross for 90 categories:
 \enumerate{
 \item CN states: 5 bins, 0-1, 2, 3, 4, 5+
 \item segment size: 3 bins, <5 MB, 5-10Mb, 10Mb,
-\item segment shape: 3 bins, LL (low left, low right segment), HH (high left, high right segment), OT (other)
+\item segment shape: 3 bins, LL (low left, low right segment), HH (high left,
+high right segment), OT (other)
 \item segment change: 2 bins: AA (difference between surrounding segments <=
 some critical value), or BB
 }

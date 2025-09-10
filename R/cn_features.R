@@ -359,12 +359,14 @@ extract_segment_sizes <- function(
 #' "ignore" to not count anything for first segments.
 #'
 #' @param segs_df dataframe. Sample copy number segments.
-#' first_seg_correction
+#' @param first_seg_correction string. Default: 'cn_mode'. Options include
+#' "diploid" or "ignore".
 #' @param sample_col string. Name of column with cell/sample names
 #' @param chrom_col string. Name of column with chromosome names
 #' @param cn_col string. Name of column with segment copy number states.
 #' @param ... can pass arguments to [dlptools::segs_to_reads]
 #' @return dataframe. Sample IDs and the observed breakpoint counts per scope.
+#' @export
 extract_changepoint <- function(
     segs_df,
     first_seg_correction = c("cn_mode", "diploid", "ignore"),
@@ -530,7 +532,6 @@ extract_breakpoints <- function(
 
       tibble::tibble(
         !!sample_col := sample,
-        chrom = chrom,
         breakpoints = unname(counts)
       )
     }

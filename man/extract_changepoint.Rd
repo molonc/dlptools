@@ -14,8 +14,10 @@ extract_changepoint(
 )
 }
 \arguments{
-\item{segs_df}{dataframe. Sample copy number segments.
-first_seg_correction}
+\item{segs_df}{dataframe. Sample copy number segments.}
+
+\item{first_seg_correction}{string. Default: 'cn_mode'. Options include
+"diploid" or "ignore".}
 
 \item{sample_col}{string. Name of column with cell/sample names}
 
