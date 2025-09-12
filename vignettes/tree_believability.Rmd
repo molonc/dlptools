@@ -92,7 +92,11 @@ toy_w <- dlptools::convert_long_reads_to_wide(toy_states)
 toy_mat <- dplyr::select(toy_w, -cell_id) |> as.matrix()
 rownames(toy_mat) <- toy_w$cell_id
 class(toy_mat) <- "character"
+```
 
+Plotting what we are working with:
+
+```{r, eval=FALSE}
 toy_p <- ggtree::ggtree(toy_tree) +
   ggtree::geom_tiplab() +
   ggtree::geom_nodelab(aes(label = node), hjust = -2, color = "red") +
@@ -102,6 +106,17 @@ ggtree::gheatmap(toy_p, toy_mat, colnames = FALSE) +
   theme(legend.position = "none") +
   scale_fill_manual(values = dlptools::CNV_COLOURS)
 ```
+
+```{r, eval=FALSE, echo=FALSE, include=FALSE}
+# something is conking on the website build, but I can't replicate it. Just
+# storing and displaying the image.
+# ggsave("/projects/molonc/aparicio_lab/bfurman/code/dlptools/vignettes/imgs/toy_heatmap_tree.png")
+```
+
+```{r, echo=FALSE, out.width="60%", out.height="50%", fig.align='center'}
+knitr::include_graphics("imgs/toy_heatmap_tree.png")
+```
+
 
 3 tips with 3 bins of state data. Node/tip numbers highlighted in red.
 
