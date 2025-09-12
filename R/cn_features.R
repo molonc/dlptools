@@ -302,11 +302,6 @@ extract_segment_position_feature <- function(
   return(seg_span_counts)
 }
 
-
-extract_process_features <- function(segs_df) {
-
-}
-
 #' sizes of the segments
 #'
 #' This function is as simple as it sounds, end - start.
@@ -511,31 +506,24 @@ extract_breakpoints <- function(
     )
   }
 
-  to_process <- dplyr::distinct(
-    segs_df,
-    sample = .data[[sample_col]],
-    chrom = .data[[chrom_col]]
-  )
+  bp_counts <- segs_df %>%
+    split(.[[sample_col]]) |>
+    purrr::map(
+      .x = _, \(x) split(x[["end"]], x[[chrom_col]])
+    ) |>
+    purrr::imap_dfr(\(samp, samp_name) {
+      bps <- purrr::imap(samp, \(chrom_ends, chrom_name) {
+        counts <- table(cut(chrom_ends, breaks = intervals[[chrom_name]]))
 
-  bp_counts <- purrr::map2_df(
-    to_process$sample,
-    to_process$chrom,
-    \(sample, chrom) {
-      ends <- segs_df_p |>
-        dplyr::filter(
-          .data[[sample_col]] == sample &
-            .data[[chrom_col]] == chrom
-        ) |>
-        dplyr::pull(end)
-
-      counts <- table(cut(ends, breaks = intervals[[chrom]]))
+        unname(counts)
+      }) |>
+        purrr::list_c()
 
       tibble::tibble(
-        !!sample_col := sample,
-        breakpoints = unname(counts)
+        !!sample_col := samp_name,
+        breakpoints = bps
       )
-    }
-  )
+    })
 
   return(bp_counts)
 }
