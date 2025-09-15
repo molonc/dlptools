@@ -343,7 +343,7 @@ extract_segment_sizes <- function(
 #' |1 - 4| and |2 - 1| resulting in: 3, 1
 #'
 #' For the first segment on a chromosome,
-#' \href{Drews et al.}{https://www.nature.com/articles/s41586-022-04789-9}
+#' \href{https://www.nature.com/articles/s41586-022-04789-9}{Drews et al.}
 #' compared it to a hypothetical diploid. So if the first segment on a
 #' chromosome is 5, the change point would be 5 - 2 = 3. That's fine if the
 #' base genome is diploid, but doesn't work so well for other ploidies, or
@@ -354,8 +354,8 @@ extract_segment_sizes <- function(
 #' "ignore" to not count anything for first segments.
 #'
 #' @param segs_df dataframe. Sample copy number segments.
-#' @param first_seg_correction string. Default: 'cn_mode'. Options include
-#' "diploid" or "ignore".
+#' @param first_seg_correction string. Default: 'ignore'. Options include
+#' "diploid" or "cn_mode".
 #' @param sample_col string. Name of column with cell/sample names
 #' @param chrom_col string. Name of column with chromosome names
 #' @param cn_col string. Name of column with segment copy number states.
@@ -364,7 +364,7 @@ extract_segment_sizes <- function(
 #' @export
 extract_changepoint <- function(
     segs_df,
-    first_seg_correction = c("cn_mode", "diploid", "ignore"),
+    first_seg_correction = c("ignore", "cn_mode", "diploid"),
     sample_col = "cell_id",
     chrom_col = "chr",
     cn_col = "state",
@@ -394,13 +394,19 @@ extract_changepoint <- function(
   change_points <- segs_df |>
     dplyr::group_by(.data[[sample_col]], .data[[chrom_col]]) |>
     dplyr::mutate(
+      n_segs = dplyr::n(),
       left_seg = dplyr::lag(.data[[cn_col]]),
       left_seg = dplyr::if_else(
         is.na(left_seg),
         first_seg_comp_val,
         left_seg
       ),
-      cn_change = abs(.data[[cn_col]] - left_seg)
+      cn_change = dplyr::if_else(
+        # set whole chromosomes without CN events to 0 changepoints.
+        n_segs == 1,
+        0,
+        abs(.data[[cn_col]] - left_seg)
+      )
     ) |>
     dplyr::ungroup() |>
     dplyr::filter(!is.na(cn_change)) |>

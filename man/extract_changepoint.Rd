@@ -6,7 +6,7 @@
 \usage{
 extract_changepoint(
   segs_df,
-  first_seg_correction = c("cn_mode", "diploid", "ignore"),
+  first_seg_correction = c("ignore", "cn_mode", "diploid"),
   sample_col = "cell_id",
   chrom_col = "chr",
   cn_col = "state",
@@ -16,8 +16,8 @@ extract_changepoint(
 \arguments{
 \item{segs_df}{dataframe. Sample copy number segments.}
 
-\item{first_seg_correction}{string. Default: 'cn_mode'. Options include
-"diploid" or "ignore".}
+\item{first_seg_correction}{string. Default: 'ignore'. Options include
+"diploid" or "cn_mode".}
 
 \item{sample_col}{string. Name of column with cell/sample names}
 
@@ -41,7 +41,7 @@ segments: 4 - 1 - 2, the change points would be:
 |1 - 4| and |2 - 1| resulting in: 3, 1
 
 For the first segment on a chromosome,
-\href{Drews et al.}{https://www.nature.com/articles/s41586-022-04789-9}
+\href{https://www.nature.com/articles/s41586-022-04789-9}{Drews et al.}
 compared it to a hypothetical diploid. So if the first segment on a
 chromosome is 5, the change point would be 5 - 2 = 3. That's fine if the
 base genome is diploid, but doesn't work so well for other ploidies, or

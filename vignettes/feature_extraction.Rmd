@@ -156,7 +156,7 @@ dlptools::extract_segment_sizes(
 
 These are the values of the change in copy number from segment to segment. E.g., 2-5 would yield a 3.
 
-See `?dlptools::extract_changepoint()` for an important discussion of the `first_seg_correction` parameter.
+See `?dlptools::extract_changepoint` for an important discussion of the `first_seg_correction` parameter.
 
 ```{r}
 dlptools::extract_changepoint(
