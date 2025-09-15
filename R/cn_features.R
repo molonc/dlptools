@@ -519,7 +519,9 @@ extract_breakpoints <- function(
     ) |>
     purrr::imap_dfr(\(samp, samp_name) {
       bps <- purrr::imap(samp, \(chrom_ends, chrom_name) {
-        counts <- table(cut(chrom_ends, breaks = intervals[[chrom_name]]))
+        counts <- cut(chrom_ends, breaks = intervals[[chrom_name]]) |>
+          table() |>
+          as.vector()
 
         unname(counts)
       }) |>
