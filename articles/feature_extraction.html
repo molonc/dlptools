@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.21</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.22</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -237,7 +237,7 @@ These lengths would need to be subsequently categorized somehow.</p>
 </ol>
 <p>These are the values of the change in copy number from segment to
 segment. E.g., 2-5 would yield a 3.</p>
-<p>See <code>?dlptools::extract_changepoint()</code> for an important
+<p>See <code><a href="../reference/extract_changepoint.html">?dlptools::extract_changepoint</a></code> for an important
 discussion of the <code>first_seg_correction</code> parameter.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_changepoint.html">extract_changepoint</a></span><span class="op">(</span></span>
@@ -252,11 +252,11 @@ discussion of the <code>first_seg_correction</code> parameter.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> AT21352-A144173A-R03-C12         1</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> AT21352-A144173A-R03-C12         1</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> AT21352-A144173A-R03-C12         1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> AT21352-A144173A-R03-C12         1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> AT21352-A144173A-R03-C12         2</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> AT21352-A144173A-R03-C12         2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> AT21352-A144173A-R03-C12         2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> AT21352-A144173A-R03-C12         1</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> AT21352-A144173A-R03-C12         1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> AT21352-A144173A-R03-C12         1</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> AT21352-A144173A-R03-C12         2</span></span></code></pre></div>
 <p><br></p>
 <ol start="3" style="list-style-type: decimal">
 <li>Extracting number of breakpoints per chromosome arm</li>
