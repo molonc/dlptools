@@ -231,8 +231,8 @@ make_cellid_matrix <- function(cell_df, name_col, val_col) {
 #' @param x vector of values
 #' @return most common element of input vector
 #' @export
-cust_mode <- function(x, na.rm = FALSE) {
-  if (na.rm) {
+cust_mode <- function(x, na_rm = FALSE) {
+  if (na_rm) {
     x <- x[!is.na(x)]
   }
 
@@ -261,4 +261,34 @@ confirm_cols_present <- function(cols, df) {
     stop(paste0("need all columns: ", col_names))
   }
   return(TRUE)
+}
+
+#' count values that map to given categories
+#'
+#' @param df dataframe. Contains a column of values you want to count per sample
+#' @param targ_col string. Column you want to put in categories and counted.
+#' @param sample_col string. Name of the column with sample ids.
+#' @param breaks vector of doubles. Bounds for the categories.
+#' @param labels vector of strings. What to call the categories.
+#' @return tibble
+cut_categories_and_count <- function(
+    df, targ_col, sample_col, breaks, labels) {
+  if (length(breaks) - 1 != length(labels)) {
+    stop("breaks and labels must be the same length.")
+  }
+
+  counts <- df |>
+    dplyr::mutate(
+      feat_cat = cut(
+        .data[[targ_col]],
+        breaks = breaks,
+        labels = labels,
+        include.lowest = TRUE,
+        right = FALSE
+      )
+    ) |>
+    dplyr::group_by(.data[[sample_col]], feat_cat, .drop = FALSE) |>
+    dplyr::count()
+
+  return(counts)
 }

@@ -4,7 +4,7 @@
 \alias{cust_mode}
 \title{find most common element in a vector}
 \usage{
-cust_mode(x, na.rm = FALSE)
+cust_mode(x, na_rm = FALSE)
 }
 \arguments{
 \item{x}{vector of values}

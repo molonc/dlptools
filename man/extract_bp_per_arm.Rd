@@ -8,7 +8,8 @@ extract_bp_per_arm(
   segs_df,
   sample_col = "cell_id",
   chrom_col = "chr",
-  genome_version = c("hg19", "hg38")
+  genome_version = c("hg19", "hg38"),
+  return = c("values", "counts")
 )
 }
 \value{

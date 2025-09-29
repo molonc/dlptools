@@ -4,12 +4,20 @@
 \alias{extract_segment_sizes}
 \title{sizes of the segments}
 \usage{
-extract_segment_sizes(segs_df, sample_col = "cell_id")
+extract_segment_sizes(
+  segs_df,
+  sample_col = "cell_id",
+  return = c("values", "counts")
+)
 }
 \arguments{
 \item{segs_df}{dataframe. copy number segments for samples.}
 
 \item{sample_col}{string. Name of column with cell/sample names}
+
+\item{return}{string. "values" (default) or "counts". Values are the
+observed values for cells, counts are the counts of these values in
+pre-determined categories.}
 }
 \value{
 dataframe. sample ids and all observed segment sizes.
@@ -29,4 +37,8 @@ define categories for to count occurrences.
 
 Related functions include: \link{extract_extract_changepoint} and
 \link{extract_breakpoints}
+
+Can also summaries counts of pre-defined categories. With categories being:
+
+< 5mb, 5-10 Mb, 20-50 Mb, 50-100 Mb, and 100+Mb.
 }

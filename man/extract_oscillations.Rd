@@ -10,7 +10,8 @@ extract_oscillations(
   ends_bound = 0,
   sample_col = "cell_id",
   chrom_col = "chr",
-  cn_col = "state"
+  cn_col = "state",
+  return = c("values", "counts")
 )
 }
 \arguments{
@@ -29,6 +30,10 @@ i.e., they must be the same copy number.}
 \item{chrom_col}{string. Name of column with chromosome names}
 
 \item{cn_col}{string. Name of column with segment copy number states.}
+
+\item{return}{string. "values" (default) or "counts". Values are the
+observed values for cells, counts are the counts of these values in
+pre-determined categories.}
 }
 \value{
 dataframe. sample IDs and observed chain lengths.
@@ -70,4 +75,8 @@ like 5-300-6 to count as an oscillation.
 
 These behaviours can be replicated here, but isn't recommended. By default,
 Ns must match exactly, and M must be within 2 CNs.
+
+Optionally can summarize in counts of pre-defined categories of:
+
+Oscillation chains of length: 0, 1-3, 4-9, 10+
 }

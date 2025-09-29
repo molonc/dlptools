@@ -10,7 +10,8 @@ extract_breakpoints(
   genome_version = c("hg19", "hg38"),
   window_size = 1e+07,
   sample_col = "cell_id",
-  chrom_col = "chr"
+  chrom_col = "chr",
+  return = c("values", "counts")
 )
 }
 \arguments{
@@ -28,6 +29,10 @@ per a "windows" scope. Most publications use 10Mb, which is the default
 \item{sample_col}{string. Name of column with cell/sample names}
 
 \item{chrom_col}{string. Name of column with chromosome names}
+
+\item{return}{string. "values" (default) or "counts". Values are the
+observed values for cells, counts are the counts of these values in
+pre-determined categories.}
 }
 \value{
 dataframe. Sample IDs and the observed breakpoint counts per scope.
@@ -35,4 +40,10 @@ dataframe. Sample IDs and the observed breakpoint counts per scope.
 \description{
 Counting the number of breakpoints (i.e., transitions between copy number
 segments) per arm or per window (typically 10Mb).
+}
+\details{
+Optional summarizing in pre-defined categories of:
+
+Arm breakpoints: 0, 1, 2, 3, 4, 5, 6+
+Window breakpoints: 0, 1, 2, 3+
 }

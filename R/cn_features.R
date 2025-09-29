@@ -316,21 +316,90 @@ extract_segment_position_feature <- function(
 #' Related functions include: [dlptools::extract_extract_changepoint] and
 #' [dlptools::extract_breakpoints]
 #'
+#' Can also summaries counts of pre-defined categories. With categories being:
+#'
+#'  < 5mb, 5-10 Mb, 20-50 Mb, 50-100 Mb, and 100+Mb.
+#'
 #' @param segs_df dataframe. copy number segments for samples.
 #' @param sample_col string. Name of column with cell/sample names
+#' @param return string. "values" (default) or "counts". Values are the
+#' observed values for cells, counts are the counts of these values in
+#' pre-determined categories.
 #' @return dataframe. sample ids and all observed segment sizes.
 #' @export
 extract_segment_sizes <- function(
     segs_df,
-    sample_col = "cell_id") {
+    sample_col = "cell_id",
+    return = c("values", "counts")) {
+  return_type <- match.arg(return)
+
   confirm_cols_present(c("start", "end"), segs_df)
 
   seg_sizes <- segs_df |>
     dplyr::mutate(seg_size = end - start + 1) |>
     dplyr::select(.data[[sample_col]], seg_size)
 
-  return(seg_sizes)
+  if (return_type == "values") {
+    return(seg_sizes)
+  } else if (return_type == "counts") {
+    seg_counts <- cut_categories_and_count(
+      df = seg_sizes,
+      targ_col = "seg_size",
+      sample_col = sample_col,
+      breaks = c(0, 5e6, 10e6, 20e6, 50e6, 100e6, Inf),
+      labels = paste0(
+        "ss:",
+        c("<5Mb", "5-10Mb", "10-20Mb", "20-50Mb", "50-100Mb", "100+Mb")
+      )
+    )
+    return(seg_counts)
+  }
 }
+
+#' extract copy state values.
+#'
+#' This function is really only here to offer the counting in pre-set
+#' categories, and provide alignment with other feature extraction types. It is
+#' mostly a pointless function and you should probably do this yourself.
+#'
+#' Also, it is a question if copy state should even be used in
+#' signature fitting, as this can occassionally lead to the same process being
+#' artifically split by ploidy of samples. See
+#' \href{https://www.nature.com/articles/s41586-022-04789-9}{Drews et al.}
+#' for a discussion of this idea.
+#'
+#' Predefined categories for summarizing counts are: CN = 1, 2, 3, 4, 5, 6+
+#'
+#' @param segs_df dataframe. copy number segments for samples.
+#' @param sample_col string. Name of column with cell/sample names
+#' @param sample_col string. Name of column with CN state values
+#' @param return string. "values" (default) or "counts". Values are the
+#' observed values for cells, counts are the counts of these values in
+#' pre-determined categories.
+#' @export
+extract_cn <- function(
+    segs_df,
+    sample_col = "cell_id",
+    state_col = "state",
+    return = c("values", "counts")) {
+  return_type <- match.arg(return)
+
+  cn_values <- dplyr::select(segs_df, .data[[sample_col]], .data[[state_col]])
+
+  if (return_type == "values") {
+    return(cn_values)
+  } else if (return_type == "counts") {
+    cn_counts <- cut_categories_and_count(
+      df = cn_values,
+      targ_col = state_col,
+      sample_col = sample_col,
+      breaks = c(0:6, 7, Inf),
+      labels = c(paste0("CN:", 0:6), "CN:7+")
+    )
+    return(cn_counts)
+  }
+}
+
 
 #' extract the CN change between adjacent segments.
 #'
@@ -353,12 +422,19 @@ extract_segment_sizes <- function(
 #' solution, "cn_mode" to compare to sample ploidy estimate based on mode, or
 #' "ignore" to not count anything for first segments.
 #'
+#' Predefined categories for summarizing counts are:
+#'
+#' Changepoint = 1, 2, 3, 4, 5+
+#'
 #' @param segs_df dataframe. Sample copy number segments.
 #' @param first_seg_correction string. Default: 'ignore'. Options include
 #' "diploid" or "cn_mode".
 #' @param sample_col string. Name of column with cell/sample names
 #' @param chrom_col string. Name of column with chromosome names
 #' @param cn_col string. Name of column with segment copy number states.
+#' @param return string. "values" (default) or "counts". Values are the
+#' observed values for cells, counts are the counts of these values in
+#' pre-determined categories.
 #' @param ... can pass arguments to [dlptools::segs_to_reads]
 #' @return dataframe. Sample IDs and the observed breakpoint counts per scope.
 #' @export
@@ -368,8 +444,10 @@ extract_changepoint <- function(
     sample_col = "cell_id",
     chrom_col = "chr",
     cn_col = "state",
+    return = c("values", "counts"),
     ...) {
   first_seg_correction <- match.arg(first_seg_correction)
+  return_type <- match.arg(return)
 
   if (first_seg_correction == "cn_mode") {
     mode_ploidies <- segs_to_reads(segs_df, ...) |>
@@ -412,7 +490,19 @@ extract_changepoint <- function(
     dplyr::filter(!is.na(cn_change)) |>
     dplyr::select(.data[[sample_col]], cn_change)
 
-  return(change_points)
+  if (return_type == "values") {
+    return(change_points)
+  } else if (return_type == "counts") {
+    changepoint_cts <- cut_categories_and_count(
+      df = change_points,
+      targ_col = "cn_change",
+      sample_col = sample_col,
+      breaks = c(0:5, Inf),
+      labels = c(paste0("CP:", 0:4), "CP:5+")
+    )
+
+    return(changepoint_cts)
+  }
 }
 
 #' convenience function to extracting breakpoints per window size
@@ -427,7 +517,8 @@ extract_bp_per_window <- function(
     window_size = 10e6, # 10Mb is standard for most of these papers
     sample_col = "cell_id",
     chrom_col = "chr",
-    genome_version = c("hg19", "hg38")) {
+    genome_version = c("hg19", "hg38"),
+    return = c("values", "counts")) {
   extract_breakpoints(
     segs_df = segs_df,
     scope = "windows",
@@ -435,6 +526,7 @@ extract_bp_per_window <- function(
     genome_version = genome_version,
     sample_col = sample_col,
     chrom_col = chrom_col,
+    return = return
   )
 }
 
@@ -449,13 +541,15 @@ extract_bp_per_arm <- function(
     segs_df,
     sample_col = "cell_id",
     chrom_col = "chr",
-    genome_version = c("hg19", "hg38")) {
+    genome_version = c("hg19", "hg38"),
+    return = c("values", "counts")) {
   extract_breakpoints(
     segs_df = segs_df,
     scope = "arms",
     genome_version = genome_version,
     sample_col = sample_col,
     chrom_col = chrom_col,
+    return = return
   )
 }
 
@@ -463,6 +557,11 @@ extract_bp_per_arm <- function(
 #'
 #' Counting the number of breakpoints (i.e., transitions between copy number
 #' segments) per arm or per window (typically 10Mb).
+#'
+#' Optional summarizing in pre-defined categories of:
+#'
+#' Arm breakpoints: 0, 1, 2, 3, 4, 5, 6+
+#' Window breakpoints: 0, 1, 2, 3+
 #'
 #' @param segs_df dataframe. Copy number segments for samples
 #' @param scope string. "windows" (default) or "arms", i.e., what to target for
@@ -473,6 +572,9 @@ extract_bp_per_arm <- function(
 #' (10e6)
 #' @param sample_col string. Name of column with cell/sample names
 #' @param chrom_col string. Name of column with chromosome names
+#' @param return string. "values" (default) or "counts". Values are the
+#' observed values for cells, counts are the counts of these values in
+#' pre-determined categories.
 #' @return dataframe. Sample IDs and the observed breakpoint counts per scope.
 #' @export
 extract_breakpoints <- function(
@@ -481,9 +583,10 @@ extract_breakpoints <- function(
     genome_version = c("hg19", "hg38"),
     window_size = 10e6, # 10Mb is standard for most of these papers
     sample_col = "cell_id",
-    chrom_col = "chr") {
+    chrom_col = "chr",
+    return = c("values", "counts")) {
   scope <- match.arg(scope)
-
+  return_type <- match.arg(return)
   genome_version <- match.arg(genome_version)
 
   confirm_cols_present("end", segs_df)
@@ -533,7 +636,30 @@ extract_breakpoints <- function(
       )
     })
 
-  return(bp_counts)
+  if (return_type == "values") {
+    return(bp_counts)
+  } else if (return_type == "counts") {
+    count_cats <- list(
+      windows = list(
+        breaks = c(0:3, Inf),
+        labels = c(paste0("wBP:", 0:2), "wBP:3+")
+      ),
+      arms = list(
+        breaks = c(0:6, Inf),
+        labels = c(paste0("armBP:", 0:5), "armBP:6+")
+      )
+    )
+
+    bp_cts <- cut_categories_and_count(
+      df = bp_counts,
+      targ_col = "breakpoints",
+      sample_col = sample_col,
+      breaks = purrr::pluck(count_cats, scope, "breaks"),
+      labels = purrr::pluck(count_cats, scope, "labels")
+    )
+
+    return(bp_cts)
+  }
 }
 
 #' extract the legths of chains of osscilating copy number segments
@@ -572,6 +698,10 @@ extract_breakpoints <- function(
 #' These behaviours can be replicated here, but isn't recommended. By default,
 #' Ns must match exactly, and M must be within 2 CNs.
 #'
+#' Optionally can summarize in counts of pre-defined categories of:
+#'
+#' Oscillation chains of length: 0, 1-3, 4-9, 10+
+#'
 #' @param segs_df dataframe. Copy number segments for samples.
 #' @param middle_bound integer. How many copy number values away the middle
 #' segment can be from the end segments to count as an oscillation. Default 2
@@ -582,6 +712,9 @@ extract_breakpoints <- function(
 #' @param sample_col string. Name of column with cell/sample names
 #' @param chrom_col string. Name of column with chromosome names
 #' @param cn_col string. Name of column with segment copy number states.
+#' @param return string. "values" (default) or "counts". Values are the
+#' observed values for cells, counts are the counts of these values in
+#' pre-determined categories.
 #' @return dataframe. sample IDs and observed chain lengths.
 #' @export
 extract_oscillations <- function(
@@ -590,7 +723,10 @@ extract_oscillations <- function(
     ends_bound = 0,
     sample_col = "cell_id",
     chrom_col = "chr",
-    cn_col = "state") {
+    cn_col = "state",
+    return = c("values", "counts")) {
+  return_type <- match.arg(return)
+
   # TODO: this is pretty gross. Is it really better that filtering,
   # splitting, or something else?
   res <- segs_df %>%
@@ -611,5 +747,17 @@ extract_oscillations <- function(
     tidyr::separate_wider_delim(name, names = c(sample_col, "chrom"), "&&&") |>
     dplyr::select(dplyr::any_of(sample_col), OSc = value)
 
-  return(sample_osc_counts)
+  if (return_type == "values") {
+    return(sample_osc_counts)
+  } else if (return_type == "counts") {
+    osc_cts <- cut_categories_and_count(
+      df = sample_osc_counts,
+      targ_col = "OSc",
+      sample_col = sample_col,
+      breaks = c(0, 1, 4, 10, Inf),
+      labels = c("osc:0", "osc:1-3", "osc:4-9", "osc:10+")
+    )
+
+    return(osc_cts)
+  }
 }
