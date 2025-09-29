@@ -270,6 +270,7 @@ confirm_cols_present <- function(cols, df) {
 #' @param sample_col string. Name of the column with sample ids.
 #' @param breaks vector of doubles. Bounds for the categories.
 #' @param labels vector of strings. What to call the categories.
+#' @return tibble
 cut_categories_and_count <- function(
     df, targ_col, sample_col, breaks, labels) {
   if (length(breaks) != length(labels)) {

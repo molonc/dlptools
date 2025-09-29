@@ -10,6 +10,7 @@ extract_changepoint(
   sample_col = "cell_id",
   chrom_col = "chr",
   cn_col = "state",
+  return = c("values", "counts"),
   ...
 )
 }
@@ -24,6 +25,10 @@ extract_changepoint(
 \item{chrom_col}{string. Name of column with chromosome names}
 
 \item{cn_col}{string. Name of column with segment copy number states.}
+
+\item{return}{string. "values" (default) or "counts". Values are the
+observed values for cells, counts are the counts of these values in
+pre-determined categories.}
 
 \item{...}{can pass arguments to \link{segs_to_reads}}
 }

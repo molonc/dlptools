@@ -9,7 +9,8 @@ extract_bp_per_window(
   window_size = 1e+07,
   sample_col = "cell_id",
   chrom_col = "chr",
-  genome_version = c("hg19", "hg38")
+  genome_version = c("hg19", "hg38"),
+  return = c("values", "counts")
 )
 }
 \value{

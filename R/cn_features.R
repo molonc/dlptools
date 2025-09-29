@@ -422,6 +422,9 @@ extract_cn <- function(
 #' @param sample_col string. Name of column with cell/sample names
 #' @param chrom_col string. Name of column with chromosome names
 #' @param cn_col string. Name of column with segment copy number states.
+#' @param return string. "values" (default) or "counts". Values are the
+#' observed values for cells, counts are the counts of these values in
+#' pre-determined categories.
 #' @param ... can pass arguments to [dlptools::segs_to_reads]
 #' @return dataframe. Sample IDs and the observed breakpoint counts per scope.
 #' @export
@@ -554,6 +557,9 @@ extract_bp_per_arm <- function(
 #' (10e6)
 #' @param sample_col string. Name of column with cell/sample names
 #' @param chrom_col string. Name of column with chromosome names
+#' @param return string. "values" (default) or "counts". Values are the
+#' observed values for cells, counts are the counts of these values in
+#' pre-determined categories.
 #' @return dataframe. Sample IDs and the observed breakpoint counts per scope.
 #' @export
 extract_breakpoints <- function(
@@ -687,6 +693,9 @@ extract_breakpoints <- function(
 #' @param sample_col string. Name of column with cell/sample names
 #' @param chrom_col string. Name of column with chromosome names
 #' @param cn_col string. Name of column with segment copy number states.
+#' @param return string. "values" (default) or "counts". Values are the
+#' observed values for cells, counts are the counts of these values in
+#' pre-determined categories.
 #' @return dataframe. sample IDs and observed chain lengths.
 #' @export
 extract_oscillations <- function(
