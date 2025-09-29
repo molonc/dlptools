@@ -9,7 +9,7 @@ If one segment is 4 and the adjacent segment is 1, the change point is 3."></hea
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.23</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.24</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,6 +56,7 @@ If one segment is 4 and the adjacent segment is 1, the change point is 3.</p>
 <span>  sample_col <span class="op">=</span> <span class="st">"cell_id"</span>,</span>
 <span>  chrom_col <span class="op">=</span> <span class="st">"chr"</span>,</span>
 <span>  cn_col <span class="op">=</span> <span class="st">"state"</span>,</span>
+<span>  return <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"values"</span>, <span class="st">"counts"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -85,6 +86,12 @@ If one segment is 4 and the adjacent segment is 1, the change point is 3.</p>
 <dd><p>string. Name of column with segment copy number states.</p></dd>
 
 
+<dt id="arg-return">return<a class="anchor" aria-label="anchor" href="#arg-return"></a></dt>
+<dd><p>string. "values" (default) or "counts". Values are the
+observed values for cells, counts are the counts of these values in
+pre-determined categories.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>can pass arguments to <a href="segs_to_reads.html">segs_to_reads</a></p></dd>
 
@@ -108,6 +115,8 @@ cases where you don't want to assume a diploid base case.</p>
 <p><code>first_seg_correction</code> provides options over what to do. "diploid" for Drews
 solution, "cn_mode" to compare to sample ploidy estimate based on mode, or
 "ignore" to not count anything for first segments.</p>
+<p>Predefined categories for summarizing counts are:</p>
+<p>Changepoint = 1, 2, 3, 4, 5+</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

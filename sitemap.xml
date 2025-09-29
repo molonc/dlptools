@@ -50,6 +50,7 @@
 <url><loc>https://molonc.github.io/dlptools/reference/create_chromosome_column_fct.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/create_expected_bins.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/cust_mode.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/cut_categories_and_count.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/decide_if_oscillation.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/does_palette_cover_plot_vals.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/expand_length_to_bins.html</loc></url>
@@ -57,6 +58,7 @@
 <url><loc>https://molonc.github.io/dlptools/reference/extract_bp_per_window.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/extract_breakpoints.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/extract_changepoint.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/extract_cn.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/extract_oscillations.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/extract_ploidy_cn_feature.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/extract_segment_position_feature.html</loc></url>

@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.23</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.24</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,9 +75,39 @@
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://molonc.github.io/dlptools/">dlptools</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
-<h2 id="features-defined-by-other-publications">Features Defined by Other Publications<a class="anchor" aria-label="anchor" href="#features-defined-by-other-publications"></a>
+<h2 id="feature-extraction">Feature Extraction<a class="anchor" aria-label="anchor" href="#feature-extraction"></a>
 </h2>
-<p>dlptools offers two externally defined feature extraction types:</p>
+<p><code>dlptools</code> has a series of functions to extract a variety
+of features. These could be used for subsequent signature extraction, or
+be use to quantify differences between samples.</p>
+<p>On offer are the “classic” process based features, inspired by</p>
+<ul>
+<li><a href="https://www.nature.com/articles/s41588-018-0179-8" class="external-link">Macintyre et
+al. 2018</a></li>
+<li><a href="https://www.nature.com/articles/s41467-021-25469-8" class="external-link">Maclachlan et
+al. 2021</a></li>
+<li><a href="https://www.nature.com/articles/s41586-022-04789-9" class="external-link">Drews
+et al. 2022</a></li>
+<li>and others</li>
+</ul>
+<p>These include:</p>
+<ol style="list-style-type: decimal">
+<li>segment size</li>
+<li>breakpoints per arm</li>
+<li>breakpoints per window</li>
+<li>changepoints: change in CN state between adjacent segments</li>
+<li>length of oscillating chains</li>
+<li>CN state (though there is debate if this should be used at all)</li>
+</ol>
+<p><br></p>
+<p>The functions for these (outlined below) will extract the observed
+values for each of these features, and offers to summarise counts in
+pre-defined categories. These categories are informed by the
+publications above, but designed to be accommodating for DLP data, which
+has a more coarse resolution than most of those publications.</p>
+<p><br></p>
+<p>Additionally, there are functions to extract two externally defined
+feature extraction types:</p>
 <ol style="list-style-type: decimal">
 <li>Wu et al. <a href="https://www.biorxiv.org/content/10.1101/2025.03.02.641098v1" class="external-link uri">https://www.biorxiv.org/content/10.1101/2025.03.02.641098v1</a>
 </li>
@@ -87,29 +117,6 @@
 <p>The Wang et al features are just a thin wrapper around <a href="https://github.com/ShixiangWang/sigminer?tab=readme-ov-file" class="external-link">sigminer</a>
 functions. Check out that package for more tools and actual signature
 extraction.</p>
-<p><br></p>
-<p>As well, dlptools offers functions to extract the standard
-“<strong>process based</strong>” features, defines/inspired by:</p>
-<ul>
-<li>Macintyre et al. 2018</li>
-<li>Maclachlan et al. 2021</li>
-<li>Drews et al. 2022</li>
-<li>and others</li>
-</ul>
-<p><br></p>
-<p>These features include:</p>
-<ul>
-<li>segment size</li>
-<li>copy number change points</li>
-<li>breakpoint counts per arm or MB window</li>
-<li>length of oscillating copy number changes</li>
-</ul>
-<p>Often, extracting these features is a starting point, and they are
-further summarized into categories. These categories are either set by
-hand, or informed by mixture models.</p>
-<p>Some publications also include the actual CN of the segments (in
-categories) as a feature, but I haven’t included a function for
-that…presumably you can pull that out of your data.</p>
 <p><br><br></p>
 <p>A likely starting point of this exercise might be some read bin data,
 or some segment data. It’s probably good that it’s been cleaned up to
@@ -146,74 +153,21 @@ your liking.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> AT21352-A144173A-R03-C12 1     21<span style="text-decoration: underline;">500</span>001 39<span style="text-decoration: underline;">000</span>000     4  17<span style="text-decoration: underline;">499</span>999</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> AT21352-A144173A-R03-C12 1     39<span style="text-decoration: underline;">000</span>001 45<span style="text-decoration: underline;">000</span>000     5   5<span style="text-decoration: underline;">999</span>999</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> AT21352-A144173A-R03-C12 1     45<span style="text-decoration: underline;">000</span>001 57<span style="text-decoration: underline;">500</span>000     4  12<span style="text-decoration: underline;">499</span>999</span></span></code></pre></div>
-<p><br><br></p>
-<div class="section level3">
-<h3 id="wu-et-al-">Wu et al.<a class="anchor" aria-label="anchor" href="#wu-et-al-"></a>
-</h3>
-<p>For extracting Wu et al. features:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_wu_features.html">extract_wu_features</a></span><span class="op">(</span></span>
-<span>  segs_df <span class="op">=</span> <span class="va">segs_df</span></span>
-<span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 7</span></span></span>
-<span><span class="co">#&gt;   cell_id                  cn_bin seg_bin seg_change seg_shape     n feat_cat   </span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AT21352-A144173A-R03-C12 S0-1   S       AA         LL            0 S:LL:S0-1:…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AT21352-A144173A-R03-C12 S0-1   S       AA         HH            0 S:HH:S0-1:…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> AT21352-A144173A-R03-C12 S0-1   S       AA         OT            0 S:OT:S0-1:…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> AT21352-A144173A-R03-C12 S0-1   S       BB         LL            1 S:LL:S0-1:…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> AT21352-A144173A-R03-C12 S0-1   S       BB         HH            0 S:HH:S0-1:…</span></span></code></pre></div>
-<p><br><br></p>
-<p>There are other options, like annotating the input dataframe, or
-returning a matrix for subsequent signature extraction:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">feat_mtx</span> <span class="op">&lt;-</span> <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_wu_features.html">extract_wu_features</a></span><span class="op">(</span></span>
-<span>  segs_df <span class="op">=</span> <span class="va">segs_df</span>,</span>
-<span>  return_matrix <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">feat_mtx</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span>
-<span><span class="co">#&gt;                          S:LL:S0-1:AA S:HH:S0-1:AA S:OT:S0-1:AA S:LL:S0-1:BB</span></span>
-<span><span class="co">#&gt; AT21352-A144173A-R03-C12            0            0            0            1</span></span>
-<span><span class="co">#&gt; AT21352-A144173A-R03-C32            0            0            0            1</span></span>
-<span><span class="co">#&gt; AT21352-A144173A-R03-C33            0            0            0            0</span></span>
-<span><span class="co">#&gt; AT21352-A144173A-R03-C35            0            0            0            0</span></span>
-<span></span>
-<span><span class="co"># alternatively, there is a generic dlptools::make_cellid_matrix() than can</span></span>
-<span><span class="co"># pivot out and make the matrix if you already have the count dataframe and</span></span>
-<span><span class="co"># don't want to redo the feature extraction</span></span></code></pre></div>
-<p><br></p>
-<p>see <code><a href="../reference/extract_wu_features.html">?dlptools::extract_wu_features</a></code> for more.</p>
-<p><br><br><br></p>
-</div>
-<div class="section level3">
-<h3 id="wang-et-al--aka-sigminer">Wang et al., aka Sigminer<a class="anchor" aria-label="anchor" href="#wang-et-al--aka-sigminer"></a>
-</h3>
-<p>Alternatively, we can get Wang et al. features. Though if going this
-route, it would be a good idea to look more at <a href="https://github.com/ShixiangWang/sigminer?tab=readme-ov-file" class="external-link">sigminer</a>
-itself:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sig_feats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract_sigminer_wang_features.html">extract_sigminer_wang_features</a></span><span class="op">(</span><span class="va">segs_df</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">sig_feats</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span>
-<span><span class="co">#&gt;                          BP10MB[0] BP10MB[1] BP10MB[2] BP10MB[3]</span></span>
-<span><span class="co">#&gt; AT21352-A144173A-R03-C12       198        87        12         3</span></span>
-<span><span class="co">#&gt; AT21352-A144173A-R03-C32       215        69        13         3</span></span>
-<span><span class="co">#&gt; AT21352-A144173A-R03-C33       201        85        13         0</span></span>
-<span><span class="co">#&gt; AT21352-A144173A-R03-C35       224        65         8         3</span></span></code></pre></div>
-<p><br><br><br></p>
-</div>
+<p><br><br><br><br></p>
 </div>
 <div class="section level2">
 <h2 id="process-based-features">Process-Based Features<a class="anchor" aria-label="anchor" href="#process-based-features"></a>
 </h2>
+<p>For the 6 functions in this section, each by default return the
+observed values. But, each function also has an option to
+<code>return = counts</code>, which will use pre-defined categories.</p>
+<p><br></p>
 <ol style="list-style-type: decimal">
 <li>segment lengths.</li>
 </ol>
 <p>This is as simple as it sounds, and the function is unnecessary.
 These lengths would need to be subsequently categorized somehow.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_segment_sizes.html">extract_segment_sizes</a></span><span class="op">(</span></span>
 <span>  segs_df <span class="op">=</span> <span class="va">segs_df</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -232,6 +186,33 @@ These lengths would need to be subsequently categorized somehow.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> AT21352-A144173A-R03-C12  9<span style="text-decoration: underline;">500</span>000</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> AT21352-A144173A-R03-C12  8<span style="text-decoration: underline;">500</span>000</span></span></code></pre></div>
 <p><br></p>
+<p>alternatively you can specify the <code>return = counts</code> to get
+counts in pre-defined categories. This is an argument available for all
+of these process based functions.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_segment_sizes.html">extract_segment_sizes</a></span><span class="op">(</span></span>
+<span>  segs_df <span class="op">=</span> <span class="va">segs_df</span>,</span>
+<span>  return <span class="op">=</span> <span class="st">"counts"</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 120 × 3</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># Groups:   cell_id, feat_cat [120]</span></span></span>
+<span><span class="co">#&gt;    cell_id                  feat_cat        n</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> AT21352-A144173A-R03-C12 ss:&lt;5Mb        21</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> AT21352-A144173A-R03-C12 ss:5-10Mb      41</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> AT21352-A144173A-R03-C12 ss:10-20Mb     39</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> AT21352-A144173A-R03-C12 ss:20-50Mb     26</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> AT21352-A144173A-R03-C12 ss:50-100Mb    12</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> AT21352-A144173A-R03-C12 ss:100+Mb       3</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> AT21352-A144173A-R03-C32 ss:&lt;5Mb        31</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> AT21352-A144173A-R03-C32 ss:5-10Mb      31</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> AT21352-A144173A-R03-C32 ss:10-20Mb     21</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> AT21352-A144173A-R03-C32 ss:20-50Mb     23</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 110 more rows</span></span></span></code></pre></div>
+<p>categories are: &lt; 5mb, 5-10 Mb, 20-50 Mb, 50-100 Mb, and
+100+Mb.</p>
+<p><br></p>
 <ol start="2" style="list-style-type: decimal">
 <li>Copy number change points</li>
 </ol>
@@ -239,9 +220,11 @@ These lengths would need to be subsequently categorized somehow.</p>
 segment. E.g., 2-5 would yield a 3.</p>
 <p>See <code><a href="../reference/extract_changepoint.html">?dlptools::extract_changepoint</a></code> for an important
 discussion of the <code>first_seg_correction</code> parameter.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_changepoint.html">extract_changepoint</a></span><span class="op">(</span></span>
 <span>  segs_df <span class="op">=</span> <span class="va">segs_df</span></span>
+<span>  <span class="co"># or returning the counts</span></span>
+<span>  <span class="co"># return = 'counts'</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 10 × 2</span></span></span>
@@ -257,15 +240,18 @@ discussion of the <code>first_seg_correction</code> parameter.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> AT21352-A144173A-R03-C12         1</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> AT21352-A144173A-R03-C12         1</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> AT21352-A144173A-R03-C12         2</span></span></code></pre></div>
+<p>Predefined count categories are changepoint = 1, 2, 3, 4, 5+</p>
 <p><br></p>
 <ol start="3" style="list-style-type: decimal">
 <li>Extracting number of breakpoints per chromosome arm</li>
 </ol>
 <p>A breakpoint is a change in the copy number.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_breakpoints.html">extract_breakpoints</a></span><span class="op">(</span></span>
 <span>  segs_df <span class="op">=</span> <span class="va">segs_df</span>,</span>
 <span>  scope <span class="op">=</span> <span class="st">"arms"</span></span>
+<span>  <span class="co"># or returning the counts</span></span>
+<span>  <span class="co"># return = 'counts'</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 10 × 2</span></span></span>
@@ -283,16 +269,20 @@ discussion of the <code>first_seg_correction</code> parameter.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> AT21352-A144173A-R03-C12           1</span></span>
 <span></span>
 <span><span class="co"># there is an alias of: dlptools::extract_bp_per_arm()</span></span></code></pre></div>
+<p>Predefined count categories are: breakpoint = 0, 1, 2, 3, 4, 5,
+6+</p>
 <p><br></p>
 <ol start="4" style="list-style-type: decimal">
 <li>Extract breakpoints per MB window</li>
 </ol>
 <p>Typically, publications have used 10Mb.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_breakpoints.html">extract_breakpoints</a></span><span class="op">(</span></span>
 <span>  segs_df <span class="op">=</span> <span class="va">segs_df</span>,</span>
 <span>  scope <span class="op">=</span> <span class="st">"windows"</span></span>
 <span>  <span class="co"># window_size = 10e6 # default</span></span>
+<span>  <span class="co"># or returning the counts</span></span>
+<span>  <span class="co"># return = 'counts'</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 10 × 2</span></span></span>
@@ -310,6 +300,7 @@ discussion of the <code>first_seg_correction</code> parameter.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> AT21352-A144173A-R03-C12           1</span></span>
 <span></span>
 <span><span class="co"># there is an alias of: dlptools::extract_bp_per_window()</span></span></code></pre></div>
+<p>Predefined count categories are: breakpoint = 0, 1, 2, 3+</p>
 <p><br></p>
 <ol start="5" style="list-style-type: decimal">
 <li>lengths of copy number oscillations</li>
@@ -339,10 +330,13 @@ discussion of how exactly this is working.</p>
 for removal…? I don’t know, they just tend to overwhelm. Again, all
 publications using this feature have done so differently, so it’s the
 wild west. Do what feels right.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_oscillations.html">extract_oscillations</a></span><span class="op">(</span></span>
 <span>  segs_df <span class="op">=</span> <span class="va">segs_df</span></span>
-<span>  <span class="co"># important arguments are:</span></span>
+<span>  <span class="co"># or returning the counts</span></span>
+<span>  <span class="co"># return = 'counts'</span></span>
+<span></span>
+<span>  <span class="co"># other important arguments are:</span></span>
 <span>  <span class="co"># middle_bound = 2 # default</span></span>
 <span>  <span class="co"># ends_bound = 0 # default</span></span>
 <span>  <span class="co"># see function documentation for what these are</span></span>
@@ -361,11 +355,35 @@ wild west. Do what feels right.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> AT21352-A144173A-R03-C12     0</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> AT21352-A144173A-R03-C12     0</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> AT21352-A144173A-R03-C12     2</span></span></code></pre></div>
+<p>Predefined count categories are: Oscillation chains of length: 0,
+1-3, 4-9, 10+.</p>
+<p>E.g.,</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_oscillations.html">extract_oscillations</a></span><span class="op">(</span></span>
+<span>  segs_df <span class="op">=</span> <span class="va">segs_df</span>,</span>
+<span>  return <span class="op">=</span> <span class="st">"counts"</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 80 × 3</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># Groups:   cell_id, feat_cat [80]</span></span></span>
+<span><span class="co">#&gt;    cell_id                  feat_cat     n</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> AT21352-A144173A-R03-C12 osc:0       70</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> AT21352-A144173A-R03-C12 osc:1-3     22</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> AT21352-A144173A-R03-C12 osc:4-9      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> AT21352-A144173A-R03-C12 osc:10+      0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> AT21352-A144173A-R03-C32 osc:0       60</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> AT21352-A144173A-R03-C32 osc:1-3     18</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> AT21352-A144173A-R03-C32 osc:4-9      0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> AT21352-A144173A-R03-C32 osc:10+      0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> AT21352-A144173A-R03-C33 osc:0       75</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> AT21352-A144173A-R03-C33 osc:1-3     13</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 70 more rows</span></span></span></code></pre></div>
 <p><br></p>
 <p>You can also play directly with
 <code><a href="../reference/count_oscillations.html">dlptools::count_oscillations</a></code> on vectors to see how the
 inernals of this function are working:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/count_oscillations.html">count_oscillations</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0</span></span>
 <span></span>
@@ -394,7 +412,94 @@ inernals of this function are working:</p>
 <span>  ends_bound <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 1</span></span></code></pre></div>
+<p><br></p>
+<ol start="6" style="list-style-type: decimal">
+<li>CN States</li>
+</ol>
+<p>And for sake of completeness, also offered is CN. By default,
+function just pulls the CN state column from your dataframe.</p>
+<p>Really only slightly useful if you want to use the pre-defined
+categories of:</p>
+<p>CN = 1, 2, 3, 4, 5, 6+</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_cn.html">extract_cn</a></span><span class="op">(</span></span>
+<span>  <span class="va">segs_df</span>,</span>
+<span>  return <span class="op">=</span> <span class="st">"counts"</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 160 × 3</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># Groups:   cell_id, feat_cat [160]</span></span></span>
+<span><span class="co">#&gt;    cell_id                  feat_cat     n</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> AT21352-A144173A-R03-C12 CN:0         0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> AT21352-A144173A-R03-C12 CN:1         4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> AT21352-A144173A-R03-C12 CN:2        19</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> AT21352-A144173A-R03-C12 CN:3        35</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> AT21352-A144173A-R03-C12 CN:4        38</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> AT21352-A144173A-R03-C12 CN:5        25</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> AT21352-A144173A-R03-C12 CN:6         4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> AT21352-A144173A-R03-C12 CN:7+       17</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> AT21352-A144173A-R03-C32 CN:0         0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> AT21352-A144173A-R03-C32 CN:1         3</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 150 more rows</span></span></span></code></pre></div>
+<p><br><br></p>
+<div class="section level3">
+<h3 id="wu-et-al-">Wu et al.<a class="anchor" aria-label="anchor" href="#wu-et-al-"></a>
+</h3>
+<p>For extracting Wu et al. features:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_wu_features.html">extract_wu_features</a></span><span class="op">(</span></span>
+<span>  segs_df <span class="op">=</span> <span class="va">segs_df</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 7</span></span></span>
+<span><span class="co">#&gt;   cell_id                  cn_bin seg_bin seg_change seg_shape     n feat_cat   </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AT21352-A144173A-R03-C12 S0-1   S       AA         LL            0 S:LL:S0-1:…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AT21352-A144173A-R03-C12 S0-1   S       AA         HH            0 S:HH:S0-1:…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> AT21352-A144173A-R03-C12 S0-1   S       AA         OT            0 S:OT:S0-1:…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> AT21352-A144173A-R03-C12 S0-1   S       BB         LL            1 S:LL:S0-1:…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> AT21352-A144173A-R03-C12 S0-1   S       BB         HH            0 S:HH:S0-1:…</span></span></code></pre></div>
+<p><br><br></p>
+<p>There are other options, like annotating the input dataframe, or
+returning a matrix for subsequent signature extraction:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">feat_mtx</span> <span class="op">&lt;-</span> <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_wu_features.html">extract_wu_features</a></span><span class="op">(</span></span>
+<span>  segs_df <span class="op">=</span> <span class="va">segs_df</span>,</span>
+<span>  return_matrix <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">feat_mtx</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span>
+<span><span class="co">#&gt;                          S:LL:S0-1:AA S:HH:S0-1:AA S:OT:S0-1:AA S:LL:S0-1:BB</span></span>
+<span><span class="co">#&gt; AT21352-A144173A-R03-C12            0            0            0            1</span></span>
+<span><span class="co">#&gt; AT21352-A144173A-R03-C32            0            0            0            1</span></span>
+<span><span class="co">#&gt; AT21352-A144173A-R03-C33            0            0            0            0</span></span>
+<span><span class="co">#&gt; AT21352-A144173A-R03-C35            0            0            0            0</span></span>
+<span></span>
+<span><span class="co"># alternatively, there is a generic dlptools::make_cellid_matrix() than can</span></span>
+<span><span class="co"># pivot out and make the matrix if you already have the count dataframe and</span></span>
+<span><span class="co"># don't want to redo the feature extraction</span></span></code></pre></div>
+<p><br></p>
+<p>see <code><a href="../reference/extract_wu_features.html">?dlptools::extract_wu_features</a></code> for more.</p>
 <p><br><br><br></p>
+</div>
+<div class="section level3">
+<h3 id="wang-et-al--aka-sigminer">Wang et al., aka Sigminer<a class="anchor" aria-label="anchor" href="#wang-et-al--aka-sigminer"></a>
+</h3>
+<p>Alternatively, we can get Wang et al. features. Though if going this
+route, it would be a good idea to look more at <a href="https://github.com/ShixiangWang/sigminer?tab=readme-ov-file" class="external-link">sigminer</a>
+itself:</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">sig_feats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract_sigminer_wang_features.html">extract_sigminer_wang_features</a></span><span class="op">(</span><span class="va">segs_df</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">sig_feats</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span>
+<span><span class="co">#&gt;                          BP10MB[0] BP10MB[1] BP10MB[2] BP10MB[3]</span></span>
+<span><span class="co">#&gt; AT21352-A144173A-R03-C12       198        87        12         3</span></span>
+<span><span class="co">#&gt; AT21352-A144173A-R03-C32       215        69        13         3</span></span>
+<span><span class="co">#&gt; AT21352-A144173A-R03-C33       201        85        13         0</span></span>
+<span><span class="co">#&gt; AT21352-A144173A-R03-C35       224        65         8         3</span></span></code></pre></div>
+<p><br><br><br></p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="other-vaguely-feature-like-things">Other vaguely feature like things<a class="anchor" aria-label="anchor" href="#other-vaguely-feature-like-things"></a>
@@ -414,7 +519,7 @@ Here we can mark 3 types of events for segments:</p>
 </ol>
 <p>Employs the function dlptools::mode_ploidy() to calculate mode ploidy
 of each sample/cell.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_ploidy_cn_feature.html">extract_ploidy_cn_feature</a></span><span class="op">(</span></span>
 <span>  <span class="va">segs_df</span>,</span>
 <span>  <span class="co"># with option just to annotate the input df</span></span>
@@ -465,7 +570,7 @@ definitions, such as:</p>
 “touching”</li>
 </ul>
 <p>We can mark a dataframe with the information:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/mark_segs_chromosome_span.html">mark_segs_chromosome_span</a></span><span class="op">(</span></span>
 <span>  <span class="va">segs_df</span>,</span>
 <span>  <span class="co"># see ?dlptools::mark_segs_chromosome_span for more args</span></span>
@@ -494,7 +599,7 @@ definitions, such as:</p>
 <p>More useful in the “feature” context, is to directly extract and
 count them up. This function bascially just calls the one above, with
 counting added:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_segment_position_feature.html">extract_segment_position_feature</a></span><span class="op">(</span></span>
 <span>  <span class="va">segs_df</span></span>
 <span>  <span class="co"># with option just to annotate the input df</span></span>
@@ -530,7 +635,7 @@ that.</p>
 <p>are all “atomic”, in that they describe aspects of individual
 segments.</p>
 <p>First, we can collect labels all all features for the segments:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">feat_anno_segs</span> <span class="op">&lt;-</span> <span class="va">segs_df</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_wu_features.html">extract_wu_features</a></span><span class="op">(</span>annotate_input <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_ploidy_cn_feature.html">extract_ploidy_cn_feature</a></span><span class="op">(</span>annotate_input <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -557,7 +662,7 @@ per feature as our feature set for signature extraction. This would
 yield a 21 feature set (6 core feature types with: 5, 3, 3, 2, 3, 5
 categories across them)</p>
 <!-- Seeing NA in AA/BB for this dataset...track down! -->
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">feat_cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"seg_bin"</span>, <span class="st">"cn_bin"</span>, <span class="st">"seg_change"</span>, <span class="st">"seg_shape"</span>, <span class="st">"cn_v_ploidy"</span>,</span>
 <span>  <span class="st">"seg_span_event"</span></span>
@@ -574,7 +679,7 @@ categories across them)</p>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/relocate.html" class="external-link">relocate</a></span><span class="op">(</span><span class="va">cell_id</span>, <span class="va">feature</span>, <span class="va">category</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/list_c.html" class="external-link">list_rbind</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="feature_extraction_files/figure-html/unnamed-chunk-17-1.png" width="768"></p>
+<p><img src="feature_extraction_files/figure-html/unnamed-chunk-20-1.png" width="768"></p>
 <p><br><br></p>
 <p>We could opt to cross all of the features into a “mega-feature-set”.
 But, this would be:</p>
@@ -589,7 +694,7 @@ But, this would be:</p>
 <code><a href="../reference/extract_segment_position_feature.html">dlptools::extract_segment_position_feature</a></code>
 </li>
 </ul>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">all_feat_labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">feat_anno_segs</span><span class="op">$</span><span class="va">seg_bin</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">feat_anno_segs</span><span class="op">$</span><span class="va">cn_bin</span><span class="op">)</span>,</span>
@@ -607,7 +712,7 @@ But, this would be:</p>
 <span><span class="co">#&gt; 2   M1 S0-1   AA   LL ploidy-gain  arm</span></span>
 <span><span class="co">#&gt; 3    L S0-1   AA   LL ploidy-gain  arm</span></span>
 <span><span class="co">#&gt; 4    S   S2   AA   LL ploidy-gain  arm</span></span></code></pre></div>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">crossed_labels</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 1350</span></span></code></pre></div>
 <p>making for a cross feature set with 1350 possible categories. That
@@ -625,7 +730,7 @@ teach you anything biologically? (and that’s only two parameters being
 crossed).</p>
 <p><br></p>
 <p>But, forging ahead bravely:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># collect all possible feature labels</span></span>
 <span></span>
 <span><span class="va">crossed_counts</span> <span class="op">&lt;-</span> <span class="va">feat_anno_segs</span> <span class="op">|&gt;</span></span>
@@ -643,12 +748,12 @@ crossed).</p>
 <span>      sep <span class="op">=</span> <span class="st">":"</span></span>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p><img src="feature_extraction_files/figure-html/unnamed-chunk-21-1.png" width="768"></p>
+<p><img src="feature_extraction_files/figure-html/unnamed-chunk-24-1.png" width="768"></p>
 <p><br><br></p>
 <p>Or, you could do some sort of combination of cross and uncrossed? I
 don’t know. Again, this whole signature field is the wild west and
 people do all kinds of things.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># count the Wu features as crossed: 90 feature categories</span></span>
 <span><span class="va">wu_crossed_counts</span> <span class="op">&lt;-</span> <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/extract_wu_features.html">extract_wu_features</a></span><span class="op">(</span><span class="va">segs_df</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">cell_id</span>, <span class="va">feat_cat</span>, <span class="va">n</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -677,7 +782,7 @@ people do all kinds of things.</p>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    feature_group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">feature_group</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">feature_group</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p><img src="feature_extraction_files/figure-html/unnamed-chunk-23-1.png" width="768"></p>
+<p><img src="feature_extraction_files/figure-html/unnamed-chunk-26-1.png" width="768"></p>
 <p><br><br><br></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

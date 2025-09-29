@@ -9,7 +9,7 @@ segments) per arm or per window (typically 10Mb)."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.23</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.24</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,7 +56,8 @@ segments) per arm or per window (typically 10Mb).</p>
 <span>  genome_version <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"hg19"</span>, <span class="st">"hg38"</span><span class="op">)</span>,</span>
 <span>  window_size <span class="op">=</span> <span class="fl">1e+07</span>,</span>
 <span>  sample_col <span class="op">=</span> <span class="st">"cell_id"</span>,</span>
-<span>  chrom_col <span class="op">=</span> <span class="st">"chr"</span></span>
+<span>  chrom_col <span class="op">=</span> <span class="st">"chr"</span>,</span>
+<span>  return <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"values"</span>, <span class="st">"counts"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -90,10 +91,22 @@ per a "windows" scope. Most publications use 10Mb, which is the default
 <dt id="arg-chrom-col">chrom_col<a class="anchor" aria-label="anchor" href="#arg-chrom-col"></a></dt>
 <dd><p>string. Name of column with chromosome names</p></dd>
 
+
+<dt id="arg-return">return<a class="anchor" aria-label="anchor" href="#arg-return"></a></dt>
+<dd><p>string. "values" (default) or "counts". Values are the
+observed values for cells, counts are the counts of these values in
+pre-determined categories.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>dataframe. Sample IDs and the observed breakpoint counts per scope.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>Optional summarizing in pre-defined categories of:</p>
+<p>Arm breakpoints: 0, 1, 2, 3, 4, 5, 6+
+Window breakpoints: 0, 1, 2, 3+</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
