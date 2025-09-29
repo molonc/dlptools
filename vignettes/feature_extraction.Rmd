@@ -19,36 +19,39 @@ library(ggplot2)
 library(dlptools)
 ```
 
-## Features Defined by Other Publications
+## Feature Extraction
 
-dlptools offers two externally defined feature extraction types:
+`dlptools` has a series of functions to extract a variety of features. These could be used for subsequent signature extraction, or be use to quantify differences between samples.
+
+On offer are the "classic" process based features, inspired by 
+
+* [Macintyre et al. 2018](https://www.nature.com/articles/s41588-018-0179-8)
+* [Maclachlan et al. 2021](https://www.nature.com/articles/s41467-021-25469-8)
+* [Drews et al. 2022](https://www.nature.com/articles/s41586-022-04789-9)
+* and others
+
+These include:
+
+1. segment size
+2. breakpoints per arm
+3. breakpoints per window
+4. changepoints: change in CN state between adjacent segments
+5. length of oscillating chains
+6. CN state (though there is debate if this should be used at all)
+
+<br>
+
+The functions for these (outlined below) will extract the observed values for each of these features, and offers to summarise counts in pre-defined categories. These categories are informed by the publications above, but designed to be accommodating for DLP data, which has a more coarse resolution than most of those publications.
+
+<br>
+
+Additionally, there are functions to extract two externally defined feature extraction types:
 
 1. Wu et al. https://www.biorxiv.org/content/10.1101/2025.03.02.641098v1
 2. Wang et al. https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1009557
 
 The Wang et al features are just a thin wrapper around [sigminer](https://github.com/ShixiangWang/sigminer?tab=readme-ov-file) functions. Check out that package for more tools and actual signature extraction.
 
-<br>
-
-As well, dlptools offers functions to extract the standard "**process based**" features, defines/inspired by:
-
-* Macintyre et al. 2018
-* Maclachlan et al. 2021
-* Drews et al. 2022
-* and others
-
-<br>
-
-These features include:
-
-* segment size
-* copy number change points
-* breakpoint counts per arm or MB window
-* length of oscillating copy number changes
-
-Often, extracting these features is a starting point, and they are further summarized into categories. These categories are either set by hand, or informed by mixture models.
-
-Some publications also include the actual CN of the segments (in categories) as a feature, but I haven't included a function for that...presumably you can pull that out of your data.
 
 <br>
 <br>
@@ -82,6 +85,200 @@ segs_df <- reads_df |>
 dplyr::slice_head(segs_df, n = 5)
 ```
  
+<br>
+<br>
+<br>
+<br>
+
+## Process-Based Features
+
+For the 6 functions in this section, each by default return the observed values. But, each function also has an option to `return = counts`, which will use pre-defined categories.
+
+<br>
+
+1. segment lengths. 
+
+This is as simple as it sounds, and the function is unnecessary. These lengths would need to be subsequently categorized somehow.
+
+```{r}
+dlptools::extract_segment_sizes(
+  segs_df = segs_df
+) |>
+  dplyr::slice_head(n = 10)
+```
+
+<br>
+
+alternatively you can specify the `return = counts` to get counts in pre-defined categories. This is an argument available for all of these process based functions.
+
+```{r}
+dlptools::extract_segment_sizes(
+  segs_df = segs_df,
+  return = "counts"
+) |>
+  dplyr::slice_head(n = 10)
+```
+
+categories are: < 5mb, 5-10 Mb, 20-50 Mb, 50-100 Mb, and 100+Mb.
+
+
+<br>
+
+2. Copy number change points
+
+These are the values of the change in copy number from segment to segment. E.g., 2-5 would yield a 3.
+
+See `?dlptools::extract_changepoint` for an important discussion of the `first_seg_correction` parameter.
+
+```{r}
+dlptools::extract_changepoint(
+  segs_df = segs_df
+  # or returning the counts
+  # return = 'counts'
+) |>
+  dplyr::slice_head(n = 10)
+```
+
+Predefined count categories are changepoint = 1, 2, 3, 4, 5+
+
+<br>
+
+3. Extracting number of breakpoints per chromosome arm
+
+A breakpoint is a change in the copy number.
+
+```{r}
+dlptools::extract_breakpoints(
+  segs_df = segs_df,
+  scope = "arms"
+  # or returning the counts
+  # return = 'counts'
+) |>
+  dplyr::slice_head(n = 10)
+
+# there is an alias of: dlptools::extract_bp_per_arm()
+```
+
+Predefined count categories are: breakpoint = 0, 1, 2, 3, 4, 5, 6+
+
+<br>
+
+4. Extract breakpoints per MB window
+
+Typically, publications have used 10Mb.
+
+```{r}
+dlptools::extract_breakpoints(
+  segs_df = segs_df,
+  scope = "windows"
+  # window_size = 10e6 # default
+  # or returning the counts
+  # return = 'counts'
+) |>
+  dplyr::slice_head(n = 10)
+
+# there is an alias of: dlptools::extract_bp_per_window()
+```
+
+Predefined count categories are: breakpoint = 0, 1, 2, 3+
+
+<br>
+
+5. lengths of copy number oscillations
+
+
+Overall, this is a bit of a funny feature. But basically, chromosomes are assessed in 3-segment sets to determine if it counts as an oscillation. If there are more than one oscillations in a row, they are added up. If the 3-segment set is not an oscillation, it gets a 0.
+
+<br>
+
+* 1-2-3 is not an oscillation, length 0
+* 2-3-2 is an oscillation of length 1
+* 2-3-2-3 is an oscillation of length 2
+* 2-3-2-3-5 is an oscillation of length 2 followed by a 0 for the non-oscillating component
+* 1-2-3-4-5 has no oscillations, and returns 0 0 0 for the 3 possible 3-set segments
+
+<br>
+
+I have dissected the code for various publications and packages that count this feature and they all work differently, some have outright bugs, and others lack some internal consistency in how they assess 0s. So, please read `?dlptools::extract_oscillations` for a long discussion of how exactly this is working.
+
+<br>
+
+Overall, 0s are typically abundant, and should maybe be considered for removal...? I don't know, they just tend to overwhelm. Again, all publications using this feature have done so differently, so it's the wild west. Do what feels right.
+
+```{r}
+dlptools::extract_oscillations(
+  segs_df = segs_df
+  # or returning the counts
+  # return = 'counts'
+
+  # other important arguments are:
+  # middle_bound = 2 # default
+  # ends_bound = 0 # default
+  # see function documentation for what these are
+) |>
+  dplyr::slice_head(n = 10)
+```
+
+Predefined count categories are: Oscillation chains of length: 0, 1-3, 4-9, 10+.
+
+E.g.,
+
+```{r}
+dlptools::extract_oscillations(
+  segs_df = segs_df,
+  return = "counts"
+) |>
+  dplyr::slice_head(n = 10)
+```
+
+
+<br>
+
+You can also play directly with `dlptools::count_oscillations` on vectors to see how the inernals of this function are working:
+
+```{r}
+dlptools::count_oscillations(1:3)
+
+dlptools::count_oscillations(c(2, 3, 2))
+
+dlptools::count_oscillations(c(2, 3, 2, 3))
+
+dlptools::count_oscillations(c(2, 3, 2, 3, 8, 5, 4, 5))
+
+# most other publications/package do not care about the middle value
+dlptools::count_oscillations(
+  c(5, 1000, 5),
+  middle_bound = Inf
+)
+
+# some publications would allow this as counting as an oscillation. Where the
+# first and last segments are allowed to be within a certain distance of one
+# another, and the middle value doesn't matter.
+dlptools::count_oscillations(
+  c(5, 1000, 6),
+  middle_bound = Inf,
+  ends_bound = 1
+)
+```
+
+<br>
+
+6. CN States
+
+And for sake of completeness, also offered is CN. By default, function just pulls the CN state column from your dataframe. 
+
+Really only slightly useful if you want to use the pre-defined categories of:
+
+CN = 1, 2, 3, 4, 5, 6+
+
+```{r}
+dlptools::extract_cn(
+  segs_df,
+  return = "counts"
+) |>
+  dplyr::slice_head(n = 10)
+```
+
 
 
 <br>
@@ -131,134 +328,6 @@ Alternatively, we can get Wang et al. features. Though if going this route, it w
 sig_feats <- extract_sigminer_wang_features(segs_df)
 
 sig_feats[1:4, 1:4]
-```
-
-<br>
-<br>
-<br>
-
-## Process-Based Features
-
-1. segment lengths. 
-
-This is as simple as it sounds, and the function is unnecessary. These lengths would need to be subsequently categorized somehow.
-
-```{r}
-dlptools::extract_segment_sizes(
-  segs_df = segs_df
-) |>
-  dplyr::slice_head(n = 10)
-```
-
-<br>
-
-2. Copy number change points
-
-These are the values of the change in copy number from segment to segment. E.g., 2-5 would yield a 3.
-
-See `?dlptools::extract_changepoint` for an important discussion of the `first_seg_correction` parameter.
-
-```{r}
-dlptools::extract_changepoint(
-  segs_df = segs_df
-) |>
-  dplyr::slice_head(n = 10)
-```
-
-<br>
-
-3. Extracting number of breakpoints per chromosome arm
-
-A breakpoint is a change in the copy number.
-
-```{r}
-dlptools::extract_breakpoints(
-  segs_df = segs_df,
-  scope = "arms"
-) |>
-  dplyr::slice_head(n = 10)
-
-# there is an alias of: dlptools::extract_bp_per_arm()
-```
-
-<br>
-
-4. Extract breakpoints per MB window
-
-Typically, publications have used 10Mb.
-
-```{r}
-dlptools::extract_breakpoints(
-  segs_df = segs_df,
-  scope = "windows"
-  # window_size = 10e6 # default
-) |>
-  dplyr::slice_head(n = 10)
-
-# there is an alias of: dlptools::extract_bp_per_window()
-```
-
-<br>
-
-5. lengths of copy number oscillations
-
-
-Overall, this is a bit of a funny feature. But basically, chromosomes are assessed in 3-segment sets to determine if it counts as an oscillation. If there are more than one oscillations in a row, they are added up. If the 3-segment set is not an oscillation, it gets a 0.
-
-<br>
-
-* 1-2-3 is not an oscillation, length 0
-* 2-3-2 is an oscillation of length 1
-* 2-3-2-3 is an oscillation of length 2
-* 2-3-2-3-5 is an oscillation of length 2 followed by a 0 for the non-oscillating component
-* 1-2-3-4-5 has no oscillations, and returns 0 0 0 for the 3 possible 3-set segments
-
-<br>
-
-I have dissected the code for various publications and packages that count this feature and they all work differently, some have outright bugs, and others lack some internal consistency in how they assess 0s. So, please read `?dlptools::extract_oscillations` for a long discussion of how exactly this is working.
-
-<br>
-
-Overall, 0s are typically abundant, and should maybe be considered for removal...? I don't know, they just tend to overwhelm. Again, all publications using this feature have done so differently, so it's the wild west. Do what feels right.
-
-```{r}
-dlptools::extract_oscillations(
-  segs_df = segs_df
-  # important arguments are:
-  # middle_bound = 2 # default
-  # ends_bound = 0 # default
-  # see function documentation for what these are
-) |>
-  dplyr::slice_head(n = 10)
-```
-
-<br>
-
-You can also play directly with `dlptools::count_oscillations` on vectors to see how the inernals of this function are working:
-
-```{r}
-dlptools::count_oscillations(1:3)
-
-dlptools::count_oscillations(c(2, 3, 2))
-
-dlptools::count_oscillations(c(2, 3, 2, 3))
-
-dlptools::count_oscillations(c(2, 3, 2, 3, 8, 5, 4, 5))
-
-# most other publications/package do not care about the middle value
-dlptools::count_oscillations(
-  c(5, 1000, 5),
-  middle_bound = Inf
-)
-
-# some publications would allow this as counting as an oscillation. Where the
-# first and last segments are allowed to be within a certain distance of one
-# another, and the middle value doesn't matter.
-dlptools::count_oscillations(
-  c(5, 1000, 6),
-  middle_bound = Inf,
-  ends_bound = 1
-)
 ```
 
 

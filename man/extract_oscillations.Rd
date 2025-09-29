@@ -75,4 +75,8 @@ like 5-300-6 to count as an oscillation.
 
 These behaviours can be replicated here, but isn't recommended. By default,
 Ns must match exactly, and M must be within 2 CNs.
+
+Optionally can summarize in counts of pre-defined categories of:
+
+Oscillation chains of length: 0, 1-3, 4-9, 10+
 }

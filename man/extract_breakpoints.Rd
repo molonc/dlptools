@@ -41,3 +41,9 @@ dataframe. Sample IDs and the observed breakpoint counts per scope.
 Counting the number of breakpoints (i.e., transitions between copy number
 segments) per arm or per window (typically 10Mb).
 }
+\details{
+Optional summarizing in pre-defined categories of:
+
+Arm breakpoints: 0, 1, 2, 3, 4, 5, 6+
+Window breakpoints: 0, 1, 2, 3+
+}

@@ -55,4 +55,8 @@ cases where you don't want to assume a diploid base case.
 \code{first_seg_correction} provides options over what to do. "diploid" for Drews
 solution, "cn_mode" to compare to sample ploidy estimate based on mode, or
 "ignore" to not count anything for first segments.
+
+Predefined categories for summarizing counts are:
+
+Changepoint = 1, 2, 3, 4, 5+
 }

@@ -273,7 +273,7 @@ confirm_cols_present <- function(cols, df) {
 #' @return tibble
 cut_categories_and_count <- function(
     df, targ_col, sample_col, breaks, labels) {
-  if (length(breaks) != length(labels)) {
+  if (length(breaks) - 1 != length(labels)) {
     stop("breaks and labels must be the same length.")
   }
 

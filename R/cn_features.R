@@ -316,6 +316,10 @@ extract_segment_position_feature <- function(
 #' Related functions include: [dlptools::extract_extract_changepoint] and
 #' [dlptools::extract_breakpoints]
 #'
+#' Can also summaries counts of pre-defined categories. With categories being:
+#'
+#'  < 5mb, 5-10 Mb, 20-50 Mb, 50-100 Mb, and 100+Mb.
+#'
 #' @param segs_df dataframe. copy number segments for samples.
 #' @param sample_col string. Name of column with cell/sample names
 #' @param return string. "values" (default) or "counts". Values are the
@@ -363,6 +367,8 @@ extract_segment_sizes <- function(
 #' artifically split by ploidy of samples. See
 #' \href{https://www.nature.com/articles/s41586-022-04789-9}{Drews et al.}
 #' for a discussion of this idea.
+#'
+#' Predefined categories for summarizing counts are: CN = 1, 2, 3, 4, 5, 6+
 #'
 #' @param segs_df dataframe. copy number segments for samples.
 #' @param sample_col string. Name of column with cell/sample names
@@ -415,6 +421,10 @@ extract_cn <- function(
 #' `first_seg_correction` provides options over what to do. "diploid" for Drews
 #' solution, "cn_mode" to compare to sample ploidy estimate based on mode, or
 #' "ignore" to not count anything for first segments.
+#'
+#' Predefined categories for summarizing counts are:
+#'
+#' Changepoint = 1, 2, 3, 4, 5+
 #'
 #' @param segs_df dataframe. Sample copy number segments.
 #' @param first_seg_correction string. Default: 'ignore'. Options include
@@ -547,6 +557,11 @@ extract_bp_per_arm <- function(
 #'
 #' Counting the number of breakpoints (i.e., transitions between copy number
 #' segments) per arm or per window (typically 10Mb).
+#'
+#' Optional summarizing in pre-defined categories of:
+#'
+#' Arm breakpoints: 0, 1, 2, 3, 4, 5, 6+
+#' Window breakpoints: 0, 1, 2, 3+
 #'
 #' @param segs_df dataframe. Copy number segments for samples
 #' @param scope string. "windows" (default) or "arms", i.e., what to target for
@@ -682,6 +697,10 @@ extract_breakpoints <- function(
 #'
 #' These behaviours can be replicated here, but isn't recommended. By default,
 #' Ns must match exactly, and M must be within 2 CNs.
+#'
+#' Optionally can summarize in counts of pre-defined categories of:
+#'
+#' Oscillation chains of length: 0, 1-3, 4-9, 10+
 #'
 #' @param segs_df dataframe. Copy number segments for samples.
 #' @param middle_bound integer. How many copy number values away the middle

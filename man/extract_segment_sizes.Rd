@@ -37,4 +37,8 @@ define categories for to count occurrences.
 
 Related functions include: \link{extract_extract_changepoint} and
 \link{extract_breakpoints}
+
+Can also summaries counts of pre-defined categories. With categories being:
+
+< 5mb, 5-10 Mb, 20-50 Mb, 50-100 Mb, and 100+Mb.
 }

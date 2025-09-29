@@ -31,4 +31,6 @@ signature fitting, as this can occassionally lead to the same process being
 artifically split by ploidy of samples. See
 \href{https://www.nature.com/articles/s41586-022-04789-9}{Drews et al.}
 for a discussion of this idea.
+
+Predefined categories for summarizing counts are: CN = 1, 2, 3, 4, 5, 6+
 }
