@@ -761,3 +761,81 @@ extract_oscillations <- function(
     return(osc_cts)
   }
 }
+
+#' wrapper around classic process based features
+#'
+#' Extracts counts using the default set categories of the process based
+#' features, including:
+#'
+#' 1. [dlptools::extract_segment_sizes]
+#' 2. [dlptools::extract_changepoint]
+#' 3. [dlptools::extract_bp_per_arm]
+#' 4. [dlptools::extract_bp_per_window]
+#' 5. [dlptools::extract_oscillations]
+#'
+#' Not included is CN, which can be added by specifying with_cn=TRUE
+#'
+#' Internally using furrr::future_map, so if you set up a future::plan(), this will execute in parallel. Recommended. See Example.
+#'
+#' @param segs_df dataframe. Segmented CN for samples.
+#' @param sample_col string. Column name of sample ID column.
+#' @param with_cn bool. default FALSE. FALSE means do not include CN in the
+#' feature counts, TRUE will include it.
+#' @examples
+#' \dontrun{
+#' future::plan(future::multicore, workers = 10)
+#' dlptools::count_default_process_feats(segs_df, sample_id = "cell_id")
+#' }
+#' @export
+count_default_process_feats <- function(segs_df, sample_col = "cell_id", with_cn = FALSE) {
+  all_sample_feats <- furrr::future_map_dfr(
+    dplyr::group_split(segs_df, .data[[sample_col]]),
+    \(segs_df) {
+      all_features <- list(
+        dlptools::extract_segment_sizes(
+          segs_df,
+          sample_col = sample_col,
+          return = "count"
+        ),
+        dlptools::extract_changepoint(
+          segs_df,
+          sample_col = sample_col,
+          return = "count"
+        ),
+        dlptools::extract_bp_per_arm(
+          dplyr::mutate(segs_df,
+            chr = as.character(chr)
+          ),
+          sample_col = sample_col,
+          return = "count"
+        ),
+        dlptools::extract_bp_per_window(
+          dplyr::mutate(segs_df,
+            chr = as.character(chr)
+          ),
+          sample_col = sample_col,
+          return = "count"
+        ),
+        dlptools::extract_oscillations(
+          segs_df,
+          sample_col = sample_col,
+          return = "count"
+        )
+      )
+
+      all_features <- dplyr::bind_rows(all_features)
+
+      if (with_cn) {
+        cn_feats <- dlptools::extract_cn(
+          segs_df = segs_df,
+          sample_col = sample_col,
+          return = "count"
+        )
+        all_features <- dplyr::bind_rows(all_features, cn_feats)
+      }
+      return(dplyr::ungroup(all_features))
+    }
+  )
+
+  return(all_sample_feats)
+}
