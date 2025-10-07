@@ -44,6 +44,7 @@
 <url><loc>https://molonc.github.io/dlptools/reference/confirm_cols_present.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/convert_dists_to_pairwise.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/convert_long_reads_to_wide.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/count_default_process_feats.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/count_oscillations.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/create_chrom_arm_intervals.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/create_chrom_window_intervals.html</loc></url>
