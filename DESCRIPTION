@@ -1,9 +1,10 @@
 Package: dlptools
 Title: DLPTools: Handling DLP+ Data
 Version: 0.3.26
-Authors@R: 
-    person("Ben", "Furman", , "bfurman@bccrc.ca", role = c("aut", "cre"))
+Authors@R: c(
+    person("Ben", "Furman", , "bfurman@bccrc.ca", role = c("aut", "cre")),
     person("Aparicio Lab Past and Present", role = "aut")
+)
 Description: A collections of functions for basic manipulation and plotting of
     DLP data in R.
 License: MIT + file LICENSE
