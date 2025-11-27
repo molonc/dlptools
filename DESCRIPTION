@@ -1,6 +1,6 @@
 Package: dlptools
 Title: DLPTools: Handling DLP+ Data
-Version: 0.3.25
+Version: 0.3.26
 Authors@R: 
     person("Ben", "Furman", , "bfurman@bccrc.ca", role = c("aut", "cre"))
     person("Aparicio Lab Past and Present", role = "aut")
