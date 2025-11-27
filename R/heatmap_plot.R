@@ -105,7 +105,7 @@ create_chromosome_column_fct <- function(states_mat) {
 
 #' creates a complex heatmap of a given matrix of states.
 generate_state_hm <- function(
-    states_mat, labels_fontsize = 8, plot_cols = STATE_COLORS,
+    states_mat, phylo, labels_fontsize = 8, plot_cols = STATE_COLORS,
     left_annot = NULL, legend_11plus = FALSE) {
   # set up a chromosome factor for column splits in the heatmap
   chroms <- create_chromosome_column_fct(states_mat)
@@ -124,7 +124,9 @@ generate_state_hm <- function(
   states_hm <- ComplexHeatmap::Heatmap(
     states_mat,
     col = plot_cols,
-    cluster_rows = FALSE,
+    # cluster_rows = FALSE,
+    cluster_rows = phylogram::as.dendrogram.phylo(phylo),
+    row_dend_width = unit(4, "cm"),
     cluster_columns = FALSE,
     show_row_names = FALSE,
     show_column_names = FALSE,
@@ -565,28 +567,28 @@ plot_state_hm <- function(
   }
 
   # deal with tree, and re-order states and annotations if so
-  if (!is.null(phylogeny)) {
-    # TODO: temp hack to prevent an import issue that I need to fix.
-    require(ggtree)
-    cell_id_plot_order <- cell_id_order_as_plotted(phylogeny)
-    states_mat <- states_mat[cell_id_plot_order, ]
+  # if (!is.null(phylogeny)) {
+  #   # TODO: temp hack to prevent an import issue that I need to fix.
+  #   require(ggtree)
+  #   cell_id_plot_order <- cell_id_order_as_plotted(phylogeny)
+  #   states_mat <- states_mat[cell_id_plot_order, ]
 
-    if (!is.null(anno_df)) {
-      anno_df <- sort_df_by_cell_order(anno_df, cell_id_plot_order)
-    }
-    if (!is.null(clones_df)) {
-      clones_df <- sort_df_by_cell_order(clones_df, cell_id_plot_order)
-    }
+  #   if (!is.null(anno_df)) {
+  #     anno_df <- sort_df_by_cell_order(anno_df, cell_id_plot_order)
+  #   }
+  #   if (!is.null(clones_df)) {
+  #     clones_df <- sort_df_by_cell_order(clones_df, cell_id_plot_order)
+  #   }
 
-    tree_hm <- make_corrupt_tree_heatmap(
-      phylogeny,
-      clones_df = clones_df,
-      color_clones = color_tree_clones,
-      clone_palette = clone_palette
-    )
-  } else {
-    tree_hm <- NULL
-  }
+  #   tree_hm <- make_tree_heatmap(
+  #     phylogeny,
+  #     clones_df = clones_df,
+  #     color_clones = color_tree_clones,
+  #     clone_palette = clone_palette
+  #   )
+  # } else {
+  #   tree_hm <- NULL
+  # }
 
   # build left annotations, returns null if there is nothing
   left_annot <- build_left_annot(
@@ -611,17 +613,19 @@ plot_state_hm <- function(
   # plot the heatmap
   state_hm <- generate_state_hm(
     states_mat,
+    phylo = phylogeny,
     plot_cols = hm_colors,
     labels_fontsize = labels_fontsize,
     left_annot = left_annot,
     legend_11plus = legend_11plus
   )
 
-  if (!is.null(tree_hm)) {
-    total_hm <- tree_hm + state_hm
-  } else {
-    total_hm <- state_hm
-  }
+  # if (!is.null(tree_hm)) {
+  #   total_hm <- tree_hm + state_hm
+  # } else {
+  #   total_hm <- state_hm
+  # }
+  total_hm <- state_hm
 
   generate_hm_image(total_hm, file_name = file_name, ...)
 }

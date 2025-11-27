@@ -19,8 +19,6 @@ knitr::opts_chunk$set(
 
 ```{r libraries, echo=FALSE}
 library(dlptools)
-library(vroom)
-library(dplyr)
 ```
 
 
@@ -53,6 +51,35 @@ We'll work from some example data to show some examples (it's a trimmed output o
 ex_state_dat <- vroom::vroom("data/ex_state_dat.tsv.gz")
 
 head(ex_state_dat)
+```
+
+
+```{r}
+ex_tree <- ape::read.tree("data/pkg_tree.newick")
+
+
+
+
+dendextend::as.ggdend(phylogram::as.dendrogram.phylo(ex_tree))
+dendextend::as.dendlist()
+
+phylogram::as.dendrogram(ex_tree)
+
+devtools::load_all()
+# dlptools::
+plot_state_hm(
+  states_df = ex_state_dat,
+  state_col = "state",
+  phylogeny = ex_tree
+)
+
+
+
+t_phy_gg <- make_tree_plot_obj(ex_tree)
+
+
+str(t_phy_gg, max.level = 1)
+t_phy_gg$data
 ```
 
 

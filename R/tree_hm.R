@@ -22,16 +22,21 @@ make_tree_plot_obj <- function(
     cell_clone_groups <- get_clone_members(clones_df)
 
     # puts tip labels into named groups, with clone id as the name of the list
-    phylo_tree <- ggtree::groupOTU(phylo_tree, cell_clone_groups)
+    # phylo_tree <- ggtree::groupOTU(phylo_tree, cell_clone_groups)
+    # phylo_tree <- dendextend::as.ggdend(phylogram::as.dendrogram.phylo(phylo_tree))
 
-    tree_aes <- ggplot2::aes(x, y, color = group)
+    # tree_aes <- ggplot2::aes(x, y, color = group)
   } else {
-    tree_aes <- ggplot2::aes(x, y)
+    # tree_aes <- ggplot2::aes(x, y)
   }
 
   # TODO: add colors like the original script
-  tree_p <- ggplot2::ggplot(phylo_tree, tree_aes) +
-    ggtree::geom_tree(size = 0.25) +
+  phylo_tree_p <- dendextend::as.ggdend(
+    phylogram::as.dendrogram.phylo(phylo_tree)
+  )
+  # tree_p <- ggplot2::ggplot(phylo_tree, tree_aes) +
+  tree_p <- ggplot2::ggplot(phylo_tree_p) +
+    # ggtree::geom_tree(size = 0.25) +
     ggplot2::coord_cartesian(expand = FALSE) +
     ggplot2::ylim(0.5, length(phylo_tree$tip.label) + 0.5) +
     ggplot2::theme_void()
@@ -108,7 +113,7 @@ cell_id_order_as_plotted <- function(phylo_tree) {
 #' @param clones (optional) adds clones as OTUs, will eventually allow for color
 #' @return a ComlexHeatmap heatmap object with a tree.
 #' @export
-make_corrupt_tree_heatmap <- function(
+make_tree_heatmap <- function(
     phylo_tree, clones_df = NULL, color_clones = FALSE, clone_palette = NULL) {
   tree_ggplot <- make_tree_plot_obj(
     phylo_tree,
@@ -131,7 +136,8 @@ make_corrupt_tree_heatmap <- function(
     tree = tree_annot_func, which = "row", show_annotation_name = FALSE
   )
 
-  n_cells <- base::sum(tree_ggplot$data$isTip)
+  # n_cells <- base::sum(tree_ggplot$data$isTip)
+  n_cells <- length(phylo_tree$tip.label)
   tree_hm <- ComplexHeatmap::Heatmap(
     base::matrix(nc = 0, nr = n_cells),
     left_annotation = tree_annot
