@@ -1,0 +1,117 @@
+# main hm building function
+
+anno_cols_list: list(Passage=c(`3`: \#123456))
+
+## Usage
+
+``` r
+plot_state_hm(
+  states_df,
+  state_col,
+  phylogeny = NULL,
+  anno_df = NULL,
+  anno_colors_list = list(),
+  clones_df = NULL,
+  anno_columns = NULL,
+  clone_column = NULL,
+  color_tree_clones = FALSE,
+  clone_palette = NULL,
+  only_largest_clone_group = FALSE,
+  file_name = NULL,
+  labels_fontsize = 8,
+  continuous_hm_colours = FALSE,
+  custom_continuous_colors = NULL,
+  custom_continuous_range = NULL,
+  hm_discrete_colors = NULL,
+  legend_11plus = FALSE,
+  ...
+)
+```
+
+## Arguments
+
+- states_df:
+
+  long format read bin data to be plotted
+
+- state_col:
+
+  string of column name to target for plotting in the heatmap. Examples
+  include: state, BAF, state_AS, state_phase
+
+- phylogeny:
+
+  optional. phylo class object to be plotted.
+
+- anno_df:
+
+  optional. annotations dataframe with cell_id column and annotation for
+  each cell id to be added to a heatmap.
+
+- anno_colors_list:
+
+  list of named vectors specifying colors for annotations example:
+  list(passage=c(`1`='#2872bc', `19`='#d23e3e'))
+
+- clones_df:
+
+  optional. dataframe of clone ideas (clone_id) for each cell_id. Both
+  columns required.
+
+- anno_columns:
+
+  optional. Columns containing the annotation data to plot.
+
+- clone_column:
+
+  optional. Column of clone id labels for cells.
+
+- color_tree_clones:
+
+  boolean. optional. Whether to color the tree with the same colors as
+  the clone labels.
+
+- clone_palette:
+
+  optional. ideally a named vector on how to color clones. Vector names
+  are clond ID, values are hex codes. If vector is unnamed, names will
+  be assigned, but without control on which get's which color.
+
+- only_largest_clone_group:
+
+  boolean. optional. Only put a letter label on the largest group of any
+  given clone id.
+
+- file_name:
+
+  name of the file to save the plot to. Recommended for most cases as
+  plots are big-ish.
+
+- labels_fontsize:
+
+  how large to make text labels
+
+- continuous_hm_colours:
+
+  plot heatmap colors on a continous scale.
+
+- custom_continuous_colors:
+
+  a vector of 3 colors to use as the scale for plotting a continuous
+  variable, specified as hexcodes. E.g., c("#3182BD", "#CCCCCC",
+  "#FDCC8A")
+
+- custom_continuous_range:
+
+  a vector of values to specify as the low, mid, and high bounds for the
+  continuous color scale, e.g., c(1, 5, 10)
+
+- hm_discrete_colors:
+
+  specified colors for the values being plotted. Named vector:
+  c(1="#3182BD", 2="#FDCC8A"). Need to specify for every value
+
+- legend_11plus:
+
+  bool. Default FALSE. For HMMCopy state values, state 11 is really 11+,
+  so we replace 11s with 11+ for the plot in the legend. being plotted

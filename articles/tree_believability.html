@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.25</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.26</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,6 +49,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/molonc/dlptools/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -65,7 +66,7 @@
       <h1>Tree Believability</h1>
             
       
-
+      <small class="dont-index">Source: <a href="https://github.com/molonc/dlptools/blob/dev/vignettes/tree_believability.Rmd" class="external-link"><code>vignettes/tree_believability.Rmd</code></a></small>
       <div class="d-none name"><code>tree_believability.Rmd</code></div>
     </div>
 
@@ -86,7 +87,7 @@ data we have on hand, how do we know when one confluence of settings is
 vibe”.</p>
 <p><br><br></p>
 <p>For example:</p>
-<p><img src="imgs/real_tree.png" width="60%" height="50%" style="display: block; margin: auto;"><img src="imgs/rand_tree.png" width="60%" height="50%" style="display: block; margin: auto;"><br></p>
+<p><img src="imgs/real_tree.png" class="r-plt" width="60%" height="50%" style="display: block; margin: auto;"><img src="imgs/rand_tree.png" class="r-plt" width="60%" height="50%" style="display: block; margin: auto;"><br></p>
 <p>were we probably trust the top result more than the bottom
 results.</p>
 <p><br></p>
@@ -141,7 +142,7 @@ walk through an example of what’s going on behind the scenes.</p>
 <span><span class="fu">ggtree</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/gheatmap.html" class="external-link">gheatmap</a></span><span class="op">(</span><span class="va">toy_p</span>, <span class="va">toy_mat</span>, colnames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu">dlptools</span><span class="fu">::</span><span class="va"><a href="../reference/CNV_COLOURS.html">CNV_COLOURS</a></span><span class="op">)</span></span></code></pre></div>
-<p><img src="imgs/toy_heatmap_tree.png" width="60%" height="50%" style="display: block; margin: auto;"></p>
+<p><img src="imgs/toy_heatmap_tree.png" class="r-plt" width="60%" height="50%" style="display: block; margin: auto;"></p>
 <p>3 tips with 3 bins of state data. Node/tip numbers highlighted in
 red.</p>
 <p><br><br><br><br></p>
@@ -195,39 +196,10 @@ their distance from each other:</p>
 <p><br><br></p>
 <p>For A, it’s a bit more tricky because the whole clade containing B
 and C (i.e., node <code>5</code>) are the sister taxa.</p>
-<pre><code><span><span class="co">#&gt; Warning: `aes_()` was deprecated in ggplot2 3.0.0.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use tidy evaluation idioms with `aes()`</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">ggtree</span> package.</span></span>
-<span><span class="co">#&gt;   Please report the issue at <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/YuLab-SMU/ggtree/issues&gt;</span>.</span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span>
-<span><span class="co">#&gt; Warning in fortify(data, ...): Arguments in `...` must be used.</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">✖</span> Problematic arguments:</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> as.Date = as.Date</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> yscale_mapping = yscale_mapping</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> branch.length = branch.length</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> hang = hang</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Did you misspell an argument name?</span></span>
-<span><span class="co">#&gt; Warning: `aes_string()` was deprecated in ggplot2 3.0.0.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use tidy evaluation idioms with `aes()`.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> See also `vignette("ggplot2-in-packages")` for more information.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">ggtree</span> package.</span></span>
-<span><span class="co">#&gt;   Please report the issue at <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/YuLab-SMU/ggtree/issues&gt;</span>.</span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span>
-<span><span class="co">#&gt; Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use `linewidth` instead.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">ggtree</span> package.</span></span>
-<span><span class="co">#&gt;   Please report the issue at <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/YuLab-SMU/ggtree/issues&gt;</span>.</span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span></code></pre>
-<p><img src="tree_believability_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
+<p><img src="tree_believability_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" width="700"></p>
 <p>The approach taken here is to calculate the distance to each and take
 the mean:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">a_string</span> <span class="op">&lt;-</span> <span class="va">toy_state_strings</span><span class="op">[</span><span class="va">toy_state_strings</span><span class="op">$</span><span class="va">tip_label</span> <span class="op">==</span> <span class="st">"A"</span>, <span class="op">]</span><span class="op">$</span><span class="va">states_string</span></span>
 <span></span>
 <span><span class="va">a_to_bc_dists</span> <span class="op">&lt;-</span> <span class="fu">stringdist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/stringdist/man/stringdist.html" class="external-link">stringdist</a></span><span class="op">(</span><span class="va">a_string</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">b_string</span>, <span class="va">c_string</span><span class="op">)</span><span class="op">)</span></span>
@@ -236,13 +208,13 @@ the mean:</p>
 <span><span class="co">#&gt; [1] 2 2</span></span></code></pre></div>
 <p>And then for the whole tree, we can just take the mean of all the
 sibling distances:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">b_c_dist</span>, <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">a_to_bc_dists</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 1.5</span></span></code></pre></div>
 <p><br><br></p>
 <p>Of course, that is too much work, so we can just call the
 function:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/compute_tip_sibling_distances.html">compute_tip_sibling_distances</a></span><span class="op">(</span></span>
 <span>  states_df <span class="op">=</span> <span class="va">toy_states</span>, <span class="co"># the long format state data</span></span>
 <span>  tree <span class="op">=</span> <span class="va">toy_tree</span>,</span>
@@ -256,7 +228,7 @@ function:</p>
 number. It’s meant as a comparison tool to other trees.</p>
 <p>Returning to the trees at the start of this vignette, we can assess
 how well each did:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># loading the data and tree underlying those plots at the top</span></span>
 <span><span class="va">ex_tree</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html" class="external-link">read.tree</a></span><span class="op">(</span><span class="st">"data/tree_support.nwk"</span><span class="op">)</span></span>
 <span><span class="va">dlp_states</span> <span class="op">&lt;-</span> <span class="fu">vroom</span><span class="fu">::</span><span class="fu"><a href="https://vroom.r-lib.org/reference/vroom.html" class="external-link">vroom</a></span><span class="op">(</span><span class="st">"data/tree_support_states.tsv.gz"</span>, show_col_types <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -266,16 +238,16 @@ how well each did:</p>
 <span><span class="va">rand_tree</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/rtree.html" class="external-link">rtree</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">ex_tree</span><span class="op">$</span><span class="va">tip.label</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">rand_tree</span><span class="op">$</span><span class="va">tip.label</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">ex_tree</span><span class="op">$</span><span class="va">tip.label</span>, size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">ex_tree</span><span class="op">$</span><span class="va">tip.label</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>The real tree:</p>
-<p><img src="imgs/real_tree.png" width="60%" height="50%" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<p><img src="imgs/real_tree.png" class="r-plt" width="60%" height="50%" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/compute_tip_sibling_distances.html">compute_tip_sibling_distances</a></span><span class="op">(</span></span>
 <span>  states_df <span class="op">=</span> <span class="va">dlp_states</span>,</span>
 <span>  tree <span class="op">=</span> <span class="va">ex_tree</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 407.7623</span></span></code></pre></div>
 <p>The random tree:</p>
-<p><img src="imgs/rand_tree.png" width="60%" height="50%" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<p><img src="imgs/rand_tree.png" class="r-plt" width="60%" height="50%" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/compute_tip_sibling_distances.html">compute_tip_sibling_distances</a></span><span class="op">(</span></span>
 <span>  states_df <span class="op">=</span> <span class="va">dlp_states</span>,</span>
 <span>  tree <span class="op">=</span> <span class="va">rand_tree</span></span>
@@ -285,7 +257,7 @@ how well each did:</p>
 <p>And, as expected, the random tree is worse. The “mean sibling state
 string distance” (that’s a mouthful…how about the “MS3D”?) is higher in
 the random tree.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># and for fun, you can call for the same results</span></span>
 <span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/check_the_vibe.html">check_the_vibe</a></span><span class="op">(</span><span class="va">dlp_states</span>, <span class="va">ex_tree</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 407.7623</span></span></code></pre></div>
@@ -333,11 +305,11 @@ ancestral state recontruction of CNV events…</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Ben Furman.</p>
+  <p>Developed by Ben Furman, Aparicio Lab Past and Present.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

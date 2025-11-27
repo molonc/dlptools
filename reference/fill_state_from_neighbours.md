@@ -1,0 +1,24 @@
+# infer missing data using the upstream neighbour bin
+
+This function fills in NAs of columns with the information from an
+upstream bin. The exception are bins missing from the start of
+chromosomes, which are filled by their downstream neighbour if there is
+nothing upstream.
+
+## Usage
+
+``` r
+fill_state_from_neighbours(state_df, cols_to_fill = c("state"))
+```
+
+## Arguments
+
+- state_df:
+
+  dataframe of state data with NAs for some bins that need to be filled
+  in. E.g., after dlptools::add_missing_bins_for_cells()
+
+## Details
+
+Primarily used to fill in "state" data for filtered bins. But can also
+pass other states to fill in.

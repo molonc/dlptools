@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.25</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.26</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,6 +49,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/molonc/dlptools/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -65,7 +66,7 @@
       <h1>Basic Exploratory Plots</h1>
             
       
-
+      <small class="dont-index">Source: <a href="https://github.com/molonc/dlptools/blob/dev/vignettes/basic_plots.Rmd" class="external-link"><code>vignettes/basic_plots.Rmd</code></a></small>
       <div class="d-none name"><code>basic_plots.Rmd</code></div>
     </div>
 
@@ -98,18 +99,18 @@ out:</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/chip_plot.html">chip_plot</a></span><span class="op">(</span><span class="va">ex_mets</span>, <span class="st">"experimental_condition"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="basic_plots_files/figure-html/unnamed-chunk-2-1.png" width="768"></p>
+<p><img src="basic_plots_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" width="768"></p>
 <p><br><br></p>
 <p>Then often we want to look for spatial effects across the chip.</p>
 <p>Such as, quality:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/chip_plot.html">chip_plot</a></span><span class="op">(</span><span class="va">ex_mets</span>, <span class="st">"quality"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="basic_plots_files/figure-html/unnamed-chunk-3-1.png" width="768"></p>
+<p><img src="basic_plots_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" width="768"></p>
 <p><br><br></p>
 <p>or perhaps total reads:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/chip_plot.html">chip_plot</a></span><span class="op">(</span><span class="va">ex_mets</span>, <span class="st">"total_reads"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="basic_plots_files/figure-html/unnamed-chunk-4-1.png" width="768"></p>
+<p><img src="basic_plots_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" width="768"></p>
 <p><br><br></p>
 </div>
 <div class="section level2">
@@ -131,7 +132,7 @@ something seems off about the multiplier HMMcopy chose for the cell.</p>
 <span>  cellid <span class="op">=</span> <span class="st">"AT21352-A144173A-R03-C32"</span>,</span>
 <span>  <span class="co"># plot_choice = "both" # the default option</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="basic_plots_files/figure-html/unnamed-chunk-5-1.png" width="768"></p>
+<p><img src="basic_plots_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" width="768"></p>
 <p><br></p>
 <p>Or you can just plot one:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -140,7 +141,7 @@ something seems off about the multiplier HMMcopy chose for the cell.</p>
 <span>  cellid <span class="op">=</span> <span class="st">"AT21352-A144173A-R03-C32"</span>,</span>
 <span>  plot_choice <span class="op">=</span> <span class="st">"corrected"</span> <span class="co"># or plot_choice = "raw"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="basic_plots_files/figure-html/unnamed-chunk-6-1.png" width="576"></p>
+<p><img src="basic_plots_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" width="576"></p>
 <p><br><br><br></p>
 </div>
 <div class="section level2">
@@ -159,7 +160,7 @@ which has lots of features.</p>
 <span>  <span class="co"># pseduo_log_y = TRUE</span></span>
 <span>  <span class="co"># and that might help. Or see function help for more ideas</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="basic_plots_files/figure-html/unnamed-chunk-7-1.png" width="960"></p>
+<p><img src="basic_plots_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" width="960"></p>
 <p><br><br><br></p>
 <p>If needed, can also change what the y-axis is to other bin-based
 options:</p>
@@ -169,7 +170,7 @@ options:</p>
 <span>  cell_ids <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">ex_reads</span><span class="op">$</span><span class="va">cell_id</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span>,</span>
 <span>  yaxis <span class="op">=</span> <span class="st">"state"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="basic_plots_files/figure-html/unnamed-chunk-8-1.png" width="960"></p>
+<p><img src="basic_plots_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" width="960"></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -178,11 +179,11 @@ options:</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Ben Furman.</p>
+  <p>Developed by Ben Furman, Aparicio Lab Past and Present.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

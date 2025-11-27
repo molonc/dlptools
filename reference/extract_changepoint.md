@@ -1,0 +1,78 @@
+# extract the CN change between adjacent segments.
+
+Change points are the change in copy number state between adjacent
+segments. If one segment is 4 and the adjacent segment is 1, the change
+point is 3.
+
+## Usage
+
+``` r
+extract_changepoint(
+  segs_df,
+  first_seg_correction = c("ignore", "cn_mode", "diploid"),
+  sample_col = "cell_id",
+  chrom_col = "chr",
+  cn_col = "state",
+  return = c("values", "counts"),
+  ...
+)
+```
+
+## Arguments
+
+- segs_df:
+
+  dataframe. Sample copy number segments.
+
+- first_seg_correction:
+
+  string. Default: 'ignore'. Options include "diploid" or "cn_mode".
+
+- sample_col:
+
+  string. Name of column with cell/sample names
+
+- chrom_col:
+
+  string. Name of column with chromosome names
+
+- cn_col:
+
+  string. Name of column with segment copy number states.
+
+- return:
+
+  string. "values" (default) or "counts". Values are the observed values
+  for cells, counts are the counts of these values in pre-determined
+  categories.
+
+- ...:
+
+  can pass arguments to
+  [segs_to_reads](https://molonc.github.io/dlptools/reference/segs_to_reads.md)
+
+## Value
+
+dataframe. Sample IDs and the observed breakpoint counts per scope.
+
+## Details
+
+Change points are based on the difference to the "left" adjacent
+segment, when moving from BP 1 to the end of a chromosome. So if there
+are 3 segments: 4 - 1 - 2, the change points would be: \|1 - 4\| and
+\|2 - 1\| resulting in: 3, 1
+
+For the first segment on a chromosome, [Drews et
+al.](https://www.nature.com/articles/s41586-022-04789-9) compared it to
+a hypothetical diploid. So if the first segment on a chromosome is 5,
+the change point would be 5 - 2 = 3. That's fine if the base genome is
+diploid, but doesn't work so well for other ploidies, or cases where you
+don't want to assume a diploid base case.
+
+`first_seg_correction` provides options over what to do. "diploid" for
+Drews solution, "cn_mode" to compare to sample ploidy estimate based on
+mode, or "ignore" to not count anything for first segments.
+
+Predefined categories for summarizing counts are:
+
+Changepoint = 1, 2, 3, 4, 5+
