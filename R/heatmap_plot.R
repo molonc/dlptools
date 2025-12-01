@@ -121,24 +121,44 @@ generate_state_hm <- function(
     legend_params <- list(nrow = 4)
   }
 
+  # states_hm <- ComplexHeatmap::Heatmap(
+  #   states_mat,
+  #   col = plot_cols,
+  #   # cluster_rows = FALSE,
+  #   cluster_rows = phylogram::as.dendrogram.phylo(phylo),
+  #   row_dend_reorder = FALSE,
+  #   row_dend_width = grid::unit(4, "cm"),
+  #   cluster_columns = FALSE,
+  #   show_row_names = FALSE,
+  #   show_column_names = FALSE,
+  #   use_raster = TRUE,
+  #   raster_quality = 5,
+  #   column_split = chroms,
+  #   column_title_side = "bottom",
+  #   # might need to revisit when I size img
+  #   column_title_gp = grid::gpar(fontsize = labels_fontsize),
+  #   heatmap_legend_param = legend_params,
+  #   na_col = "white",
+  #   left_annotation = left_annot
+  # )
+
   states_hm <- ComplexHeatmap::Heatmap(
     states_mat,
     col = plot_cols,
-    # cluster_rows = FALSE,
-    cluster_rows = phylogram::as.dendrogram.phylo(phylo),
-    row_dend_width = unit(4, "cm"),
+    column_split = chroms,
+    cluster_rows = phylo,
+    left_annotation = left_annot,
+    row_dend_reorder = FALSE, # so tree order is used if given
+    column_dend_reorder = FALSE, # don't do any internal reordering
+    row_dend_width = grid::unit(4, "cm"), # width of tree when present
     cluster_columns = FALSE,
     show_row_names = FALSE,
     show_column_names = FALSE,
-    use_raster = TRUE,
-    raster_quality = 5,
-    column_split = chroms,
+    heatmap_legend_param = list(nrow = 4),
     column_title_side = "bottom",
-    # might need to revisit when I size img
-    column_title_gp = grid::gpar(fontsize = labels_fontsize),
-    heatmap_legend_param = legend_params,
     na_col = "white",
-    left_annotation = left_annot
+    use_raster = TRUE,
+    raster_quality = 5
   )
 
   return(states_hm)
@@ -366,7 +386,7 @@ build_left_annot <- function(
   # must be a cleaner way, with adding annotations together or something.
   if (!is.null(clones_df) && !is.null(anno_df)) {
     left_annot <- ComplexHeatmap::HeatmapAnnotation(
-      clones = clones_df$clone_id,
+      clones = factor(clones_df$clone_id),
       clone_label = ComplexHeatmap::anno_mark(
         labels = clone_label_pos$clone_id,
         at = clone_label_pos$row_num,
@@ -378,8 +398,8 @@ build_left_annot <- function(
       annotation_legend_param = list(
         clones = list(nrow = legend_n_row)
       ),
-      df = anno_df,
-      col = purrr::list_merge(anno_cols_list, clones = clone_palette)
+      df = anno_df # ,
+      # col = purrr::list_merge(anno_cols_list, clones = clone_palette)
     )
   } else if (!is.null(clones_df) && is.null(anno_df)) {
     left_annot <- ComplexHeatmap::HeatmapAnnotation(
@@ -471,6 +491,26 @@ check_or_fetch_clone_palette <- function(clones_df, clone_palette = NULL) {
   return(clone_palette)
 }
 
+#' generate a color palette for clone labels
+#'
+#' @param clone_ids unique vector of clone labels
+#' @return named vector of hex colors, names are clone labels
+#' @export
+make_clone_palette <- function(clone_ids) {
+  clone_ids <- gtools::mixedsort(clone_ids)
+  n_clones <- length(clone_ids)
+  if (n_clones < 26) {
+    clone_palette <- pals::alphabet() |> sample(size = n_clones)
+  } else {
+    clone_palette <- grDevices::colorRampPalette(pals::stepped3())(n_clones)
+  }
+
+  names(clone_palette) <- clone_ids
+
+  return(clone_palette)
+}
+
+
 #' main hm building function
 #'
 #' anno_cols_list: list(Passage=c(`3`: #123456))
@@ -510,19 +550,19 @@ check_or_fetch_clone_palette <- function(clones_df, clone_palette = NULL) {
 #' being plotted
 #' @export
 plot_state_hm <- function(
-    states_df, # long format data
-    state_col, # column of data to plot
-    phylogeny = NULL, # optional
+    states_df,
+    state_col,
+    phylogeny = NULL,
+    file_name,
     anno_df = NULL, # optional, can also specify columns in the dataframe
     anno_colors_list = list(), # for custom colors of annotations
-    clones_df = NULL, # optional, can also specify columns in the dataframe
     anno_columns = NULL,
     clone_column = NULL,
-    color_tree_clones = FALSE,
+    clones_df = NULL, # optional, can also specify columns in the dataframe
     clone_palette = NULL,
-    only_largest_clone_group = FALSE,
-    file_name = NULL, # for direct saving to a file
+    only_largest_clone_group = TRUE,
     labels_fontsize = 8,
+    is_continuous = FALSE,
     continuous_hm_colours = FALSE,
     custom_continuous_colors = NULL,
     custom_continuous_range = NULL,
@@ -531,12 +571,13 @@ plot_state_hm <- function(
     ...) {
   check_args()
 
-  # first, format the states for plotting
-  states_mat <- format_states_for_hm(
+  states_mtx <- format_states_for_hm(
     states_df,
     state_col,
-    continuous = continuous_hm_colours
+    continuous = is_continuous
   )
+
+  chroms <- create_chromosome_column_fct(states_mtx)
 
   # deal with any annotations
   if (!is.null(anno_columns) && is.null(anno_df)) {
@@ -547,7 +588,7 @@ plot_state_hm <- function(
 
   if (!is.null(anno_df)) {
     # ensure consistent ordering
-    anno_df <- sort_df_by_cell_order(anno_df, rownames(states_mat))
+    anno_df <- sort_df_by_cell_order(anno_df, rownames(states_mtx))
   }
 
   # deal with clones or consider it an annotation? They are a bit special
@@ -566,31 +607,6 @@ plot_state_hm <- function(
     )
   }
 
-  # deal with tree, and re-order states and annotations if so
-  # if (!is.null(phylogeny)) {
-  #   # TODO: temp hack to prevent an import issue that I need to fix.
-  #   require(ggtree)
-  #   cell_id_plot_order <- cell_id_order_as_plotted(phylogeny)
-  #   states_mat <- states_mat[cell_id_plot_order, ]
-
-  #   if (!is.null(anno_df)) {
-  #     anno_df <- sort_df_by_cell_order(anno_df, cell_id_plot_order)
-  #   }
-  #   if (!is.null(clones_df)) {
-  #     clones_df <- sort_df_by_cell_order(clones_df, cell_id_plot_order)
-  #   }
-
-  #   tree_hm <- make_tree_heatmap(
-  #     phylogeny,
-  #     clones_df = clones_df,
-  #     color_clones = color_tree_clones,
-  #     clone_palette = clone_palette
-  #   )
-  # } else {
-  #   tree_hm <- NULL
-  # }
-
-  # build left annotations, returns null if there is nothing
   left_annot <- build_left_annot(
     anno_df = anno_df,
     anno_cols_list = anno_colors_list,
@@ -599,6 +615,20 @@ plot_state_hm <- function(
     only_largest_clone_group = only_largest_clone_group,
     clone_palette = clone_palette
   )
+
+  if (is.null(phylogeny)) {
+    phylo_arg <- FALSE
+  } else {
+    if (class(phylogeny) == "phylo") {
+      phylo_arg <- phylogram::as.dendrogram.phylo(phylogeny)
+    } else if (class(phylogeny) == "dendrogram") {
+      phylo_arg <- phylogeny
+    } else {
+      stop(
+        "please pass a object of class phylo or dendrogram for the phylogeny"
+      )
+    }
+  }
 
   # determine plot colors for heatmap
   hm_colors <- fetch_heatmap_color_palette(
@@ -610,22 +640,18 @@ plot_state_hm <- function(
     discrete_colors = hm_discrete_colors
   )
 
-  # plot the heatmap
-  state_hm <- generate_state_hm(
-    states_mat,
-    phylo = phylogeny,
+  hm_p <- generate_state_hm(
+    states_mat = states_mtx,
+    phylo = phylo_arg,
     plot_cols = hm_colors,
     labels_fontsize = labels_fontsize,
     left_annot = left_annot,
     legend_11plus = legend_11plus
   )
 
-  # if (!is.null(tree_hm)) {
-  #   total_hm <- tree_hm + state_hm
-  # } else {
-  #   total_hm <- state_hm
-  # }
-  total_hm <- state_hm
-
-  generate_hm_image(total_hm, file_name = file_name, ...)
+  generate_hm_image(
+    hm_p,
+    file_name = file_name,
+    ...
+  )
 }

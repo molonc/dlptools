@@ -5,8 +5,7 @@
 #' a segments file from that. This function will take a reads table and covert
 #' it to a segments table.
 #'
-#' @param reads_df a table with standard reads data (e.g., created with
-#' [import_dlp_files(file_type='reads')])
+#' @param reads_df a table with standard reads data
 #' @return tibble/dataframe with read bins organized into segment blocks.
 #' @export
 #' @importFrom rlang .data

@@ -16,5 +16,5 @@ factor of the column with sorted levels
 }
 \description{
 Common plotting issue, used mixed sort so things like, e.g., chromosomes
-get sorted properly chr1, chr2, \link{...}, chr10
+get sorted properly chr1, chr2, ..., chr10
 }
