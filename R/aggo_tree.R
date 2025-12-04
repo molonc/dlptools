@@ -28,8 +28,8 @@
 #' from a bin of 2, making distance based metrics using CN states dubious (see
 #' example).
 #'
-#' @example
-#' mm <- matrix(c(2, 3, 4), byrow=TRUE)
+#' @examples
+#' mm <- matrix(c(2, 3, 4), byrow = TRUE)
 #' rownames(mm) <- c(paste0("cell-", LETTERS[1:3]))
 #' dist(mm)
 #'
@@ -50,10 +50,10 @@ build_aggo_tree <- function(
     cut_k = 8,
     state_col = "state",
     sample_col = "cell_id",
+    chrom_col = "chr",
     by_ploidy_change = FALSE,
     by_cn_change = FALSE) {
   if (by_ploidy_change) {
-    state_col <- "ploidy_change"
     reads_df <- reads_df |>
       mark_cn_relative_to_ploidy(
         sample_col = sample_col
@@ -61,13 +61,13 @@ build_aggo_tree <- function(
       dplyr::mutate(
         ploidy_change = state - mode_ploidy
       )
-  } else if (by_cn_change) {
-    state_col <- "bin_change"
 
+    state_col <- "ploidy_change"
+  } else if (by_cn_change) {
     reads_df <- reads_df |>
-      dplyr::group_by(cell_id, chr) |>
+      dplyr::group_by(.data[[sample_col]], .data[[chrom_col]]) |>
       dplyr::mutate(
-        prev_bin_state = dplyr::lag(state),
+        prev_bin_state = dplyr::lag(.data[[state_col]]),
         bin_change = dplyr::case_when(
           state == prev_bin_state ~ 0,
           state != prev_bin_state ~ 1,
@@ -76,21 +76,26 @@ build_aggo_tree <- function(
       ) |>
       dplyr::ungroup() |>
       dplyr::filter(!is.na(bin_change))
+
+    state_col <- "bin_change"
   }
 
-
-  os_states_wm <- format_states_for_hm(states_df = reads_df, state_col = state_col)
+  os_states_wm <- format_states_for_hm(
+    states_df = reads_df,
+    state_col = state_col
+  )
 
   agnes_clust <- cluster::agnes(dist(os_states_wm), method = "ward")
 
   agnes_clones <- tibble::tibble(
-    # cell_id = os_states_w[[sample_col]],
-    cell_id = rownames(os_states_wm), # do I know this is the right order?
-    # oddly seems to be, though I don't know how.
+    cell_id = rownames(os_states_wm),
     clone_id = cutree(agnes_clust, k = cut_k)
   )
 
-  # agnes_phylo <- phylogram::as.phylo(as.dendrogram(agnes_clust))
-
-  return(list(clones = agnes_clones, phylo = as.dendrogram(agnes_clust)))
+  return(
+    list(
+      clones = agnes_clones,
+      dendro = as.dendrogram(agnes_clust)
+    )
+  )
 }

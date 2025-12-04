@@ -8,7 +8,7 @@ plot_state_hm(
   states_df,
   state_col,
   phylogeny = NULL,
-  file_name,
+  file_name = NULL,
   anno_df = NULL,
   anno_colors_list = list(),
   anno_columns = NULL,
@@ -22,7 +22,8 @@ plot_state_hm(
   custom_continuous_colors = NULL,
   custom_continuous_range = NULL,
   hm_discrete_colors = NULL,
-  legend_11plus = FALSE,
+  legend_11plus = TRUE,
+  color_tree_clones = FALSE,
   ...
 )
 }
@@ -41,7 +42,7 @@ cases as plots are big-ish.}
 annotation for each cell id to be added to a heatmap.}
 
 \item{anno_colors_list}{list of named vectors specifying colors for
-annotations example: list(passage=c(\code{1}='#2872bc', \code{19}='#d23e3e'))}
+annotations example: \code{list(passage=c(p1='#2872bc', p19='#d23e3e'))}}
 
 \item{anno_columns}{optional. Columns containing the annotation data to plot.}
 
@@ -73,12 +74,12 @@ Named vector: c(1="#3182BD", 2="#FDCC8A"). Need to specify for every value}
 
 \item{legend_11plus}{bool. Default FALSE. For HMMCopy state values,
 state 11 is really 11+, so we replace 11s with 11+ for the plot in the
-legend.
-being plotted}
+legend.}
 
 \item{color_tree_clones}{boolean. optional. Whether to color the tree with
 the same colors as the clone labels.}
 }
 \description{
-anno_cols_list: list(Passage=c(\code{3}: #123456))
+Plot a heat map of states across chromosomes. Put annotations next to it, a
+tree next to it, mark clone groups, or all of that at once!
 }

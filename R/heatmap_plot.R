@@ -1,8 +1,3 @@
-# This module is inspired from and directly lifts some code from other versions
-# of this script. Primarily inspired by a script passed to me by Hoa Tran, and
-# other versions given to me by Daniel Lai, and the R package Signals.
-
-
 #' read a tree from a file in newick format
 #'
 #' @param tree_f a path to a tree file
@@ -27,23 +22,6 @@ import_clones <- function(clones_f) {
   return(clones)
 }
 
-#' read an annotations file (t(c)sv)
-#'
-#' @param annotations_file path to file. Requires at least sample_id column
-#' @return tibble
-#' @export
-import_annotations_df <- function(annotations_file) {
-  anno_df <- vroom::vroom(annotations_file)
-
-  if (!("sample_id" %in% colnames(anno_df))) {
-    stop(
-      "sample_id not in annotations df. Will not be able to add annotations"
-    )
-    return(NULL)
-  }
-
-  return(anno_df)
-}
 
 #' format states for plotting in a heatmap
 #'
@@ -121,27 +99,6 @@ generate_state_hm <- function(
     legend_params <- list(nrow = 4)
   }
 
-  # states_hm <- ComplexHeatmap::Heatmap(
-  #   states_mat,
-  #   col = plot_cols,
-  #   # cluster_rows = FALSE,
-  #   cluster_rows = phylogram::as.dendrogram.phylo(phylo),
-  #   row_dend_reorder = FALSE,
-  #   row_dend_width = grid::unit(4, "cm"),
-  #   cluster_columns = FALSE,
-  #   show_row_names = FALSE,
-  #   show_column_names = FALSE,
-  #   use_raster = TRUE,
-  #   raster_quality = 5,
-  #   column_split = chroms,
-  #   column_title_side = "bottom",
-  #   # might need to revisit when I size img
-  #   column_title_gp = grid::gpar(fontsize = labels_fontsize),
-  #   heatmap_legend_param = legend_params,
-  #   na_col = "white",
-  #   left_annotation = left_annot
-  # )
-
   states_hm <- ComplexHeatmap::Heatmap(
     states_mat,
     col = plot_cols,
@@ -154,7 +111,7 @@ generate_state_hm <- function(
     cluster_columns = FALSE,
     show_row_names = FALSE,
     show_column_names = FALSE,
-    heatmap_legend_param = list(nrow = 4),
+    heatmap_legend_param = legend_params,
     column_title_side = "bottom",
     na_col = "white",
     use_raster = TRUE,
@@ -173,7 +130,7 @@ generate_state_hm <- function(
 #' @param file_name optional string of where to save a png image of the heatmap.
 #' @return ComplexHeatmap::draw or nothing if a file is written.
 #' @export
-generate_hm_image <- function(
+output_hm_image <- function(
     hm, file_name = NULL,
     png_height = 1600, png_width = 2800, png_res = 144) {
   if (!is.null(file_name)) {
@@ -513,7 +470,9 @@ make_clone_palette <- function(clone_ids) {
 
 #' main hm building function
 #'
-#' anno_cols_list: list(Passage=c(`3`: #123456))
+#' Plot a heat map of states across chromosomes. Put annotations next to it, a
+#' tree next to it, mark clone groups, or all of that at once!
+#'
 #' @param states_df long format read bin data to be plotted
 #' @param state_col string of column name to target for plotting in the heatmap.
 #' Examples include: state, BAF, state_AS, state_phase
@@ -524,7 +483,7 @@ make_clone_palette <- function(clone_ids) {
 #' annotation for each cell id to be added to a heatmap.
 #' @param anno_columns optional. Columns containing the annotation data to plot.
 #' @param anno_colors_list list of named vectors specifying colors for
-#' annotations example: list(passage=c(`1`='#2872bc', `19`='#d23e3e'))
+#' annotations example: `list(passage=c(p1='#2872bc', p19='#d23e3e'))`
 #' @param clones_df optional. dataframe of clone ideas (clone_id) for each
 #' cell_id. Both columns required.
 #' @param clone_column optional. Column of clone id labels for cells.
@@ -547,7 +506,6 @@ make_clone_palette <- function(clone_ids) {
 #' @param legend_11plus bool. Default FALSE. For HMMCopy state values,
 #' state 11 is really 11+, so we replace 11s with 11+ for the plot in the
 #' legend.
-#' being plotted
 #' @export
 plot_state_hm <- function(
     states_df,
@@ -567,10 +525,14 @@ plot_state_hm <- function(
     custom_continuous_colors = NULL,
     custom_continuous_range = NULL,
     hm_discrete_colors = NULL,
-    legend_11plus = FALSE,
+    legend_11plus = TRUE,
     color_tree_clones = FALSE,
     ...) {
   check_args()
+
+  if (color_tree_clones) {
+    warning("Sorry, not colouring the tree by clone colours yet. Function temporarily removed.")
+  }
 
   if (is.null(phylogeny)) {
     phylo_arg <- FALSE
@@ -637,8 +599,6 @@ plot_state_hm <- function(
     clone_palette = clone_palette
   )
 
-
-
   # determine plot colors for heatmap
   hm_colors <- fetch_heatmap_color_palette(
     state_col,
@@ -658,7 +618,7 @@ plot_state_hm <- function(
     legend_11plus = legend_11plus
   )
 
-  generate_hm_image(
+  output_hm_image(
     hm_p,
     file_name = file_name,
     ...
