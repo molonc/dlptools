@@ -15,8 +15,7 @@ reads_to_segs(reads_df)
 
 - reads_df:
 
-  a table with standard reads data (e.g., created with
-  import_dlp_files(file_type='reads'))
+  a table with standard reads data
 
 ## Value
 

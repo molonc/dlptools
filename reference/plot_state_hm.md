@@ -1,6 +1,7 @@
 # main hm building function
 
-anno_cols_list: list(Passage=c(`3`: \#123456))
+Plot a heat map of states across chromosomes. Put annotations next to
+it, a tree next to it, mark clone groups, or all of that at once!
 
 ## Usage
 
@@ -9,21 +10,22 @@ plot_state_hm(
   states_df,
   state_col,
   phylogeny = NULL,
+  file_name = NULL,
   anno_df = NULL,
   anno_colors_list = list(),
-  clones_df = NULL,
   anno_columns = NULL,
   clone_column = NULL,
-  color_tree_clones = FALSE,
+  clones_df = NULL,
   clone_palette = NULL,
-  only_largest_clone_group = FALSE,
-  file_name = NULL,
+  only_largest_clone_group = TRUE,
   labels_fontsize = 8,
+  is_continuous = FALSE,
   continuous_hm_colours = FALSE,
   custom_continuous_colors = NULL,
   custom_continuous_range = NULL,
   hm_discrete_colors = NULL,
-  legend_11plus = FALSE,
+  legend_11plus = TRUE,
+  color_tree_clones = FALSE,
   ...
 )
 ```
@@ -43,6 +45,11 @@ plot_state_hm(
 
   optional. phylo class object to be plotted.
 
+- file_name:
+
+  name of the file to save the plot to. Recommended for most cases as
+  plots are big-ish.
+
 - anno_df:
 
   optional. annotations dataframe with cell_id column and annotation for
@@ -51,12 +58,7 @@ plot_state_hm(
 - anno_colors_list:
 
   list of named vectors specifying colors for annotations example:
-  list(passage=c(`1`='#2872bc', `19`='#d23e3e'))
-
-- clones_df:
-
-  optional. dataframe of clone ideas (clone_id) for each cell_id. Both
-  columns required.
+  `list(passage=c(p1='#2872bc', p19='#d23e3e'))`
 
 - anno_columns:
 
@@ -66,10 +68,10 @@ plot_state_hm(
 
   optional. Column of clone id labels for cells.
 
-- color_tree_clones:
+- clones_df:
 
-  boolean. optional. Whether to color the tree with the same colors as
-  the clone labels.
+  optional. dataframe of clone ideas (clone_id) for each cell_id. Both
+  columns required.
 
 - clone_palette:
 
@@ -81,11 +83,6 @@ plot_state_hm(
 
   boolean. optional. Only put a letter label on the largest group of any
   given clone id.
-
-- file_name:
-
-  name of the file to save the plot to. Recommended for most cases as
-  plots are big-ish.
 
 - labels_fontsize:
 
@@ -114,4 +111,9 @@ plot_state_hm(
 - legend_11plus:
 
   bool. Default FALSE. For HMMCopy state values, state 11 is really 11+,
-  so we replace 11s with 11+ for the plot in the legend. being plotted
+  so we replace 11s with 11+ for the plot in the legend.
+
+- color_tree_clones:
+
+  boolean. optional. Whether to color the tree with the same colors as
+  the clone labels.

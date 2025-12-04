@@ -7,6 +7,7 @@ creates a complex heatmap of a given matrix of states.
 ``` r
 generate_state_hm(
   states_mat,
+  phylo,
   labels_fontsize = 8,
   plot_cols = STATE_COLORS,
   left_annot = NULL,

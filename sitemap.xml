@@ -27,9 +27,9 @@
 <url><loc>https://molonc.github.io/dlptools/reference/add_wu_seg_state_bins.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/basic_tile_plot.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/bme_vec.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/build_aggo_tree.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/build_left_annot.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/cell_cn_profile.html</loc></url>
-<url><loc>https://molonc.github.io/dlptools/reference/cell_id_order_as_plotted.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/cell_states_to_strings.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/characterize_foreground_allele_state_changes.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/characterize_foreground_total_state_changes.html</loc></url>
@@ -74,16 +74,13 @@
 <url><loc>https://molonc.github.io/dlptools/reference/format_sitka_tree.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/format_states_for_hm.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/gc_plot.html</loc></url>
-<url><loc>https://molonc.github.io/dlptools/reference/generate_hm_image.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/generate_state_hm.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/get_clone_id_label_positions.html</loc></url>
-<url><loc>https://molonc.github.io/dlptools/reference/get_clone_members.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/get_column_metrics.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/get_dist_to_sibs.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/get_package_file_path.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/get_tip_parents.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/get_tips_that_avoid_redundant_comps.html</loc></url>
-<url><loc>https://molonc.github.io/dlptools/reference/import_annotations_df.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/import_clones.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/import_dlp_files.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/import_telos_file.html</loc></url>
@@ -97,8 +94,6 @@
 <url><loc>https://molonc.github.io/dlptools/reference/load_ucsc_centromeres.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/make_cellid_matrix.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/make_clone_palette.html</loc></url>
-<url><loc>https://molonc.github.io/dlptools/reference/make_corrupt_tree_heatmap.html</loc></url>
-<url><loc>https://molonc.github.io/dlptools/reference/make_tree_plot_obj.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/map_states_to_letters.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/mark_bins_overlapping_centromeres.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/mark_cn_relative_to_ploidy.html</loc></url>
@@ -106,6 +101,7 @@
 <url><loc>https://molonc.github.io/dlptools/reference/mark_segs_chromosome_span.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/medicc_profiles_to_foreground.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/mode_ploidy.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/output_hm_image.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/pairwise_bin_difference.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/pipe.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/plot_bg_state_highlight.html</loc></url>

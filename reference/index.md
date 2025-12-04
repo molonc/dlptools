@@ -31,12 +31,12 @@
 - [`bme_vec()`](https://molonc.github.io/dlptools/reference/bme_vec.md)
   : picks beginning, middle, and end of a vector to handle when vectors
   that are too long are passed
+- [`build_aggo_tree()`](https://molonc.github.io/dlptools/reference/build_aggo_tree.md)
+  : build tree with AGNES clustering
 - [`build_left_annot()`](https://molonc.github.io/dlptools/reference/build_left_annot.md)
   : builds the left-side annotations of the cells
 - [`cell_cn_profile()`](https://molonc.github.io/dlptools/reference/cell_cn_profile.md)
   : plot copy number profile plot of a cell.
-- [`cell_id_order_as_plotted()`](https://molonc.github.io/dlptools/reference/cell_id_order_as_plotted.md)
-  : grab cell ids in the order that they are plotted
 - [`cell_states_to_strings()`](https://molonc.github.io/dlptools/reference/cell_states_to_strings.md)
   : collapse cell states to strings
 - [`characterize_foreground_allele_state_changes()`](https://molonc.github.io/dlptools/reference/characterize_foreground_allele_state_changes.md)
@@ -127,14 +127,10 @@
   : format states for plotting in a heatmap
 - [`gc_plot()`](https://molonc.github.io/dlptools/reference/gc_plot.md)
   : visualize GC correction for a cell
-- [`generate_hm_image()`](https://molonc.github.io/dlptools/reference/generate_hm_image.md)
-  : generate a ComplexHeatmap::Heatmap image, either to console or file.
 - [`generate_state_hm()`](https://molonc.github.io/dlptools/reference/generate_state_hm.md)
   : creates a complex heatmap of a given matrix of states.
 - [`get_clone_id_label_positions()`](https://molonc.github.io/dlptools/reference/get_clone_id_label_positions.md)
   : get a row number of where to place each clone label.
-- [`get_clone_members()`](https://molonc.github.io/dlptools/reference/get_clone_members.md)
-  : create list of list of cell_ids that belong to each clone id.
 - [`get_column_metrics()`](https://molonc.github.io/dlptools/reference/get_column_metrics.md)
   : get plotted values bounds
 - [`get_dist_to_sibs()`](https://molonc.github.io/dlptools/reference/get_dist_to_sibs.md)
@@ -145,8 +141,6 @@
   : resolve who the immediate parent nodes are for each tip.
 - [`get_tips_that_avoid_redundant_comps()`](https://molonc.github.io/dlptools/reference/get_tips_that_avoid_redundant_comps.md)
   : get tips labels that will avoid duplicate sibling comparisons
-- [`import_annotations_df()`](https://molonc.github.io/dlptools/reference/import_annotations_df.md)
-  : read an annotations file (t(c)sv)
 - [`import_clones()`](https://molonc.github.io/dlptools/reference/import_clones.md)
   : read a clones t(c)sv file
 - [`import_dlp_files()`](https://molonc.github.io/dlptools/reference/import_dlp_files.md)
@@ -171,10 +165,6 @@
   : pivot a cell_id dataframe to a wide matrix.
 - [`make_clone_palette()`](https://molonc.github.io/dlptools/reference/make_clone_palette.md)
   : generate a color palette for clone labels
-- [`make_corrupt_tree_heatmap()`](https://molonc.github.io/dlptools/reference/make_corrupt_tree_heatmap.md)
-  : create a complex heatmap object with a tree.
-- [`make_tree_plot_obj()`](https://molonc.github.io/dlptools/reference/make_tree_plot_obj.md)
-  : create a ggplot object of a phylogenetic tree
 - [`map_states_to_letters()`](https://molonc.github.io/dlptools/reference/map_states_to_letters.md)
   : convert a vector of states to letters
 - [`mark_bins_overlapping_centromeres()`](https://molonc.github.io/dlptools/reference/mark_bins_overlapping_centromeres.md)
@@ -189,6 +179,8 @@
   : medicc profiles files to foreground assessment
 - [`mode_ploidy()`](https://molonc.github.io/dlptools/reference/mode_ploidy.md)
   : find the mode CN per chromosome, then mode across the chromosomes
+- [`output_hm_image()`](https://molonc.github.io/dlptools/reference/output_hm_image.md)
+  : generate a ComplexHeatmap::Heatmap image, either to console or file.
 - [`pairwise_bin_difference()`](https://molonc.github.io/dlptools/reference/pairwise_bin_difference.md)
   : metric of pairwise differences between two cells.
 - [`plot_bg_state_highlight()`](https://molonc.github.io/dlptools/reference/plot_bg_state_highlight.md)

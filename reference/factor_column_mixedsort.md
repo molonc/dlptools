@@ -1,8 +1,7 @@
 # naturally sort a column from a dataframe.
 
 Common plotting issue, used mixed sort so things like, e.g., chromosomes
-get sorted properly chr1, chr2, [...](https://rdrr.io/r/base/dots.html),
-chr10
+get sorted properly chr1, chr2, ..., chr10
 
 ## Usage
 
