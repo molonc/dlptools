@@ -572,6 +572,26 @@ plot_state_hm <- function(
     ...) {
   check_args()
 
+  if (is.null(phylogeny)) {
+    phylo_arg <- FALSE
+  } else {
+    if (class(phylogeny) == "phylo") {
+      phylo_arg <- phylogram::as.dendrogram.phylo(phylogeny)
+      # can I rely on this actually being the order?
+      tip_ord <- phylogeny$tip.label
+    } else if (class(phylogeny) == "dendrogram") {
+      phylo_arg <- phylogeny
+      tip_ord <- labels(phylogeny)
+    } else {
+      stop(
+        "please pass a object of class phylo or dendrogram for the phylogeny"
+      )
+    }
+
+    # rearrange input data to tip order of the tree.
+    states_df <- dplyr::arrange(states_df, match(cell_id, tip_ord))
+  }
+
   states_mtx <- format_states_for_hm(
     states_df,
     state_col,
@@ -617,23 +637,7 @@ plot_state_hm <- function(
     clone_palette = clone_palette
   )
 
-  if (is.null(phylogeny)) {
-    phylo_arg <- FALSE
-  } else {
-    if (class(phylogeny) == "phylo") {
-      phylo_arg <- phylogram::as.dendrogram.phylo(phylogeny)
-    } else if (class(phylogeny) == "dendrogram") {
-      phylo_arg <- phylogeny
-    } else {
-      stop(
-        "please pass a object of class phylo or dendrogram for the phylogeny"
-      )
-    }
 
-    # won't work for dendrogram
-    # states_mtx <- states_mtx[phylogeny$tip.label, ]
-    # works for hm + tree, but now everything else is out of order
-  }
 
   # determine plot colors for heatmap
   hm_colors <- fetch_heatmap_color_palette(
