@@ -146,8 +146,8 @@ generate_state_hm <- function(
     states_mat,
     col = plot_cols,
     column_split = chroms,
-    cluster_rows = phylo,
     left_annotation = left_annot,
+    cluster_rows = phylo,
     row_dend_reorder = FALSE, # so tree order is used if given
     column_dend_reorder = FALSE, # don't do any internal reordering
     row_dend_width = grid::unit(4, "cm"), # width of tree when present
@@ -398,8 +398,8 @@ build_left_annot <- function(
       annotation_legend_param = list(
         clones = list(nrow = legend_n_row)
       ),
-      df = anno_df # ,
-      # col = purrr::list_merge(anno_cols_list, clones = clone_palette)
+      df = anno_df,
+      col = purrr::list_merge(anno_cols_list, clones = clone_palette)
     )
   } else if (!is.null(clones_df) && is.null(anno_df)) {
     left_annot <- ComplexHeatmap::HeatmapAnnotation(
@@ -553,7 +553,7 @@ plot_state_hm <- function(
     states_df,
     state_col,
     phylogeny = NULL,
-    file_name,
+    file_name = NULL,
     anno_df = NULL, # optional, can also specify columns in the dataframe
     anno_colors_list = list(), # for custom colors of annotations
     anno_columns = NULL,
@@ -568,6 +568,7 @@ plot_state_hm <- function(
     custom_continuous_range = NULL,
     hm_discrete_colors = NULL,
     legend_11plus = FALSE,
+    color_tree_clones = FALSE,
     ...) {
   check_args()
 
@@ -628,6 +629,10 @@ plot_state_hm <- function(
         "please pass a object of class phylo or dendrogram for the phylogeny"
       )
     }
+
+    # won't work for dendrogram
+    # states_mtx <- states_mtx[phylogeny$tip.label, ]
+    # works for hm + tree, but now everything else is out of order
   }
 
   # determine plot colors for heatmap
