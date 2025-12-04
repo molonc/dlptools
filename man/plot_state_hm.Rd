@@ -8,21 +8,22 @@ plot_state_hm(
   states_df,
   state_col,
   phylogeny = NULL,
+  file_name = NULL,
   anno_df = NULL,
   anno_colors_list = list(),
-  clones_df = NULL,
   anno_columns = NULL,
   clone_column = NULL,
-  color_tree_clones = FALSE,
+  clones_df = NULL,
   clone_palette = NULL,
-  only_largest_clone_group = FALSE,
-  file_name = NULL,
+  only_largest_clone_group = TRUE,
   labels_fontsize = 8,
+  is_continuous = FALSE,
   continuous_hm_colours = FALSE,
   custom_continuous_colors = NULL,
   custom_continuous_range = NULL,
   hm_discrete_colors = NULL,
-  legend_11plus = FALSE,
+  legend_11plus = TRUE,
+  color_tree_clones = FALSE,
   ...
 )
 }
@@ -34,21 +35,21 @@ Examples include: state, BAF, state_AS, state_phase}
 
 \item{phylogeny}{optional. phylo class object to be plotted.}
 
+\item{file_name}{name of the file to save the plot to. Recommended for most
+cases as plots are big-ish.}
+
 \item{anno_df}{optional. annotations dataframe with cell_id column and
 annotation for each cell id to be added to a heatmap.}
 
 \item{anno_colors_list}{list of named vectors specifying colors for
-annotations example: list(passage=c(\code{1}='#2872bc', \code{19}='#d23e3e'))}
-
-\item{clones_df}{optional. dataframe of clone ideas (clone_id) for each
-cell_id. Both columns required.}
+annotations example: \code{list(passage=c(p1='#2872bc', p19='#d23e3e'))}}
 
 \item{anno_columns}{optional. Columns containing the annotation data to plot.}
 
 \item{clone_column}{optional. Column of clone id labels for cells.}
 
-\item{color_tree_clones}{boolean. optional. Whether to color the tree with
-the same colors as the clone labels.}
+\item{clones_df}{optional. dataframe of clone ideas (clone_id) for each
+cell_id. Both columns required.}
 
 \item{clone_palette}{optional. ideally a named vector on how to color clones.
 Vector names are clond ID, values are hex codes. If vector is unnamed, names
@@ -56,9 +57,6 @@ will be assigned, but without control on which get's which color.}
 
 \item{only_largest_clone_group}{boolean. optional. Only put a letter label on
 the largest group of any given clone id.}
-
-\item{file_name}{name of the file to save the plot to. Recommended for most
-cases as plots are big-ish.}
 
 \item{labels_fontsize}{how large to make text labels}
 
@@ -76,9 +74,12 @@ Named vector: c(1="#3182BD", 2="#FDCC8A"). Need to specify for every value}
 
 \item{legend_11plus}{bool. Default FALSE. For HMMCopy state values,
 state 11 is really 11+, so we replace 11s with 11+ for the plot in the
-legend.
-being plotted}
+legend.}
+
+\item{color_tree_clones}{boolean. optional. Whether to color the tree with
+the same colors as the clone labels.}
 }
 \description{
-anno_cols_list: list(Passage=c(\code{3}: #123456))
+Plot a heat map of states across chromosomes. Put annotations next to it, a
+tree next to it, mark clone groups, or all of that at once!
 }

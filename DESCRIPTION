@@ -1,6 +1,6 @@
 Package: dlptools
 Title: DLPTools: Handling DLP+ Data
-Version: 0.3.26
+Version: 1.0.0
 Authors@R: c(
     person("Ben", "Furman", email = "bfurman@bccrc.ca", role = c("aut", "cre")),
     person("Aparicio Lab Past and Present", role = "aut")
@@ -10,7 +10,7 @@ Description: A collections of functions for basic manipulation and plotting of
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 biocViews:
 Imports: 
     ape,
@@ -24,7 +24,6 @@ Imports:
     ggplot2,
     ggrepel,
     ggsci,
-    ggtree,
     gtools,
     IRanges,
     magrittr,

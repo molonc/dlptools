@@ -19,8 +19,6 @@ knitr::opts_chunk$set(
 
 ```{r libraries, echo=FALSE}
 library(dlptools)
-library(vroom)
-library(dplyr)
 ```
 
 
@@ -232,24 +230,4 @@ dlptools::plot_state_hm(
 
 ```{r, out.width="75%", out.height="75%", echo=FALSE}
 knitr::include_graphics("imgs/continuous.png")
-```
-
-
-## Errors
-
-If you see an error like this:
-
-```
-Error in `fortify()`:
-! `data` must be a <data.frame>, or an object coercible by `fortify()`, or a valid <data.frame>-like object coercible by `as.data.frame()`.
-Caused by error in `.prevalidate_data_frame_like_object()`:
-! `dim(data)` must return an <integer> of length 2.
-```
-
-That's a complaint from ggtree that I need to fix and haven't yet.
-
-Loading ggtree should fix it:
-
-```{r, eval=FALSE}
-library(ggtree)
 ```

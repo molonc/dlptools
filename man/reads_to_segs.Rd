@@ -7,8 +7,7 @@
 reads_to_segs(reads_df)
 }
 \arguments{
-\item{reads_df}{a table with standard reads data (e.g., created with
-\link{import_dlp_files(file_type='reads')})}
+\item{reads_df}{a table with standard reads data}
 }
 \value{
 tibble/dataframe with read bins organized into segment blocks.
