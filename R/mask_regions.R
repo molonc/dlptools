@@ -4,8 +4,7 @@
 #' with regions in the mask file. Will add a 'mask' boolean column to the
 #' dataframe to indicate whether the region should be masked.
 #'
-#' @param subject_df a table with chromosome, start, and end columns. Typically
-#' the reads or segs dataframe created by [import_dlp_files()].
+#' @param subject_df a table with chromosome, start, and end columns.
 #' @param mask_f path to a mask file, see README.md ## Setup for details.
 #' @param mask_chr_name the name of the chromosomes column in the mask file.
 #' Default is "seqnames", which is the name in the provided file.

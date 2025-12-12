@@ -11,32 +11,31 @@
 #' Dramatic speed improvements can be had by setting up a parallel plan for
 #' furrr like so:
 #'
-#' future::plan(future::multicore, workers=N_CORES_YOU_WANT)
+#' future::plan(future::multisession, workers=N_CORES_YOU_WANT)
 #'
 #' Example for 100 cells, which is 4950 pairs, this function will take 4 minutes
 #' with 4 cores.
 #'
-#' The returned DF is organized by each cell and the distances to each other
-#' cell (so there are some redundant comparisons, like cell 1 vs cell 2 and
-#' cell 2 vs cell 1). There is also a column "nearest_neighbour" which is a
-#' boolean identifying which comparison is the minimum distance for each cell.
+#' These comparisons are unique pairs! So if 3 input cells: A, B, C,
+#' comparisons made are A-B, A-C, B-C. So one input cell will always be
+#' "missing" from the index column. See
+#' [the vignette](https://molonc.github.io/dlptools/articles/pairwise-differences.html)
+#' for how you can turn this around, but it can create a very large DF with
+#' redundant comparisons to rearrange to have each cell against all others.
 #'
 #' @param bin_df a dataframe of read bins with states. Expected columns of:
 #' cell_id, chr, start, end, state
-#' @param cells optional vector specifying cells to compare. If it's blank, all
-#' cells are compared. If it's 1 cell, then that one cell is compared to all
-#' others. If it's 2 or more, then just the specified cells are compared to each
-#' other.
+#' @param targ_cells optional vector specifying which cells to compare to all
+#' other cells.
 #' @param min_seg_length double. This is the minium length of matching segment
 #' bins to use when measuring similarity.
-#' @param return_pairs_matrix boolean. If TRUE, returns a pairwise matrix
-#' object of distances. This is useful to then pass to functions like hclust()
-#' and so forth. Can also do afterwards with
-#' dlptools::convert_dists_to_pairwise()
 #' @return tibble of cell pairs and metrics about their differences.
 #' @export
 pairwise_bin_difference <- function(
-    bin_df, cells = c(), min_seg_length = 2.5e6, return_pairs_matrix = FALSE) {
+    bin_df,
+    targ_cells = c(),
+    min_seg_length = 2.5e6,
+    return_pairs_matrix = FALSE) {
   required_cols <- c("cell_id", "chr", "start", "end", "state")
   if (!all(required_cols %in% colnames(bin_df))) {
     stop(paste(
@@ -58,90 +57,75 @@ pairwise_bin_difference <- function(
     ), immediate. = TRUE)
   }
 
-  targ_cell <- NULL
-  if (length(cells) == 0) {
-    print("comparing all cells. Gonna take some time.")
-    cells <- unique(bin_df$cell_id)
-  } else if (length(cells) == 1) {
-    print("comparing one cell to all others")
-    targ_cell <- cells[1]
-    print(targ_cell)
-    cells <- unique(bin_df$cell_id)
-  }
-
+  cells <- unique(bin_df$cell_id)
   cell_pairs <- t(combn(unique(cells), 2))
 
-  if (!is.null(targ_cell)) {
+  if (length(targ_cells) > 0) {
+    # remove unneeded comparisons
     cell_pairs <- cell_pairs[
       c(
-        cell_pairs[, 1] == targ_cell |
-          cell_pairs[, 2] == targ_cell
+        cell_pairs[, 1] %in% targ_cells |
+          cell_pairs[, 2] %in% targ_cells
       ), ,
       drop = FALSE
     ]
   }
 
-  print(stringr::str_c(
+  warning(stringr::str_c(
     "processing:", nrow(cell_pairs), "pairs",
     sep = " "
-  ))
+  ), immediate. = TRUE)
 
-  targ_cells_df <- dplyr::filter(bin_df, cell_id %in% cells)
-  targ_cells_df <- split(targ_cells_df, f = as.factor(targ_cells_df$cell_id))
+
+  bind_df_split <- split(bin_df, f = as.factor(bin_df$cell_id))
 
   all_cell_comps <- furrr::future_map2(
     cell_pairs[, 1], cell_pairs[, 2],
     \(c1, c2) {
       compare_two_cells(
-        targ_cells_df[[c1]], targ_cells_df[[c2]],
+        bind_df_split[[c1]], bind_df_split[[c2]],
         min_seg_length = min_seg_length
       )
     }
   ) |>
     purrr::list_rbind()
 
-  # this comparison was done in a non-redundant way (i.e., only doing 1 vs 2
-  # and not also the converse of 2 vs 1). But want to reorg to see each cell
-  # against all of the others.
-  cell_based_comps <- furrr::future_map(
-    cells,
-    \(cell) {
-      all_cell_comps |>
-        dplyr::filter(cell_one == cell | cell_two == cell) |>
-        dplyr::mutate(
-          index_cell = cell,
-          comp_cell = dplyr::if_else(cell_one == cell, cell_two, cell_one),
-          nearest_neighbour = prop_diff == min(prop_diff)
-        ) |>
-        dplyr::select(-c(cell_one, cell_two))
-    }
-  ) |>
-    purrr::list_rbind()
 
-  if (return_pairs_matrix) {
-    return(convert_dists_to_pairwise(cell_based_comps))
-  } else {
-    return(cell_based_comps)
-  }
+  all_cell_comps <- all_cell_comps |>
+    dplyr::rename(
+      index_cell = cell_one,
+      comp_cell = cell_two,
+    )
+
+
+  return(all_cell_comps)
 }
 
 
-#' convert cell distances to a pairwise matrix
+#' mostly internal for rearranging the pairwise DF to focus on a cell.
 #'
-#' Takes the output of dlptools::pairwise_bin_difference() and returns a
-#' pairwise matrix of the distances. Useful to then pass to functions like
-#' stats::hclust() and related ideas.
+#' This is useful because with non-redundant pair comparisons, the "last cell"
+#' in the list is never the "index_cell", as it has already been compared ot all
+#' others. But sometimes useful to still see it.
 #'
-#' @param cell_dists dataframe from dlptools::pairwise_bin_difference()
-#' @return matrix of index vs comp cell distances.
+#' e.g.,
+#' cells: A, B, C
+#' comparisons would be: A-B, A-C, B-C
+#' generate C focus with this function: C-A, C-B
+#' or B focus: B-A, B-C
+#' @param in_df dataframe most likely from [dlptools::pairwise_bin_difference()]
+#' @param cell string. Target cell ID to put as index cell
+#' @return tibble
 #' @export
-convert_dists_to_pairwise <- function(cell_dists) {
-  p_mtx <- xtabs(
-    prop_diff ~ .,
-    dplyr::select(cell_dists, index_cell, comp_cell, prop_diff)
-  ) |> t()
-
-  return(p_mtx)
+make_cell_focused_matrix <- function(in_df, cell) {
+  in_df |>
+    dplyr::filter(index_cell == cell | comp_cell == cell) |>
+    dplyr::mutate(
+      comp_cell = dplyr::if_else(
+        index_cell == cell, comp_cell, index_cell
+      ),
+      index_cell = cell
+    )
 }
 
 #' internal workhorse of pairwise_bin_difference function
@@ -196,36 +180,63 @@ compare_two_cells <- function(cell_1_df, cell_2_df, min_seg_length) {
   return(diff_res)
 }
 
+#' find the nearest neighbour of each cell
+#'
+#' After running [dlptools::pairwise_bin_difference()], we can feed that output
+#' dataframe to this function to find the nearest neighbour of each cell. The
+#' pairwise function does the comparisons in a non-redundant way (A-B, A-C,
+#' B-C), leaving out some redundant comparisons (i.e., C-A, C-B). If A's
+#' nearest neighbour is C, it's not guaranteed that C's nearest neighbour is A.
+#' This function takes a cell specific focus and finds the nearest neighbour of
+#' each.
+#'
+#' As with [dlptools::pairwise_bin_difference()], using [furrr::future_map()]
+#' internally, so speed improvements with a [future::plan()] being set.
+#'
+#' @param pairwise_diffs tibble output of [dlptools::pairwise_bin_difference()]
+#' @return tibble/dataframe
+#' @export
+find_nearest_neighbours <- function(pairwise_diffs) {
+  cells <- unique(c(pairwise_diffs$index_cell, pairwise_diffs$comp_cell))
+
+  nearest_neighs <- furrr::future_map_dfr(
+    cells, \(cell) {
+      cell_df <- make_cell_focused_matrix(pairwise_diffs, cell)
+
+      cell_df |>
+        dplyr::slice_min(prop_diff) |>
+        dplyr::rename(nn_diff = prop_diff) |>
+        dplyr::mutate(
+          max_diff_to_all = max(cell_df$prop_diff),
+          mean_diff_to_all = mean(cell_df$prop_diff)
+        )
+    }
+  )
+
+  return(nearest_neighs)
+}
+
 
 #' Find outlier cells using a beta distribution
 #'
 #' Also inspired by MSKCC SPECTRUM paper. Using the measured pairwise bin
-#' distances between cells (dlptools::pairwise_bin_differences()), this
+#' distances between cells [dlptools::pairwise_bin_differences()], this
 #' function takes the nearest neighbour of each cell and fits a beta
 #' distribution. Then using this distribution, it finds outlier cells based on
 #' a selected percentile of the distribution (default 99th).
 #'
-#' @param cell_diffs the dataframe of differences from
-#' dlptools::pairwise_bin_differences()
+#' @param cell_diffs dataframe of differences from
+#' [dlptools::pairwise_bin_differences()]
+#' @param nn_cells dataframe of [dlptools::find_nearest_neighbours()]
 #' @param outlier_percentile double. Default 0.99. What percentile of the
 #' distribution to consider an outlier cell.
 #' @return NA or tibble of information on cells considered outliers. NA if no outliers found.
 #' @export
-find_outlier_cells <- function(cell_diffs, outlier_percentile = 0.99) {
-  if (!"nearest_neighbour" %in% colnames(cell_diffs)) {
-    stop(paste(
-      "Requries a boolean column with the name: nearest_neighbour. First need",
-      "to run dlptools::pairwise_bin_difference() to get the nearest_neighbour",
-      "values for the cells.",
-      sep = " "
-    ))
-  }
-
-  # maybe do the average, I am capturing some interesting cells with a low
-  # distance to one another, but high distance to everyone else.
-  # cell_diffs <- pairwise_diffs
-  nn_cells <- dplyr::filter(cell_diffs, nearest_neighbour)
-  diff_beta_dist <- fitdistrplus::fitdist(nn_cells$prop_diff, "beta")
+find_outlier_cells <- function(
+    pairwise_diffs,
+    nn_cells,
+    outlier_percentile = 0.99) {
+  diff_beta_dist <- fitdistrplus::fitdist(nn_cells$nn_diff, "beta")
 
   min_diff <- qbeta(
     p = outlier_percentile,
@@ -233,62 +244,64 @@ find_outlier_cells <- function(cell_diffs, outlier_percentile = 0.99) {
     shape2 = diff_beta_dist$estimate[["shape2"]]
   )
 
-  outlier_cells <- dplyr::filter(nn_cells, prop_diff >= min_diff)
+  outlier_cells <- dplyr::filter(nn_cells, nn_diff >= min_diff) |>
+    dplyr::rename(outlier_cell = index_cell, nn_cell = comp_cell)
 
   if (nrow(outlier_cells) == 0) {
     print("no outlier cells found!")
     return(NA)
   }
 
-  outlier_cell_info <- cell_diffs |>
-    dplyr::filter(index_cell %in% outlier_cells$index_cell) |>
-    dplyr::rename(outlier_cell = index_cell) |>
-    dplyr::group_by(outlier_cell) |>
-    dplyr::summarise(
-      mean_diff_to_all_cells = mean(prop_diff),
-      nn_dist = unique(prop_diff[nearest_neighbour]),
-      nn_cell = unique(comp_cell[nearest_neighbour])
-    )
-
-  return(outlier_cell_info)
+  return(outlier_cells)
 }
 
 #' visualize cell nearest neighbour distance values
 #'
-#' Generates a simple plot of each cell and highlights the min NN-distance for
-#' each. Also highlights cells that are considered outliers.
+#' Generates a simple plot of the nearest neighbour distance for each cell,
+#' which is highlighted with the point. Outlier cells are indicated by colour.
+#' A violin plot is used to show distance to all other cells.
 #'
-#' @param cell_diffs output dataframe of dlptools::pairwise_bin_difference()
-#' @param outlier_Cells output dataframe of dlptools::find_outlier_cells()
+#' @param pairwise_diffs dataframe of [dlptools::pairwise_bin_difference()]
+#' @param nn_cells dataframe of [dlptools::find_nearest_neighbours()]
+#' @param outlier_Cells dataframe of [dlptools::find_outlier_cells()]
 #' @return ggplot object
 #' @export
-plot_nnd_outlier_cells <- function(cell_diffs, outlier_cells) {
-  p_dat <- cell_diffs |>
-    dplyr::group_by(index_cell) |>
-    dplyr::mutate(
-      outlier = index_cell %in% outlier_cells$outlier_cell,
-      p_lab = dplyr::case_when(
-        prop_diff == min(prop_diff) & !outlier ~ "min-NN",
-        prop_diff == min(prop_diff) & outlier ~ "min-NN-outlier",
-        .default = "other"
-      )
-    ) |>
-    dplyr::ungroup()
+plot_nnd_outlier_cells <- function(
+    pairwise_diffs,
+    nn_cells,
+    outlier_cells) {
+  nn_p_dat <- dplyr::mutate(
+    nn_cells,
+    `outlier cell` = index_cell %in% outlier_cells$outlier_cell
+  )
 
-  cell_ord <- p_dat |>
-    dplyr::filter(nearest_neighbour) |>
-    dplyr::arrange(prop_diff) |>
+  cell_dfs <- furrr::future_map_dfr(
+    unique(nn_cells$index_cell),
+    \(cell) {
+      cell_df <- make_cell_focused_matrix(pairwise_diffs, cell)
+    }
+  )
+
+  cell_ord <- nn_cells |>
+    dplyr::arrange(nn_diff) |>
     dplyr::pull(index_cell) |>
     unique()
 
-  p_dat$index_cell <- factor(p_dat$index_cell, levels = cell_ord)
+  nn_p_dat$index_cell <- factor(nn_p_dat$index_cell, levels = cell_ord)
 
   ggplot2::ggplot(
-    p_dat,
-    ggplot2::aes(x = index_cell, y = prop_diff, color = p_lab)
+    nn_p_dat,
+    ggplot2::aes(x = index_cell, y = nn_diff)
   ) +
-    ggplot2::geom_point() +
-    # facet_grid(~outlier, scales='free_x') +
+    ggplot2::geom_violin(
+      data = cell_dfs,
+      bw = 0.02,
+      ggplot2::aes(x = index_cell, y = prop_diff)
+    ) +
+    ggplot2::geom_point(
+      ggplot2::aes(color = `outlier cell`),
+      size = 3
+    ) +
     ggplot2::theme_classic() +
     ggplot2::theme(
       plot.background = ggplot2::element_rect(color = "white"),
@@ -298,12 +311,11 @@ plot_nnd_outlier_cells <- function(cell_diffs, outlier_cells) {
     ) +
     ggplot2::scale_color_manual(
       values = c(
-        `min-NN` = GEN_PLOT_COLS[2],
-        `min-NN-outlier` = GEN_PLOT_COLS[3],
-        `other` = "grey"
+        `FALSE` = GEN_PLOT_COLS[2],
+        `TRUE` = GEN_PLOT_COLS[3]
       )
     ) +
     ggplot2::xlab("Index Cell") +
     ggplot2::ylab("Nearest Neighbour Distance") +
-    ggplot2::guides(color = ggplot2::guide_legend(title = ""))
+    ggplot2::guides(color = ggplot2::guide_legend(title = "Outlier Cell"))
 }

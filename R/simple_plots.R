@@ -3,8 +3,7 @@
 #' builds a basic ggplot with geom_tile on a reads df.
 #' Only expects columns of cell_id, start, state, chr
 #'
-#' @param reads_df a table of reads data (e.g., could load with
-#' [import_dlp_files()])
+#' @param reads_df a table of reads data
 #' @return ggplot object
 #' @export
 #' @importFrom rlang .data

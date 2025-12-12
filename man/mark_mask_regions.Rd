@@ -12,8 +12,7 @@ mark_mask_regions(
 )
 }
 \arguments{
-\item{subject_df}{a table with chromosome, start, and end columns. Typically
-the reads or segs dataframe created by \code{\link[=import_dlp_files]{import_dlp_files()}}.}
+\item{subject_df}{a table with chromosome, start, and end columns.}
 
 \item{mask_f}{path to a mask file, see README.md ## Setup for details.}
 

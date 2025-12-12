@@ -4,21 +4,23 @@
 \alias{find_outlier_cells}
 \title{Find outlier cells using a beta distribution}
 \usage{
-find_outlier_cells(cell_diffs, outlier_percentile = 0.99)
+find_outlier_cells(pairwise_diffs, nn_cells, outlier_percentile = 0.99)
 }
 \arguments{
-\item{cell_diffs}{the dataframe of differences from
-dlptools::pairwise_bin_differences()}
+\item{nn_cells}{dataframe of \code{\link[=find_nearest_neighbours]{find_nearest_neighbours()}}}
 
 \item{outlier_percentile}{double. Default 0.99. What percentile of the
 distribution to consider an outlier cell.}
+
+\item{cell_diffs}{dataframe of differences from
+\code{\link[=pairwise_bin_differences]{pairwise_bin_differences()}}}
 }
 \value{
 NA or tibble of information on cells considered outliers. NA if no outliers found.
 }
 \description{
 Also inspired by MSKCC SPECTRUM paper. Using the measured pairwise bin
-distances between cells (dlptools::pairwise_bin_differences()), this
+distances between cells \code{\link[=pairwise_bin_differences]{pairwise_bin_differences()}}, this
 function takes the nearest neighbour of each cell and fits a beta
 distribution. Then using this distribution, it finds outlier cells based on
 a selected percentile of the distribution (default 99th).

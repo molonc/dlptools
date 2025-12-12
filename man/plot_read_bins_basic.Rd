@@ -7,8 +7,7 @@
 plot_read_bins_basic(reads_df)
 }
 \arguments{
-\item{reads_df}{a table of reads data (e.g., could load with
-\code{\link[=import_dlp_files]{import_dlp_files()}})}
+\item{reads_df}{a table of reads data}
 }
 \value{
 ggplot object

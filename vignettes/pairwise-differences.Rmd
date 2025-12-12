@@ -31,7 +31,7 @@ First some toy data:
 reads_df <- vroom::vroom("data/example_reads.tsv.gz", show_col_types = FALSE)
 
 # only using a few cells to demonstrate functions below
-targ_cells <- unique(reads_df$cell_id)[1:50]
+targ_cells <- unique(reads_df$cell_id)[1:40]
 
 reads_df <- dplyr::filter(reads_df, cell_id %in% targ_cells)
 
@@ -58,9 +58,10 @@ Warning, this function is *slow*, and the number of pairwise comparisons grows w
 
 Parallelizing will make your life a bit better. Internally, this function uses `furrr`, you just need to set up a plan.
 
-```{r}
+
+```{r, message=FALSE, warning=FALSE}
 # first set up a parallel plan, here with 4 cores being used
-future::plan(future::multicore, workers = 4)
+# future::plan(future::multisession, workers = 4)
 
 pairwise_diffs <- dlptools::pairwise_bin_difference(
   reads_df,
@@ -74,7 +75,16 @@ dplyr::slice_head(pairwise_diffs, n = 5)
 
 which is each cell (`index cell`) compared to each other cell (`comp_cell`) and some information on the proportion of bins different (`prop_diff`).
 
-The `nearest_neighbour` column is a boolean where the nearest neighbour of each cell is marked as TRUE.
+<br>
+<br>
+<br>
+
+We can then find the nearest neighbour of each cell:
+
+```{r}
+(nn_cells <- dlptools::find_nearest_neighbours(pairwise_diffs))
+```
+
 
 <br>
 <br>
@@ -84,38 +94,41 @@ The `nearest_neighbour` column is a boolean where the nearest neighbour of each 
 
 **Side Note**
 
-The function `dlptools::pairwise_bin_difference()` has a `cells` parameter. Leaving it empty, the default, compares all cells in a pairwise manner.
+The function `dlptools::pairwise_bin_difference()` has a `targ_cells` parameter. Leaving it empty, the default, compares all cells in a pairwise manner.
 
-This will compare this one cell against all others:
+This will compare the specified cell or cells against all others:
 
-```{r, eval=FALSE}
+```{r, message=FALSE, warning=FALSE}
 dlptools::pairwise_bin_difference(
   reads_df,
-  cells = "some_cell_id"
+  targ_cells = unique(reads_df$cell_id)[1:2]
 )
 ```
 
 
-Alternatively, specifying two or more cells will just compared the specified cells to each other:
+<br>
+<br>
 
-```{r, eval=FALSE}
-dlptools::pairwise_bin_difference(
-  reads_df,
-  cells = c("cell_id_one", "cell_id_two", "cell_id_three")
-)
+Alternatively, if you want to just compare some set of cells against themselves, best to just filter upfront:
+
+```{r, message=FALSE, warning=FALSE}
+reads_df |>
+  dplyr::filter(cell_id %in% unique(reads_df$cell_id)[1:3]) |>
+  dlptools::pairwise_bin_difference()
 ```
+
+<br>
 
 ---
 
 <br>
 <br>
 
-The nearest neighbour of each cell is marked in the dataframe returned above. This function now takes that information, fits a beta distribution to those nearest neighbours, then returns outlier cells based on that distribution:
+We can then combine the pairwise differences and nearest neighbours to find outlier cells by fitting a beta distribution to the latter, and finding outlier pairwise comparisons:
+
 
 ```{r}
-outlier_cells <- dlptools::find_outlier_cells(pairwise_diffs)
-
-dplyr::slice_head(outlier_cells, n = 5)
+(outlier_cells <- dlptools::find_outlier_cells(pairwise_diffs, nn_cells))
 ```
 
 <br>
@@ -126,7 +139,7 @@ There is a simple plot that can be made to visualize these distances:
 
 ```{r, fig.height=4, fig.width=6}
 dlptools::plot_nnd_outlier_cells(
-  pairwise_diffs, outlier_cells
+  pairwise_diffs, nn_cells, outlier_cells
 )
 ```
 
@@ -136,36 +149,34 @@ dlptools::plot_nnd_outlier_cells(
 <br>
 
 
+With a bit of work, we can re-orient the cell distances matrix to contain each cell compared against all others. The original function performs non-redundant comparisons: A-B, A-C, B-C. 
 
-You can also convert those distance measurements into a pairwise distance matrix:
+For various reasons, we might also want to see C-A and C-B, even though it's redundant.
+
+This is actually happening internally in several of the above functions.
+
+This dataframe can get big, as it's now every cell compared to every other cell.
 
 ```{r}
-pairs_mtx <- dlptools::convert_dists_to_pairwise(pairwise_diffs)
+# first, we need to know all of the cells we want to do this for. It could
+# be all cells, or some subset.
 
-pairs_mtx[1:4, 1:4]
-```
+# the nearest neighbours frame is all input cells, so could use that.
 
-<br>
-
-or if you know you only want this, it can be returned with the function above:
-
-```{r, eval=FALSE}
-dlptools::pairwise_bin_difference(
-  reads_df,
-  return_pairs_matrix = TRUE # this option here
+cell_focused_df <- purrr::map_dfr(
+  # might want to consider furrr::future_map_dfr
+  unique(nn_cells$index_cell),
+  \(cell) {
+    dlptools::make_cell_focused_matrix(pairwise_diffs, cell)
+  }
 )
+
+dplyr::slice_head(cell_focused_df, n = 5)
 ```
 
 
+Now every cell will be present in the `index_cell` column.
+
 <br>
 <br>
-
-A matrix like this can then be useful for other analyses, like if you wanted to do some clustering:
-
-```{r, fig.height=5, fig.width=7}
-pairs_mtx |>
-  as.dist() |>
-  hclust() |>
-  plot(labels = FALSE)
-```
-
+<br>

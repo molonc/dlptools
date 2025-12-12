@@ -4,17 +4,20 @@
 \alias{plot_nnd_outlier_cells}
 \title{visualize cell nearest neighbour distance values}
 \usage{
-plot_nnd_outlier_cells(cell_diffs, outlier_cells)
+plot_nnd_outlier_cells(pairwise_diffs, nn_cells, outlier_cells)
 }
 \arguments{
-\item{cell_diffs}{output dataframe of dlptools::pairwise_bin_difference()}
+\item{pairwise_diffs}{dataframe of \code{\link[=pairwise_bin_difference]{pairwise_bin_difference()}}}
 
-\item{outlier_Cells}{output dataframe of dlptools::find_outlier_cells()}
+\item{nn_cells}{dataframe of \code{\link[=find_nearest_neighbours]{find_nearest_neighbours()}}}
+
+\item{outlier_Cells}{dataframe of \code{\link[=find_outlier_cells]{find_outlier_cells()}}}
 }
 \value{
 ggplot object
 }
 \description{
-Generates a simple plot of each cell and highlights the min NN-distance for
-each. Also highlights cells that are considered outliers.
+Generates a simple plot of the nearest neighbour distance for each cell,
+which is highlighted with the point. Outlier cells are indicated by colour.
+A violin plot is used to show distance to all other cells.
 }

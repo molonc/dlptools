@@ -6,7 +6,7 @@
 \usage{
 pairwise_bin_difference(
   bin_df,
-  cells = c(),
+  targ_cells = c(),
   min_seg_length = 2500000,
   return_pairs_matrix = FALSE
 )
@@ -15,18 +15,11 @@ pairwise_bin_difference(
 \item{bin_df}{a dataframe of read bins with states. Expected columns of:
 cell_id, chr, start, end, state}
 
-\item{cells}{optional vector specifying cells to compare. If it's blank, all
-cells are compared. If it's 1 cell, then that one cell is compared to all
-others. If it's 2 or more, then just the specified cells are compared to each
-other.}
+\item{targ_cells}{optional vector specifying which cells to compare to all
+other cells.}
 
 \item{min_seg_length}{double. This is the minium length of matching segment
 bins to use when measuring similarity.}
-
-\item{return_pairs_matrix}{boolean. If TRUE, returns a pairwise matrix
-object of distances. This is useful to then pass to functions like hclust()
-and so forth. Can also do afterwards with
-dlptools::convert_dists_to_pairwise()}
 }
 \value{
 tibble of cell pairs and metrics about their differences.
@@ -44,13 +37,15 @@ This function is slow, and the number of pairwise comparisons grows quickly.
 Dramatic speed improvements can be had by setting up a parallel plan for
 furrr like so:
 
-future::plan(future::multicore, workers=N_CORES_YOU_WANT)
+future::plan(future::multisession, workers=N_CORES_YOU_WANT)
 
 Example for 100 cells, which is 4950 pairs, this function will take 4 minutes
 with 4 cores.
 
-The returned DF is organized by each cell and the distances to each other
-cell (so there are some redundant comparisons, like cell 1 vs cell 2 and
-cell 2 vs cell 1). There is also a column "nearest_neighbour" which is a
-boolean identifying which comparison is the minimum distance for each cell.
+These comparisons are unique pairs! So if 3 input cells: A, B, C,
+comparisons made are A-B, A-C, B-C. So one input cell will always be
+"missing" from the index column. See
+\href{https://molonc.github.io/dlptools/articles/pairwise-differences.html}{the vignette}
+for how you can turn this around, but it can create a very large DF with
+redundant comparisons to rearrange to have each cell against all others.
 }
