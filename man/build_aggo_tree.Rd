@@ -66,7 +66,7 @@ from a bin of 2, making distance based metrics using CN states dubious (see
 example).
 }
 \examples{
-mm <- matrix(c(2, 3, 4), byrow=TRUE)
+mm <- matrix(c(2, 3, 4), byrow = TRUE)
 rownames(mm) <- c(paste0("cell-", LETTERS[1:3]))
 dist(mm)
 

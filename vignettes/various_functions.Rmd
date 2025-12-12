@@ -465,36 +465,6 @@ ex_reads_w[1:4, 1:4]
 <br>
 <br>
 
-## Basic Plots
-
-This plot is a simplified alternative to the methods described in [the heatmaps vignette](https://molonc.github.io/dlptools/articles/heatmaps.html). There are no additions, like trees and annotations, but works for a variety of quick inspections.
-
-```{r, out.width="75%", out.height="75%"}
-dlptools::basic_tile_plot(
-  # just filtering to make the plot smaller for this demonstration
-  dplyr::filter(ex_reads, chr %in% c(7:9))
-)
-```
-
-To help with plotting, a variety of commonly use color palettes are available:
-
-```{r}
-# standard state colors
-dlptools::CNV_COLOURS
-
-# typically used allele specific colors
-dlptools::ASCN_COLORS
-
-# typically used phase colors
-dlptools::ASCN_PHASE_COLORS
-
-# typically BAF scale is a circlize::colorRamp2 spanning
-# standard green-grey-purple used for ASCN colors
-# dlptools::BAF_COLORS
-```
-
-<br>
-<br>
 
 ## Other
 

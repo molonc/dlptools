@@ -8,7 +8,7 @@
 #' @return ggplot object
 #' @export
 #' @importFrom rlang .data
-basic_tile_plot <- function(reads_df) {
+plot_read_bins_basic <- function(reads_df) {
   tile_p <- ggplot2::ggplot(
     reads_df,
     ggplot2::aes(
@@ -46,7 +46,7 @@ basic_tile_plot <- function(reads_df) {
 #' experimental_condition, quality, total_reads.
 #' @return ggplot2 object
 #' @export
-chip_plot <- function(metrics_df, targ_val) {
+plot_dlp_chip <- function(metrics_df, targ_val) {
   # boundaries of experimental conditions for outlining on plot
   exp_bounds <- metrics_df |>
     dplyr::filter(!is_control) |>
@@ -140,7 +140,7 @@ chip_plot <- function(metrics_df, targ_val) {
 #' values.
 #' @return ggplot2 object
 #' @export
-gc_plot <- function(
+plot_gc <- function(
     reads_df, cellid, plot_choice = c("both", "raw", "corrected")) {
   plot_choice <- match.arg(plot_choice)
 
@@ -216,7 +216,11 @@ gc_plot <- function(
 #' plotting. But you can change to other bin values, like state.
 #' @return ggplot2 object
 #' @export
-cell_cn_profile <- function(reads_df, cell_ids = c(), pseduo_log_y = FALSE, yaxis = "copy") {
+plot_cell_cn_profile <- function(
+    reads_df,
+    cell_ids = c(),
+    pseduo_log_y = FALSE,
+    yaxis = "copy") {
   if (length(cell_ids) == 0) {
     n_cell_ids <- unique(reads_df$cell_id)
     if (length(n_cell_ids) > 10) {
