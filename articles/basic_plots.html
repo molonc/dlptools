@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -98,18 +98,18 @@ out:</p>
 <span>  show_col_types <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/chip_plot.html">chip_plot</a></span><span class="op">(</span><span class="va">ex_mets</span>, <span class="st">"experimental_condition"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/plot_dlp_chip.html">plot_dlp_chip</a></span><span class="op">(</span><span class="va">ex_mets</span>, <span class="st">"experimental_condition"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="basic_plots_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" width="768"></p>
 <p><br><br></p>
 <p>Then often we want to look for spatial effects across the chip.</p>
 <p>Such as, quality:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/chip_plot.html">chip_plot</a></span><span class="op">(</span><span class="va">ex_mets</span>, <span class="st">"quality"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/plot_dlp_chip.html">plot_dlp_chip</a></span><span class="op">(</span><span class="va">ex_mets</span>, <span class="st">"quality"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="basic_plots_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" width="768"></p>
 <p><br><br></p>
 <p>or perhaps total reads:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/chip_plot.html">chip_plot</a></span><span class="op">(</span><span class="va">ex_mets</span>, <span class="st">"total_reads"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/plot_dlp_chip.html">plot_dlp_chip</a></span><span class="op">(</span><span class="va">ex_mets</span>, <span class="st">"total_reads"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="basic_plots_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" width="768"></p>
 <p><br><br></p>
 </div>
@@ -127,7 +127,7 @@ something seems off about the multiplier HMMcopy chose for the cell.</p>
 <span>  show_col_types <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/gc_plot.html">gc_plot</a></span><span class="op">(</span></span>
+<span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/plot_gc.html">plot_gc</a></span><span class="op">(</span></span>
 <span>  <span class="va">ex_reads</span>,</span>
 <span>  cellid <span class="op">=</span> <span class="st">"AT21352-A144173A-R03-C32"</span>,</span>
 <span>  <span class="co"># plot_choice = "both" # the default option</span></span>
@@ -136,7 +136,7 @@ something seems off about the multiplier HMMcopy chose for the cell.</p>
 <p><br></p>
 <p>Or you can just plot one:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/gc_plot.html">gc_plot</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/plot_gc.html">plot_gc</a></span><span class="op">(</span></span>
 <span>  <span class="va">ex_reads</span>,</span>
 <span>  cellid <span class="op">=</span> <span class="st">"AT21352-A144173A-R03-C32"</span>,</span>
 <span>  plot_choice <span class="op">=</span> <span class="st">"corrected"</span> <span class="co"># or plot_choice = "raw"</span></span>
@@ -153,7 +153,7 @@ with their copy values and the overlaid state calls.</p>
 which has lots of features.</p>
 <p>But if you want a quick and dirt dlptools version, you can do:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/cell_cn_profile.html">cell_cn_profile</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/plot_cell_cn_profile.html">plot_cell_cn_profile</a></span><span class="op">(</span></span>
 <span>  <span class="va">ex_reads</span>,</span>
 <span>  cell_ids <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">ex_reads</span><span class="op">$</span><span class="va">cell_id</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span>,</span>
 <span>  <span class="co"># high copy numbers can obscure the plot, so you can set:</span></span>
@@ -165,12 +165,54 @@ which has lots of features.</p>
 <p>If needed, can also change what the y-axis is to other bin-based
 options:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/cell_cn_profile.html">cell_cn_profile</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/plot_cell_cn_profile.html">plot_cell_cn_profile</a></span><span class="op">(</span></span>
 <span>  <span class="va">ex_reads</span>,</span>
 <span>  cell_ids <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">ex_reads</span><span class="op">$</span><span class="va">cell_id</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span>,</span>
 <span>  yaxis <span class="op">=</span> <span class="st">"state"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="basic_plots_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" width="960"></p>
+<p><br><br><br></p>
+<div class="section level3">
+<h3 id="simplified-tile-plot">Simplified Tile Plot<a class="anchor" aria-label="anchor" href="#simplified-tile-plot"></a>
+</h3>
+<p>This plot is a simplified alternative to the methods described in <a href="https://molonc.github.io/dlptools/articles/heatmaps.html">the
+heatmaps vignette</a>. There are no additions, like trees and
+annotations, but works for a variety of quick inspections.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/plot_read_bins_basic.html">plot_read_bins_basic</a></span><span class="op">(</span></span>
+<span>  <span class="co"># just filtering to make the plot smaller for this demonstration</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">ex_reads</span>, <span class="va">chr</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">7</span><span class="op">:</span><span class="fl">9</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="basic_plots_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" width="75%" height="75%"></p>
+<p>To help with plotting, a variety of commonly use color palettes are
+available:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># standard state colors</span></span>
+<span><span class="fu">dlptools</span><span class="fu">::</span><span class="va"><a href="../reference/CNV_COLOURS.html">CNV_COLOURS</a></span></span>
+<span><span class="co">#&gt;         0         1         2         3         4         5         6         7 </span></span>
+<span><span class="co">#&gt; "#3182BD" "#9ECAE1" "#CCCCCC" "#FDCC8A" "#FC8D59" "#E34A33" "#B30000" "#980043" </span></span>
+<span><span class="co">#&gt;         8         9        10       11+        11 </span></span>
+<span><span class="co">#&gt; "#DD1C77" "#DF65B0" "#C994C7" "#D4B9DA" "#D4B9DA"</span></span>
+<span></span>
+<span><span class="co"># typically used allele specific colors</span></span>
+<span><span class="fu">dlptools</span><span class="fu">::</span><span class="va"><a href="../reference/ASCN_COLORS.html">ASCN_COLORS</a></span></span>
+<span><span class="co">#&gt;       0|0       1|0       1|1       2|0       2|1       3|0       2|2       3|1 </span></span>
+<span><span class="co">#&gt; "#3182BD" "#9ECAE1" "#CCCCCC" "#666666" "#FDCC8A" "#FEE2BC" "#FC8D59" "#FDC1A4" </span></span>
+<span><span class="co">#&gt;       4|0         5         6         7         8         9        10        11 </span></span>
+<span><span class="co">#&gt; "#FB590E" "#E34A33" "#B30000" "#980043" "#DD1C77" "#DF65B0" "#C994C7" "#D4B9DA" </span></span>
+<span><span class="co">#&gt;       11+ </span></span>
+<span><span class="co">#&gt; "#D4B9DA"</span></span>
+<span></span>
+<span><span class="co"># typically used phase colors</span></span>
+<span><span class="fu">dlptools</span><span class="fu">::</span><span class="va"><a href="../reference/ASCN_PHASE_COLORS.html">ASCN_PHASE_COLORS</a></span></span>
+<span><span class="co">#&gt;     A-Hom     B-Hom  A-Gained  B-Gained  Balanced </span></span>
+<span><span class="co">#&gt; "#56941E" "#471871" "#94C773" "#7B52AE" "#d5d5d4"</span></span>
+<span></span>
+<span><span class="co"># typically BAF scale is a circlize::colorRamp2 spanning</span></span>
+<span><span class="co"># standard green-grey-purple used for ASCN colors</span></span>
+<span><span class="co"># dlptools::BAF_COLORS</span></span></code></pre></div>
+<p><br><br></p>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

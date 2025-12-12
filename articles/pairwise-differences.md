@@ -21,7 +21,7 @@ First some toy data:
 reads_df <- vroom::vroom("data/example_reads.tsv.gz", show_col_types = FALSE)
 
 # only using a few cells to demonstrate functions below
-targ_cells <- unique(reads_df$cell_id)[1:50]
+targ_cells <- unique(reads_df$cell_id)[1:40]
 
 reads_df <- dplyr::filter(reads_df, cell_id %in% targ_cells)
 
@@ -65,33 +65,52 @@ function uses `furrr`, you just need to set up a plan.
 
 ``` r
 # first set up a parallel plan, here with 4 cores being used
-future::plan(future::multicore, workers = 4)
+# future::plan(future::multisession, workers = 4)
 
 pairwise_diffs <- dlptools::pairwise_bin_difference(
   reads_df,
   # min_seg_length = 2.5e6 # see function documentation. It's the minimum
   # length of a stretch of matching/unmatching bins to consider.
 )
-#> [1] "comparing all cells. Gonna take some time."
-#> [1] "processing: 1225 pairs"
 
 dplyr::slice_head(pairwise_diffs, n = 5)
-#> # A tibble: 5 × 6
-#>   n_diff tot_bins prop_diff index_cell               comp_cell nearest_neighbour
-#>    <int>    <int>     <dbl> <chr>                    <chr>     <lgl>            
-#> 1   2214     6144     0.360 AT23998-A138956A-R03-C34 AT23998-… FALSE            
-#> 2   2286     6135     0.373 AT23998-A138956A-R03-C34 AT23998-… FALSE            
-#> 3   2212     6151     0.360 AT23998-A138956A-R03-C34 AT23998-… FALSE            
-#> 4   1972     6141     0.321 AT23998-A138956A-R03-C34 AT23998-… FALSE            
-#> 5   2811     6151     0.457 AT23998-A138956A-R03-C34 AT23998-… FALSE
+#> # A tibble: 5 × 5
+#>   n_diff tot_bins prop_diff index_cell               comp_cell               
+#>    <int>    <int>     <dbl> <chr>                    <chr>                   
+#> 1   2214     6144     0.360 AT23998-A138956A-R03-C34 AT23998-A138956A-R04-C58
+#> 2   2286     6135     0.373 AT23998-A138956A-R03-C34 AT23998-A138956A-R05-C42
+#> 3   2212     6151     0.360 AT23998-A138956A-R03-C34 AT23998-A138956A-R05-C64
+#> 4   1972     6141     0.321 AT23998-A138956A-R03-C34 AT23998-A138956A-R06-C31
+#> 5   2811     6151     0.457 AT23998-A138956A-R03-C34 AT23998-A138956A-R06-C34
 ```
 
 which is each cell (`index cell`) compared to each other cell
 (`comp_cell`) and some information on the proportion of bins different
 (`prop_diff`).
 
-The `nearest_neighbour` column is a boolean where the nearest neighbour
-of each cell is marked as TRUE.
+  
+  
+  
+
+We can then find the nearest neighbour of each cell:
+
+``` r
+(nn_cells <- dlptools::find_nearest_neighbours(pairwise_diffs))
+#> # A tibble: 40 × 7
+#>    n_diff tot_bins nn_diff index_cell comp_cell max_diff_to_all mean_diff_to_all
+#>     <int>    <int>   <dbl> <chr>      <chr>               <dbl>            <dbl>
+#>  1   1701     6134   0.277 AT23998-A… AT23998-…           0.899            0.422
+#>  2   1107     6141   0.180 AT23998-A… AT23998-…           0.881            0.361
+#>  3    801     6146   0.130 AT23998-A… AT23998-…           0.851            0.339
+#>  4   1173     6151   0.191 AT23998-A… AT23998-…           0.870            0.357
+#>  5   1202     6146   0.196 AT23998-A… AT23998-…           0.879            0.387
+#>  6   1909     6151   0.310 AT23998-A… AT23998-…           0.866            0.467
+#>  7    914     6134   0.149 AT23998-A… AT23998-…           0.850            0.349
+#>  8   1313     6159   0.213 AT23998-A… AT23998-…           0.872            0.360
+#>  9   1202     6146   0.196 AT23998-A… AT23998-…           0.875            0.388
+#> 10   1352     6156   0.220 AT23998-A… AT23998-…           0.847            0.390
+#> # ℹ 30 more rows
+```
 
   
   
@@ -103,48 +122,69 @@ of each cell is marked as TRUE.
 
 The function
 [`dlptools::pairwise_bin_difference()`](https://molonc.github.io/dlptools/reference/pairwise_bin_difference.md)
-has a `cells` parameter. Leaving it empty, the default, compares all
-cells in a pairwise manner.
+has a `targ_cells` parameter. Leaving it empty, the default, compares
+all cells in a pairwise manner.
 
-This will compare this one cell against all others:
-
-``` r
-dlptools::pairwise_bin_difference(
-  reads_df,
-  cells = "some_cell_id"
-)
-```
-
-Alternatively, specifying two or more cells will just compared the
-specified cells to each other:
+This will compare the specified cell or cells against all others:
 
 ``` r
 dlptools::pairwise_bin_difference(
   reads_df,
-  cells = c("cell_id_one", "cell_id_two", "cell_id_three")
+  targ_cells = unique(reads_df$cell_id)[1:2]
 )
+#> # A tibble: 77 × 5
+#>    n_diff tot_bins prop_diff index_cell               comp_cell               
+#>     <int>    <int>     <dbl> <chr>                    <chr>                   
+#>  1   2214     6144     0.360 AT23998-A138956A-R03-C34 AT23998-A138956A-R04-C58
+#>  2   2286     6135     0.373 AT23998-A138956A-R03-C34 AT23998-A138956A-R05-C42
+#>  3   2212     6151     0.360 AT23998-A138956A-R03-C34 AT23998-A138956A-R05-C64
+#>  4   1972     6141     0.321 AT23998-A138956A-R03-C34 AT23998-A138956A-R06-C31
+#>  5   2811     6151     0.457 AT23998-A138956A-R03-C34 AT23998-A138956A-R06-C34
+#>  6   2318     6134     0.378 AT23998-A138956A-R03-C34 AT23998-A138956A-R06-C54
+#>  7   1701     6134     0.277 AT23998-A138956A-R03-C34 AT23998-A138956A-R07-C22
+#>  8   1926     6146     0.313 AT23998-A138956A-R03-C34 AT23998-A138956A-R08-C36
+#>  9   2607     6162     0.423 AT23998-A138956A-R03-C34 AT23998-A138956A-R08-C39
+#> 10   2541     6153     0.413 AT23998-A138956A-R03-C34 AT23998-A138956A-R08-C41
+#> # ℹ 67 more rows
 ```
+
+  
+  
+
+Alternatively, if you want to just compare some set of cells against
+themselves, best to just filter upfront:
+
+``` r
+reads_df |>
+  dplyr::filter(cell_id %in% unique(reads_df$cell_id)[1:3]) |>
+  dlptools::pairwise_bin_difference()
+#> # A tibble: 3 × 5
+#>   n_diff tot_bins prop_diff index_cell               comp_cell               
+#>    <int>    <int>     <dbl> <chr>                    <chr>                   
+#> 1   2214     6144     0.360 AT23998-A138956A-R03-C34 AT23998-A138956A-R04-C58
+#> 2   2286     6135     0.373 AT23998-A138956A-R03-C34 AT23998-A138956A-R05-C42
+#> 3   1754     6124     0.286 AT23998-A138956A-R04-C58 AT23998-A138956A-R05-C42
+```
+
+  
 
 ------------------------------------------------------------------------
 
   
   
 
-The nearest neighbour of each cell is marked in the dataframe returned
-above. This function now takes that information, fits a beta
-distribution to those nearest neighbours, then returns outlier cells
-based on that distribution:
+We can then combine the pairwise differences and nearest neighbours to
+find outlier cells by fitting a beta distribution to the latter, and
+finding outlier pairwise comparisons:
 
 ``` r
-outlier_cells <- dlptools::find_outlier_cells(pairwise_diffs)
-
-dplyr::slice_head(outlier_cells, n = 5)
-#> # A tibble: 3 × 4
-#>   outlier_cell             mean_diff_to_all_cells nn_dist nn_cell               
-#>   <chr>                                     <dbl>   <dbl> <chr>                 
-#> 1 AT23998-A138956A-R11-C39                  0.839   0.664 AT23998-A138956A-R13-…
-#> 2 AT23998-A138956A-R13-C52                  0.834   0.664 AT23998-A138956A-R11-…
-#> 3 AT23998-A138956A-R15-C39                  0.837   0.685 AT23998-A138956A-R11-…
+(outlier_cells <- dlptools::find_outlier_cells(pairwise_diffs, nn_cells))
+#> # A tibble: 3 × 7
+#>   n_diff tot_bins nn_diff outlier_cell  nn_cell max_diff_to_all mean_diff_to_all
+#>    <int>    <int>   <dbl> <chr>         <chr>             <dbl>            <dbl>
+#> 1   4002     6026   0.664 AT23998-A138… AT2399…           0.902            0.839
+#> 2   4002     6026   0.664 AT23998-A138… AT2399…           0.899            0.832
+#> 3   4216     6155   0.685 AT23998-A138… AT2399…           0.896            0.836
 ```
 
   
@@ -155,60 +195,55 @@ There is a simple plot that can be made to visualize these distances:
 
 ``` r
 dlptools::plot_nnd_outlier_cells(
-  pairwise_diffs, outlier_cells
+  pairwise_diffs, nn_cells, outlier_cells
 )
 ```
 
-![](pairwise-differences_files/figure-html/unnamed-chunk-7-1.png)
+![](pairwise-differences_files/figure-html/unnamed-chunk-8-1.png)
 
   
   
   
 
-You can also convert those distance measurements into a pairwise
-distance matrix:
+With a bit of work, we can re-orient the cell distances matrix to
+contain each cell compared against all others. The original function
+performs non-redundant comparisons: A-B, A-C, B-C.
+
+For various reasons, we might also want to see C-A and C-B, even though
+it’s redundant.
+
+This is actually happening internally in several of the above functions.
+
+This dataframe can get big, as it’s now every cell compared to every
+other cell.
 
 ``` r
-pairs_mtx <- dlptools::convert_dists_to_pairwise(pairwise_diffs)
+# first, we need to know all of the cells we want to do this for. It could
+# be all cells, or some subset.
 
-pairs_mtx[1:4, 1:4]
-#>                           index_cell
-#> comp_cell                  AT23998-A138956A-R03-C34 AT23998-A138956A-R04-C58
-#>   AT23998-A138956A-R03-C34                0.0000000                0.3603516
-#>   AT23998-A138956A-R04-C58                0.3603516                0.0000000
-#>   AT23998-A138956A-R05-C42                0.3726161                0.2864141
-#>   AT23998-A138956A-R05-C64                0.3596163                0.3495224
-#>                           index_cell
-#> comp_cell                  AT23998-A138956A-R05-C42 AT23998-A138956A-R05-C64
-#>   AT23998-A138956A-R03-C34                0.3726161                0.3596163
-#>   AT23998-A138956A-R04-C58                0.2864141                0.3495224
-#>   AT23998-A138956A-R05-C42                0.0000000                0.2165719
-#>   AT23998-A138956A-R05-C64                0.2165719                0.0000000
-```
+# the nearest neighbours frame is all input cells, so could use that.
 
-  
-
-or if you know you only want this, it can be returned with the function
-above:
-
-``` r
-dlptools::pairwise_bin_difference(
-  reads_df,
-  return_pairs_matrix = TRUE # this option here
+cell_focused_df <- purrr::map_dfr(
+  # might want to consider furrr::future_map_dfr
+  unique(nn_cells$index_cell),
+  \(cell) {
+    dlptools::make_cell_focused_matrix(pairwise_diffs, cell)
+  }
 )
+
+dplyr::slice_head(cell_focused_df, n = 5)
+#> # A tibble: 5 × 5
+#>   n_diff tot_bins prop_diff index_cell               comp_cell               
+#>    <int>    <int>     <dbl> <chr>                    <chr>                   
+#> 1   2214     6144     0.360 AT23998-A138956A-R03-C34 AT23998-A138956A-R04-C58
+#> 2   2286     6135     0.373 AT23998-A138956A-R03-C34 AT23998-A138956A-R05-C42
+#> 3   2212     6151     0.360 AT23998-A138956A-R03-C34 AT23998-A138956A-R05-C64
+#> 4   1972     6141     0.321 AT23998-A138956A-R03-C34 AT23998-A138956A-R06-C31
+#> 5   2811     6151     0.457 AT23998-A138956A-R03-C34 AT23998-A138956A-R06-C34
 ```
+
+Now every cell will be present in the `index_cell` column.
 
   
   
-
-A matrix like this can then be useful for other analyses, like if you
-wanted to do some clustering:
-
-``` r
-pairs_mtx |>
-  as.dist() |>
-  hclust() |>
-  plot(labels = FALSE)
-```
-
-![](pairwise-differences_files/figure-html/unnamed-chunk-10-1.png)
+  

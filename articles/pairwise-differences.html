@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -87,7 +87,7 @@ do other clustering to find groups of similar/different cells, etc.</p>
 <code class="sourceCode R"><span><span class="va">reads_df</span> <span class="op">&lt;-</span> <span class="fu">vroom</span><span class="fu">::</span><span class="fu"><a href="https://vroom.tidyverse.org/reference/vroom.html" class="external-link">vroom</a></span><span class="op">(</span><span class="st">"data/example_reads.tsv.gz"</span>, show_col_types <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># only using a few cells to demonstrate functions below</span></span>
-<span><span class="va">targ_cells</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">reads_df</span><span class="op">$</span><span class="va">cell_id</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">50</span><span class="op">]</span></span>
+<span><span class="va">targ_cells</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">reads_df</span><span class="op">$</span><span class="va">cell_id</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">40</span><span class="op">]</span></span>
 <span></span>
 <span><span class="va">reads_df</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">reads_df</span>, <span class="va">cell_id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">targ_cells</span><span class="op">)</span></span>
 <span></span>
@@ -127,109 +127,141 @@ here.</p>
 function uses <code>furrr</code>, you just need to set up a plan.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># first set up a parallel plan, here with 4 cores being used</span></span>
-<span><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="fu">future</span><span class="fu">::</span><span class="va"><a href="https://future.futureverse.org/reference/multicore.html" class="external-link">multicore</a></span>, workers <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
+<span><span class="co"># future::plan(future::multisession, workers = 4)</span></span>
 <span></span>
 <span><span class="va">pairwise_diffs</span> <span class="op">&lt;-</span> <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/pairwise_bin_difference.html">pairwise_bin_difference</a></span><span class="op">(</span></span>
 <span>  <span class="va">reads_df</span>,</span>
 <span>  <span class="co"># min_seg_length = 2.5e6 # see function documentation. It's the minimum</span></span>
 <span>  <span class="co"># length of a stretch of matching/unmatching bins to consider.</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "comparing all cells. Gonna take some time."</span></span>
-<span><span class="co">#&gt; [1] "processing: 1225 pairs"</span></span>
 <span></span>
 <span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span><span class="va">pairwise_diffs</span>, n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 6</span></span></span>
-<span><span class="co">#&gt;   n_diff tot_bins prop_diff index_cell               comp_cell nearest_neighbour</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>            </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   <span style="text-decoration: underline;">2</span>214     <span style="text-decoration: underline;">6</span>144     0.360 AT23998-A138956A-R03-C34 AT23998-… FALSE            </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>   <span style="text-decoration: underline;">2</span>286     <span style="text-decoration: underline;">6</span>135     0.373 AT23998-A138956A-R03-C34 AT23998-… FALSE            </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   <span style="text-decoration: underline;">2</span>212     <span style="text-decoration: underline;">6</span>151     0.360 AT23998-A138956A-R03-C34 AT23998-… FALSE            </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>   <span style="text-decoration: underline;">1</span>972     <span style="text-decoration: underline;">6</span>141     0.321 AT23998-A138956A-R03-C34 AT23998-… FALSE            </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>   <span style="text-decoration: underline;">2</span>811     <span style="text-decoration: underline;">6</span>151     0.457 AT23998-A138956A-R03-C34 AT23998-… FALSE</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 5</span></span></span>
+<span><span class="co">#&gt;   n_diff tot_bins prop_diff index_cell               comp_cell               </span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   <span style="text-decoration: underline;">2</span>214     <span style="text-decoration: underline;">6</span>144     0.360 AT23998-A138956A-R03-C34 AT23998-A138956A-R04-C58</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>   <span style="text-decoration: underline;">2</span>286     <span style="text-decoration: underline;">6</span>135     0.373 AT23998-A138956A-R03-C34 AT23998-A138956A-R05-C42</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   <span style="text-decoration: underline;">2</span>212     <span style="text-decoration: underline;">6</span>151     0.360 AT23998-A138956A-R03-C34 AT23998-A138956A-R05-C64</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>   <span style="text-decoration: underline;">1</span>972     <span style="text-decoration: underline;">6</span>141     0.321 AT23998-A138956A-R03-C34 AT23998-A138956A-R06-C31</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>   <span style="text-decoration: underline;">2</span>811     <span style="text-decoration: underline;">6</span>151     0.457 AT23998-A138956A-R03-C34 AT23998-A138956A-R06-C34</span></span></code></pre></div>
 <p>which is each cell (<code>index cell</code>) compared to each other
 cell (<code>comp_cell</code>) and some information on the proportion of
 bins different (<code>prop_diff</code>).</p>
-<p>The <code>nearest_neighbour</code> column is a boolean where the
-nearest neighbour of each cell is marked as TRUE.</p>
+<p><br><br><br></p>
+<p>We can then find the nearest neighbour of each cell:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">nn_cells</span> <span class="op">&lt;-</span> <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/find_nearest_neighbours.html">find_nearest_neighbours</a></span><span class="op">(</span><span class="va">pairwise_diffs</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 40 × 7</span></span></span>
+<span><span class="co">#&gt;    n_diff tot_bins nn_diff index_cell comp_cell max_diff_to_all mean_diff_to_all</span></span>
+<span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>   <span style="text-decoration: underline;">1</span>701     <span style="text-decoration: underline;">6</span>134   0.277 AT23998-A… AT23998-…           0.899            0.422</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>   <span style="text-decoration: underline;">1</span>107     <span style="text-decoration: underline;">6</span>141   0.180 AT23998-A… AT23998-…           0.881            0.361</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>    801     <span style="text-decoration: underline;">6</span>146   0.130 AT23998-A… AT23998-…           0.851            0.339</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>   <span style="text-decoration: underline;">1</span>173     <span style="text-decoration: underline;">6</span>151   0.191 AT23998-A… AT23998-…           0.870            0.357</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>   <span style="text-decoration: underline;">1</span>202     <span style="text-decoration: underline;">6</span>146   0.196 AT23998-A… AT23998-…           0.879            0.387</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>   <span style="text-decoration: underline;">1</span>909     <span style="text-decoration: underline;">6</span>151   0.310 AT23998-A… AT23998-…           0.866            0.467</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>    914     <span style="text-decoration: underline;">6</span>134   0.149 AT23998-A… AT23998-…           0.850            0.349</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>   <span style="text-decoration: underline;">1</span>313     <span style="text-decoration: underline;">6</span>159   0.213 AT23998-A… AT23998-…           0.872            0.360</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>   <span style="text-decoration: underline;">1</span>202     <span style="text-decoration: underline;">6</span>146   0.196 AT23998-A… AT23998-…           0.875            0.388</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>   <span style="text-decoration: underline;">1</span>352     <span style="text-decoration: underline;">6</span>156   0.220 AT23998-A… AT23998-…           0.847            0.390</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 30 more rows</span></span></span></code></pre></div>
 <p><br><br><br></p>
 <hr>
 <p><strong>Side Note</strong></p>
 <p>The function <code><a href="../reference/pairwise_bin_difference.html">dlptools::pairwise_bin_difference()</a></code> has a
-<code>cells</code> parameter. Leaving it empty, the default, compares
-all cells in a pairwise manner.</p>
-<p>This will compare this one cell against all others:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/pairwise_bin_difference.html">pairwise_bin_difference</a></span><span class="op">(</span></span>
-<span>  <span class="va">reads_df</span>,</span>
-<span>  cells <span class="op">=</span> <span class="st">"some_cell_id"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p>Alternatively, specifying two or more cells will just compared the
-specified cells to each other:</p>
+<code>targ_cells</code> parameter. Leaving it empty, the default,
+compares all cells in a pairwise manner.</p>
+<p>This will compare the specified cell or cells against all others:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/pairwise_bin_difference.html">pairwise_bin_difference</a></span><span class="op">(</span></span>
 <span>  <span class="va">reads_df</span>,</span>
-<span>  cells <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cell_id_one"</span>, <span class="st">"cell_id_two"</span>, <span class="st">"cell_id_three"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span>  targ_cells <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">reads_df</span><span class="op">$</span><span class="va">cell_id</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 77 × 5</span></span></span>
+<span><span class="co">#&gt;    n_diff tot_bins prop_diff index_cell               comp_cell               </span></span>
+<span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>   <span style="text-decoration: underline;">2</span>214     <span style="text-decoration: underline;">6</span>144     0.360 AT23998-A138956A-R03-C34 AT23998-A138956A-R04-C58</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>   <span style="text-decoration: underline;">2</span>286     <span style="text-decoration: underline;">6</span>135     0.373 AT23998-A138956A-R03-C34 AT23998-A138956A-R05-C42</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>   <span style="text-decoration: underline;">2</span>212     <span style="text-decoration: underline;">6</span>151     0.360 AT23998-A138956A-R03-C34 AT23998-A138956A-R05-C64</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>   <span style="text-decoration: underline;">1</span>972     <span style="text-decoration: underline;">6</span>141     0.321 AT23998-A138956A-R03-C34 AT23998-A138956A-R06-C31</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>   <span style="text-decoration: underline;">2</span>811     <span style="text-decoration: underline;">6</span>151     0.457 AT23998-A138956A-R03-C34 AT23998-A138956A-R06-C34</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>   <span style="text-decoration: underline;">2</span>318     <span style="text-decoration: underline;">6</span>134     0.378 AT23998-A138956A-R03-C34 AT23998-A138956A-R06-C54</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>   <span style="text-decoration: underline;">1</span>701     <span style="text-decoration: underline;">6</span>134     0.277 AT23998-A138956A-R03-C34 AT23998-A138956A-R07-C22</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>   <span style="text-decoration: underline;">1</span>926     <span style="text-decoration: underline;">6</span>146     0.313 AT23998-A138956A-R03-C34 AT23998-A138956A-R08-C36</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>   <span style="text-decoration: underline;">2</span>607     <span style="text-decoration: underline;">6</span>162     0.423 AT23998-A138956A-R03-C34 AT23998-A138956A-R08-C39</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>   <span style="text-decoration: underline;">2</span>541     <span style="text-decoration: underline;">6</span>153     0.413 AT23998-A138956A-R03-C34 AT23998-A138956A-R08-C41</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 67 more rows</span></span></span></code></pre></div>
+<p><br><br></p>
+<p>Alternatively, if you want to just compare some set of cells against
+themselves, best to just filter upfront:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">reads_df</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">cell_id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">reads_df</span><span class="op">$</span><span class="va">cell_id</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/pairwise_bin_difference.html">pairwise_bin_difference</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
+<span><span class="co">#&gt;   n_diff tot_bins prop_diff index_cell               comp_cell               </span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   <span style="text-decoration: underline;">2</span>214     <span style="text-decoration: underline;">6</span>144     0.360 AT23998-A138956A-R03-C34 AT23998-A138956A-R04-C58</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>   <span style="text-decoration: underline;">2</span>286     <span style="text-decoration: underline;">6</span>135     0.373 AT23998-A138956A-R03-C34 AT23998-A138956A-R05-C42</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   <span style="text-decoration: underline;">1</span>754     <span style="text-decoration: underline;">6</span>124     0.286 AT23998-A138956A-R04-C58 AT23998-A138956A-R05-C42</span></span></code></pre></div>
+<p><br></p>
 <hr>
 <p><br><br></p>
-<p>The nearest neighbour of each cell is marked in the dataframe
-returned above. This function now takes that information, fits a beta
-distribution to those nearest neighbours, then returns outlier cells
-based on that distribution:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outlier_cells</span> <span class="op">&lt;-</span> <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/find_outlier_cells.html">find_outlier_cells</a></span><span class="op">(</span><span class="va">pairwise_diffs</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span><span class="va">outlier_cells</span>, n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 4</span></span></span>
-<span><span class="co">#&gt;   outlier_cell             mean_diff_to_all_cells nn_dist nn_cell               </span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AT23998-A138956A-R11-C39                  0.839   0.664 AT23998-A138956A-R13-…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AT23998-A138956A-R13-C52                  0.834   0.664 AT23998-A138956A-R11-…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> AT23998-A138956A-R15-C39                  0.837   0.685 AT23998-A138956A-R11-…</span></span></code></pre></div>
+<p>We can then combine the pairwise differences and nearest neighbours
+to find outlier cells by fitting a beta distribution to the latter, and
+finding outlier pairwise comparisons:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">outlier_cells</span> <span class="op">&lt;-</span> <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/find_outlier_cells.html">find_outlier_cells</a></span><span class="op">(</span><span class="va">pairwise_diffs</span>, <span class="va">nn_cells</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 7</span></span></span>
+<span><span class="co">#&gt;   n_diff tot_bins nn_diff outlier_cell  nn_cell max_diff_to_all mean_diff_to_all</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   <span style="text-decoration: underline;">4</span>002     <span style="text-decoration: underline;">6</span>026   0.664 AT23998-A138… AT2399…           0.902            0.839</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>   <span style="text-decoration: underline;">4</span>002     <span style="text-decoration: underline;">6</span>026   0.664 AT23998-A138… AT2399…           0.899            0.832</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   <span style="text-decoration: underline;">4</span>216     <span style="text-decoration: underline;">6</span>155   0.685 AT23998-A138… AT2399…           0.896            0.836</span></span></code></pre></div>
 <p><br><br><br></p>
 <p>There is a simple plot that can be made to visualize these
 distances:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/plot_nnd_outlier_cells.html">plot_nnd_outlier_cells</a></span><span class="op">(</span></span>
-<span>  <span class="va">pairwise_diffs</span>, <span class="va">outlier_cells</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p><img src="pairwise-differences_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" width="576"></p>
-<p><br><br><br></p>
-<p>You can also convert those distance measurements into a pairwise
-distance matrix:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">pairs_mtx</span> <span class="op">&lt;-</span> <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/convert_dists_to_pairwise.html">convert_dists_to_pairwise</a></span><span class="op">(</span><span class="va">pairwise_diffs</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">pairs_mtx</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span>
-<span><span class="co">#&gt;                           index_cell</span></span>
-<span><span class="co">#&gt; comp_cell                  AT23998-A138956A-R03-C34 AT23998-A138956A-R04-C58</span></span>
-<span><span class="co">#&gt;   AT23998-A138956A-R03-C34                0.0000000                0.3603516</span></span>
-<span><span class="co">#&gt;   AT23998-A138956A-R04-C58                0.3603516                0.0000000</span></span>
-<span><span class="co">#&gt;   AT23998-A138956A-R05-C42                0.3726161                0.2864141</span></span>
-<span><span class="co">#&gt;   AT23998-A138956A-R05-C64                0.3596163                0.3495224</span></span>
-<span><span class="co">#&gt;                           index_cell</span></span>
-<span><span class="co">#&gt; comp_cell                  AT23998-A138956A-R05-C42 AT23998-A138956A-R05-C64</span></span>
-<span><span class="co">#&gt;   AT23998-A138956A-R03-C34                0.3726161                0.3596163</span></span>
-<span><span class="co">#&gt;   AT23998-A138956A-R04-C58                0.2864141                0.3495224</span></span>
-<span><span class="co">#&gt;   AT23998-A138956A-R05-C42                0.0000000                0.2165719</span></span>
-<span><span class="co">#&gt;   AT23998-A138956A-R05-C64                0.2165719                0.0000000</span></span></code></pre></div>
-<p><br></p>
-<p>or if you know you only want this, it can be returned with the
-function above:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/pairwise_bin_difference.html">pairwise_bin_difference</a></span><span class="op">(</span></span>
-<span>  <span class="va">reads_df</span>,</span>
-<span>  return_pairs_matrix <span class="op">=</span> <span class="cn">TRUE</span> <span class="co"># this option here</span></span>
+<code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/plot_nnd_outlier_cells.html">plot_nnd_outlier_cells</a></span><span class="op">(</span></span>
+<span>  <span class="va">pairwise_diffs</span>, <span class="va">nn_cells</span>, <span class="va">outlier_cells</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><br><br></p>
-<p>A matrix like this can then be useful for other analyses, like if you
-wanted to do some clustering:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">pairs_mtx</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/dist.html" class="external-link">as.dist</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/hclust.html" class="external-link">hclust</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="pairwise-differences_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" width="672"></p>
+<p><img src="pairwise-differences_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" width="576"></p>
+<p><br><br><br></p>
+<p>With a bit of work, we can re-orient the cell distances matrix to
+contain each cell compared against all others. The original function
+performs non-redundant comparisons: A-B, A-C, B-C.</p>
+<p>For various reasons, we might also want to see C-A and C-B, even
+though it’s redundant.</p>
+<p>This is actually happening internally in several of the above
+functions.</p>
+<p>This dataframe can get big, as it’s now every cell compared to every
+other cell.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># first, we need to know all of the cells we want to do this for. It could</span></span>
+<span><span class="co"># be all cells, or some subset.</span></span>
+<span></span>
+<span><span class="co"># the nearest neighbours frame is all input cells, so could use that.</span></span>
+<span></span>
+<span><span class="va">cell_focused_df</span> <span class="op">&lt;-</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map_dfr.html" class="external-link">map_dfr</a></span><span class="op">(</span></span>
+<span>  <span class="co"># might want to consider furrr::future_map_dfr</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">nn_cells</span><span class="op">$</span><span class="va">index_cell</span><span class="op">)</span>,</span>
+<span>  \<span class="op">(</span><span class="va">cell</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/make_cell_focused_matrix.html">make_cell_focused_matrix</a></span><span class="op">(</span><span class="va">pairwise_diffs</span>, <span class="va">cell</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span><span class="va">cell_focused_df</span>, n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 5</span></span></span>
+<span><span class="co">#&gt;   n_diff tot_bins prop_diff index_cell               comp_cell               </span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   <span style="text-decoration: underline;">2</span>214     <span style="text-decoration: underline;">6</span>144     0.360 AT23998-A138956A-R03-C34 AT23998-A138956A-R04-C58</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>   <span style="text-decoration: underline;">2</span>286     <span style="text-decoration: underline;">6</span>135     0.373 AT23998-A138956A-R03-C34 AT23998-A138956A-R05-C42</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   <span style="text-decoration: underline;">2</span>212     <span style="text-decoration: underline;">6</span>151     0.360 AT23998-A138956A-R03-C34 AT23998-A138956A-R05-C64</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>   <span style="text-decoration: underline;">1</span>972     <span style="text-decoration: underline;">6</span>141     0.321 AT23998-A138956A-R03-C34 AT23998-A138956A-R06-C31</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>   <span style="text-decoration: underline;">2</span>811     <span style="text-decoration: underline;">6</span>151     0.457 AT23998-A138956A-R03-C34 AT23998-A138956A-R06-C34</span></span></code></pre></div>
+<p>Now every cell will be present in the <code>index_cell</code>
+column.</p>
+<p><br><br><br></p>
   </main>
 </div>
 

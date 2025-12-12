@@ -609,56 +609,6 @@ ex_reads_w[1:4, 1:4]
   
   
 
-### Basic Plots
-
-This plot is a simplified alternative to the methods described in [the
-heatmaps
-vignette](https://molonc.github.io/dlptools/articles/heatmaps.html).
-There are no additions, like trees and annotations, but works for a
-variety of quick inspections.
-
-``` r
-dlptools::basic_tile_plot(
-  # just filtering to make the plot smaller for this demonstration
-  dplyr::filter(ex_reads, chr %in% c(7:9))
-)
-```
-
-![](various_functions_files/figure-html/unnamed-chunk-26-1.png)
-
-To help with plotting, a variety of commonly use color palettes are
-available:
-
-``` r
-# standard state colors
-dlptools::CNV_COLOURS
-#>         0         1         2         3         4         5         6         7 
-#> "#3182BD" "#9ECAE1" "#CCCCCC" "#FDCC8A" "#FC8D59" "#E34A33" "#B30000" "#980043" 
-#>         8         9        10       11+        11 
-#> "#DD1C77" "#DF65B0" "#C994C7" "#D4B9DA" "#D4B9DA"
-
-# typically used allele specific colors
-dlptools::ASCN_COLORS
-#>       0|0       1|0       1|1       2|0       2|1       3|0       2|2       3|1 
-#> "#3182BD" "#9ECAE1" "#CCCCCC" "#666666" "#FDCC8A" "#FEE2BC" "#FC8D59" "#FDC1A4" 
-#>       4|0         5         6         7         8         9        10        11 
-#> "#FB590E" "#E34A33" "#B30000" "#980043" "#DD1C77" "#DF65B0" "#C994C7" "#D4B9DA" 
-#>       11+ 
-#> "#D4B9DA"
-
-# typically used phase colors
-dlptools::ASCN_PHASE_COLORS
-#>     A-Hom     B-Hom  A-Gained  B-Gained  Balanced 
-#> "#56941E" "#471871" "#94C773" "#7B52AE" "#d5d5d4"
-
-# typically BAF scale is a circlize::colorRamp2 spanning
-# standard green-grey-purple used for ASCN colors
-# dlptools::BAF_COLORS
-```
-
-  
-  
-
 ### Other
 
 Phylogenetic trees made by Stika take some formatting before they can be

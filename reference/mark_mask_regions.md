@@ -19,9 +19,7 @@ mark_mask_regions(
 
 - subject_df:
 
-  a table with chromosome, start, and end columns. Typically the reads
-  or segs dataframe created by
-  [`import_dlp_files()`](https://molonc.github.io/dlptools/reference/import_dlp_files.md).
+  a table with chromosome, start, and end columns.
 
 - mask_f:
 

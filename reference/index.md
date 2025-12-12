@@ -26,8 +26,6 @@
   : see dlptools::extract_wu_features
 - [`add_wu_seg_state_bins()`](https://molonc.github.io/dlptools/reference/add_wu_seg_state_bins.md)
   : see dlptools::extract_wu_features
-- [`basic_tile_plot()`](https://molonc.github.io/dlptools/reference/basic_tile_plot.md)
-  : create a tile plot of read state calls.
 - [`bme_vec()`](https://molonc.github.io/dlptools/reference/bme_vec.md)
   : picks beginning, middle, and end of a vector to handle when vectors
   that are too long are passed
@@ -35,8 +33,6 @@
   : build tree with AGNES clustering
 - [`build_left_annot()`](https://molonc.github.io/dlptools/reference/build_left_annot.md)
   : builds the left-side annotations of the cells
-- [`cell_cn_profile()`](https://molonc.github.io/dlptools/reference/cell_cn_profile.md)
-  : plot copy number profile plot of a cell.
 - [`cell_states_to_strings()`](https://molonc.github.io/dlptools/reference/cell_states_to_strings.md)
   : collapse cell states to strings
 - [`characterize_foreground_allele_state_changes()`](https://molonc.github.io/dlptools/reference/characterize_foreground_allele_state_changes.md)
@@ -51,8 +47,6 @@
   : confirm pallete given has enough colors or generate one
 - [`check_the_vibe()`](https://molonc.github.io/dlptools/reference/check_the_vibe.md)
   : just a silly alias.
-- [`chip_plot()`](https://molonc.github.io/dlptools/reference/chip_plot.md)
-  : Plot metrics across the chip
 - [`chr_name_check()`](https://molonc.github.io/dlptools/reference/chr_name_check.md)
   : internal for checking the names of chromosome columns in a
   dataframe.
@@ -62,8 +56,6 @@
   : measure string distances between sibling tips
 - [`confirm_cols_present()`](https://molonc.github.io/dlptools/reference/confirm_cols_present.md)
   : confirm if columns exist in dataframe
-- [`convert_dists_to_pairwise()`](https://molonc.github.io/dlptools/reference/convert_dists_to_pairwise.md)
-  : convert cell distances to a pairwise matrix
 - [`convert_long_reads_to_wide()`](https://molonc.github.io/dlptools/reference/convert_long_reads_to_wide.md)
   : convert long format reads to wide format
 - [`count_default_process_feats()`](https://molonc.github.io/dlptools/reference/count_default_process_feats.md)
@@ -119,16 +111,17 @@
   : grab colors for various hm possibilities.
 - [`fill_state_from_neighbours()`](https://molonc.github.io/dlptools/reference/fill_state_from_neighbours.md)
   : infer missing data using the upstream neighbour bin
+- [`find_nearest_neighbours()`](https://molonc.github.io/dlptools/reference/find_nearest_neighbours.md)
+  : find the nearest neighbour of each cell
 - [`find_outlier_cells()`](https://molonc.github.io/dlptools/reference/find_outlier_cells.md)
   : Find outlier cells using a beta distribution
 - [`format_sitka_tree()`](https://molonc.github.io/dlptools/reference/format_sitka_tree.md)
   : clean tree tip labels and drop any locus tips from sitka trees
 - [`format_states_for_hm()`](https://molonc.github.io/dlptools/reference/format_states_for_hm.md)
   : format states for plotting in a heatmap
-- [`gc_plot()`](https://molonc.github.io/dlptools/reference/gc_plot.md)
-  : visualize GC correction for a cell
 - [`generate_state_hm()`](https://molonc.github.io/dlptools/reference/generate_state_hm.md)
-  : creates a complex heatmap of a given matrix of states.
+  : Internal function. Creates a complex heatmap of a given matrix of
+  states.
 - [`get_clone_id_label_positions()`](https://molonc.github.io/dlptools/reference/get_clone_id_label_positions.md)
   : get a row number of where to place each clone label.
 - [`get_column_metrics()`](https://molonc.github.io/dlptools/reference/get_column_metrics.md)
@@ -143,8 +136,6 @@
   : get tips labels that will avoid duplicate sibling comparisons
 - [`import_clones()`](https://molonc.github.io/dlptools/reference/import_clones.md)
   : read a clones t(c)sv file
-- [`import_dlp_files()`](https://molonc.github.io/dlptools/reference/import_dlp_files.md)
-  : generic function to import dlp files
 - [`import_telos_file()`](https://molonc.github.io/dlptools/reference/import_telos_file.md)
   : load UCSC gap files for telomeres
 - [`import_tree()`](https://molonc.github.io/dlptools/reference/import_tree.md)
@@ -161,6 +152,8 @@
   : internal to control mask file loading.
 - [`load_ucsc_centromeres()`](https://molonc.github.io/dlptools/reference/load_ucsc_centromeres.md)
   : load and prep default centromerefiles from UCSC
+- [`make_cell_focused_matrix()`](https://molonc.github.io/dlptools/reference/make_cell_focused_matrix.md)
+  : mostly internal for rearranging the pairwise DF to focus on a cell.
 - [`make_cellid_matrix()`](https://molonc.github.io/dlptools/reference/make_cellid_matrix.md)
   : pivot a cell_id dataframe to a wide matrix.
 - [`make_clone_palette()`](https://molonc.github.io/dlptools/reference/make_clone_palette.md)
@@ -186,13 +179,21 @@
 - [`plot_bg_state_highlight()`](https://molonc.github.io/dlptools/reference/plot_bg_state_highlight.md)
   : generate a plot of just the background states, making the foreground
   white.
+- [`plot_cell_cn_profile()`](https://molonc.github.io/dlptools/reference/plot_cell_cn_profile.md)
+  : plot copy number profile plot of a cell.
+- [`plot_dlp_chip()`](https://molonc.github.io/dlptools/reference/plot_dlp_chip.md)
+  : Plot metrics across the chip
 - [`plot_fg_state_highlight()`](https://molonc.github.io/dlptools/reference/plot_fg_state_highlight.md)
   : generate a plot of just the foreground states, making the background
   white.
+- [`plot_gc()`](https://molonc.github.io/dlptools/reference/plot_gc.md)
+  : visualize GC correction for a cell
 - [`plot_heatmap_of_tip_changes()`](https://molonc.github.io/dlptools/reference/plot_heatmap_of_tip_changes.md)
   : make a plot of just the foreground events
 - [`plot_nnd_outlier_cells()`](https://molonc.github.io/dlptools/reference/plot_nnd_outlier_cells.md)
   : visualize cell nearest neighbour distance values
+- [`plot_read_bins_basic()`](https://molonc.github.io/dlptools/reference/plot_read_bins_basic.md)
+  : create a tile plot of read state calls.
 - [`plot_state_hm()`](https://molonc.github.io/dlptools/reference/plot_state_hm.md)
   : main hm building function
 - [`pull_chr_from_col_name()`](https://molonc.github.io/dlptools/reference/pull_chr_from_col_name.md)

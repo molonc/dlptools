@@ -83,7 +83,7 @@ metrics using CN states dubious (see example).
 ## Examples
 
 ``` r
-mm <- matrix(c(2, 3, 4), byrow=TRUE)
+mm <- matrix(c(2, 3, 4), byrow = TRUE)
 rownames(mm) <- c(paste0("cell-", LETTERS[1:3]))
 dist(mm)
 #>        cell-A cell-B
