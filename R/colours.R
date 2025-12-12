@@ -116,7 +116,9 @@ fetch_continuous_color_ramp <- function(
     metrics <- get_column_metrics(plotting_values)
   } else {
     if (length(custom_continuous_range) > 3) {
-      custom_continuous_range <- bme_vec(custom_continuous_range, "custom_continuous_range")
+      custom_continuous_range <- bme_vec(
+        custom_continuous_range, "custom_continuous_range"
+      )
     }
     metrics <- custom_continuous_range
   }
@@ -132,7 +134,9 @@ fetch_continuous_color_ramp <- function(
 
   if (!is.null(custom_continuous_colors)) {
     if (length(custom_continuous_colors) > 3) {
-      custom_continuous_colors <- bme_vec(custom_continuous_colors, "custom_continuous_colors")
+      custom_continuous_colors <- bme_vec(
+        custom_continuous_colors, "custom_continuous_colors"
+      )
     } else if (length(custom_continuous_colors) < 3) {
       stop(paste0(
         "need to specify 3 colors (bottom, middle, top) for custom",

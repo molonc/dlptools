@@ -22,7 +22,8 @@ plot_state_hm(
   custom_continuous_colors = NULL,
   custom_continuous_range = NULL,
   hm_discrete_colors = NULL,
-  legend_11plus = TRUE,
+  hm_legend_title = NULL,
+  legend_11plus = FALSE,
   color_tree_clones = FALSE,
   ...
 )
@@ -71,6 +72,9 @@ and high bounds for the continuous color scale, e.g., c(1, 5, 10)}
 
 \item{hm_discrete_colors}{specified colors for the values being plotted.
 Named vector: c(1="#3182BD", 2="#FDCC8A"). Need to specify for every value}
+
+\item{hm_legend_title}{string. What to label the legend for what is plotted
+in the heatmap. Will default to the name of the column being plotted.}
 
 \item{legend_11plus}{bool. Default FALSE. For HMMCopy state values,
 state 11 is really 11+, so we replace 11s with 11+ for the plot in the

@@ -81,10 +81,12 @@ create_chromosome_column_fct <- function(states_mat) {
   return(chroms)
 }
 
-#' creates a complex heatmap of a given matrix of states.
+#' Internal function. Creates a complex heatmap of a given matrix of states.
+#'
+#' See [dlptools::plot_state_hm()] for arguments description.
 generate_state_hm <- function(
     states_mat, phylo, labels_fontsize = 8, plot_cols = STATE_COLORS,
-    left_annot = NULL, legend_11plus = FALSE) {
+    left_annot = NULL, hm_legend_title = NULL, legend_11plus = FALSE) {
   # set up a chromosome factor for column splits in the heatmap
   chroms <- create_chromosome_column_fct(states_mat)
 
@@ -93,8 +95,13 @@ generate_state_hm <- function(
     # in the legend
     legend_params <- list(
       nrow = 4,
-      title = "state", at = 1:11, labels = c(1:10, "11+"), legend_gp = dlptools::CNV_COLOURS
+      title = "state",
+      at = 1:11,
+      labels = c(1:10, "11+"),
+      legend_gp = dlptools::CNV_COLOURS
     )
+  } else if (!is.null(hm_legend_title)) {
+    legend_params <- list(title = hm_legend_title, nrow = 4)
   } else {
     legend_params <- list(nrow = 4)
   }
@@ -503,6 +510,8 @@ make_clone_palette <- function(clone_ids) {
 #' and high bounds for the continuous color scale, e.g., c(1, 5, 10)
 #' @param hm_discrete_colors specified colors for the values being plotted.
 #' Named vector: c(1="#3182BD", 2="#FDCC8A"). Need to specify for every value
+#' @param hm_legend_title string. What to label the legend for what is plotted
+#' in the heatmap. Will default to the name of the column being plotted.
 #' @param legend_11plus bool. Default FALSE. For HMMCopy state values,
 #' state 11 is really 11+, so we replace 11s with 11+ for the plot in the
 #' legend.
@@ -525,7 +534,8 @@ plot_state_hm <- function(
     custom_continuous_colors = NULL,
     custom_continuous_range = NULL,
     hm_discrete_colors = NULL,
-    legend_11plus = TRUE,
+    hm_legend_title = NULL,
+    legend_11plus = FALSE,
     color_tree_clones = FALSE,
     ...) {
   check_args()
@@ -552,6 +562,7 @@ plot_state_hm <- function(
 
     # rearrange input data to tip order of the tree.
     states_df <- dplyr::arrange(states_df, match(cell_id, tip_ord))
+    # I think this is reliable for ordering...but that surprises me.
   }
 
   states_mtx <- format_states_for_hm(
@@ -609,12 +620,17 @@ plot_state_hm <- function(
     discrete_colors = hm_discrete_colors
   )
 
+  if (is.null(hm_legend_title)) {
+    hm_legend_title <- state_col
+  }
+
   hm_p <- generate_state_hm(
     states_mat = states_mtx,
     phylo = phylo_arg,
     plot_cols = hm_colors,
     labels_fontsize = labels_fontsize,
     left_annot = left_annot,
+    hm_legend_title = hm_legend_title,
     legend_11plus = legend_11plus
   )
 

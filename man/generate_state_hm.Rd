@@ -2,7 +2,7 @@
 % Please edit documentation in R/heatmap_plot.R
 \name{generate_state_hm}
 \alias{generate_state_hm}
-\title{creates a complex heatmap of a given matrix of states.}
+\title{Internal function. Creates a complex heatmap of a given matrix of states.}
 \usage{
 generate_state_hm(
   states_mat,
@@ -10,9 +10,10 @@ generate_state_hm(
   labels_fontsize = 8,
   plot_cols = STATE_COLORS,
   left_annot = NULL,
+  hm_legend_title = NULL,
   legend_11plus = FALSE
 )
 }
 \description{
-creates a complex heatmap of a given matrix of states.
+See \code{\link[=plot_state_hm]{plot_state_hm()}} for arguments description.
 }
