@@ -135,11 +135,13 @@ generate_state_hm <- function(
 #'
 #' @param total_hm ComplexHeatmap::Heatmap of the combined tree and states.
 #' @param file_name optional string of where to save a png image of the heatmap.
+#' @param png_height optional height of png file
 #' @return ComplexHeatmap::draw or nothing if a file is written.
 #' @export
 output_hm_image <- function(
     hm, file_name = NULL,
     png_height = 1600, png_width = 2800, png_res = 144) {
+  print(png_height)
   if (!is.null(file_name)) {
     # open a file to dump it to
     grDevices::png(
@@ -514,6 +516,8 @@ make_clone_palette <- function(clone_ids) {
 #' in the heatmap. Will default to the name of the column being plotted.
 #' @param legend_11plus bool. Default FALSE. For HMMCopy state values,
 #' state 11 is really 11+, so we replace 11s with 11+ for the plot in the
+#' @param scale_y bool. Default FALSE. Scale the y size of the saved image accoring
+#' to the number of cells in the heatmap
 #' legend.
 #' @export
 plot_state_hm <- function(
@@ -537,6 +541,7 @@ plot_state_hm <- function(
     hm_legend_title = NULL,
     legend_11plus = FALSE,
     color_tree_clones = FALSE,
+    scale_y = FALSE,
     ...) {
   check_args()
 
@@ -634,9 +639,20 @@ plot_state_hm <- function(
     legend_11plus = legend_11plus
   )
 
+  # If scale_y is true, scale image height to number of cells
+  if (scale_y) {
+    message("Scaling Image Size by number of cells")
+    ncells <- length(unique(states_df$cell_id))
+    message(ncells)
+    png_height <- ncells*15
+  } else {
+    png_height <- 1600
+  }
+
   output_hm_image(
     hm_p,
     file_name = file_name,
+    png_height = png_height,
     ...
   )
 }
