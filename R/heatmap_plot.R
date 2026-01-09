@@ -141,7 +141,6 @@ generate_state_hm <- function(
 output_hm_image <- function(
     hm, file_name = NULL,
     png_height = 1600, png_width = 2800, png_res = 144) {
-  print(png_height)
   if (!is.null(file_name)) {
     # open a file to dump it to
     grDevices::png(
@@ -515,10 +514,12 @@ make_clone_palette <- function(clone_ids) {
 #' in the heatmap. Will default to the name of the column being plotted.
 #' @param legend_11plus bool. Default FALSE. For HMMCopy state values,
 #' state 11 is really 11+, so we replace 11s with 11+ for the plot in the
+#' #' legend.
 #' @param scale_y bool. Default FALSE. Scale the y size of the saved image accoring
 #' to the number of cells in the heatmap
 #' @param cell_height, int. Default = 10 Heigh in pixels per cell if scale_y is True
-#' legend.
+#' @param default_png_height, int: Default = 1600. If scale_y not used, height
+#' of final png
 #' @export
 plot_state_hm <- function(
     states_df,
@@ -543,7 +544,7 @@ plot_state_hm <- function(
     color_tree_clones = FALSE,
     scale_y = FALSE,
     cell_height = 10, 
-    default_png_height = 1600
+    default_png_height = 1600,
     ...) {
   check_args()
 
