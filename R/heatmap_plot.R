@@ -391,7 +391,6 @@ build_left_annot <- function(
       col = anno_cols_list
     )
   }
-
   return(left_annot)
 }
 
@@ -518,6 +517,7 @@ make_clone_palette <- function(clone_ids) {
 #' state 11 is really 11+, so we replace 11s with 11+ for the plot in the
 #' @param scale_y bool. Default FALSE. Scale the y size of the saved image accoring
 #' to the number of cells in the heatmap
+#' @param cell_height, int. Default = 10 Heigh in pixels per cell if scale_y is True
 #' legend.
 #' @export
 plot_state_hm <- function(
@@ -526,7 +526,7 @@ plot_state_hm <- function(
     phylogeny = NULL,
     file_name = NULL,
     anno_df = NULL, # optional, can also specify columns in the dataframe
-    anno_colors_list = list(), # for custom colors of annotations
+    anno_colors_list = list(), # for custom colors of annotations. Can also specify custom breaks in the cmap
     anno_columns = NULL,
     clone_column = NULL,
     clones_df = NULL, # optional, can also specify columns in the dataframe
@@ -542,6 +542,8 @@ plot_state_hm <- function(
     legend_11plus = FALSE,
     color_tree_clones = FALSE,
     scale_y = FALSE,
+    cell_height = 10, 
+    default_png_height = 1600
     ...) {
   check_args()
 
@@ -643,10 +645,9 @@ plot_state_hm <- function(
   if (scale_y) {
     message("Scaling Image Size by number of cells")
     ncells <- length(unique(states_df$cell_id))
-    message(ncells)
-    png_height <- ncells*15
+    png_height <- 200 + ncells*cell_height
   } else {
-    png_height <- 1600
+    png_height <- default_png_height
   }
 
   output_hm_image(
