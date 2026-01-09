@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -99,18 +99,18 @@ out:</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/plot_dlp_chip.html">plot_dlp_chip</a></span><span class="op">(</span><span class="va">ex_mets</span>, <span class="st">"experimental_condition"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="basic_plots_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" width="768"></p>
+<p><img src="basic_plots_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="" width="768"></p>
 <p><br><br></p>
 <p>Then often we want to look for spatial effects across the chip.</p>
 <p>Such as, quality:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/plot_dlp_chip.html">plot_dlp_chip</a></span><span class="op">(</span><span class="va">ex_mets</span>, <span class="st">"quality"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="basic_plots_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" width="768"></p>
+<p><img src="basic_plots_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="768"></p>
 <p><br><br></p>
 <p>or perhaps total reads:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/plot_dlp_chip.html">plot_dlp_chip</a></span><span class="op">(</span><span class="va">ex_mets</span>, <span class="st">"total_reads"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="basic_plots_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" width="768"></p>
+<p><img src="basic_plots_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="" width="768"></p>
 <p><br><br></p>
 </div>
 <div class="section level2">
@@ -132,7 +132,7 @@ something seems off about the multiplier HMMcopy chose for the cell.</p>
 <span>  cellid <span class="op">=</span> <span class="st">"AT21352-A144173A-R03-C32"</span>,</span>
 <span>  <span class="co"># plot_choice = "both" # the default option</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="basic_plots_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" width="768"></p>
+<p><img src="basic_plots_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="" width="768"></p>
 <p><br></p>
 <p>Or you can just plot one:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -141,7 +141,7 @@ something seems off about the multiplier HMMcopy chose for the cell.</p>
 <span>  cellid <span class="op">=</span> <span class="st">"AT21352-A144173A-R03-C32"</span>,</span>
 <span>  plot_choice <span class="op">=</span> <span class="st">"corrected"</span> <span class="co"># or plot_choice = "raw"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="basic_plots_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" width="576"></p>
+<p><img src="basic_plots_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="" width="576"></p>
 <p><br><br><br></p>
 </div>
 <div class="section level2">
@@ -160,7 +160,7 @@ which has lots of features.</p>
 <span>  <span class="co"># pseduo_log_y = TRUE</span></span>
 <span>  <span class="co"># and that might help. Or see function help for more ideas</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="basic_plots_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" width="960"></p>
+<p><img src="basic_plots_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="" width="960"></p>
 <p><br><br><br></p>
 <p>If needed, can also change what the y-axis is to other bin-based
 options:</p>
@@ -170,7 +170,7 @@ options:</p>
 <span>  cell_ids <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">ex_reads</span><span class="op">$</span><span class="va">cell_id</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span>,</span>
 <span>  yaxis <span class="op">=</span> <span class="st">"state"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="basic_plots_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" width="960"></p>
+<p><img src="basic_plots_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="" width="960"></p>
 <p><br><br><br></p>
 <div class="section level3">
 <h3 id="simplified-tile-plot">Simplified Tile Plot<a class="anchor" aria-label="anchor" href="#simplified-tile-plot"></a>
@@ -183,7 +183,7 @@ annotations, but works for a variety of quick inspections.</p>
 <span>  <span class="co"># just filtering to make the plot smaller for this demonstration</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">ex_reads</span>, <span class="va">chr</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">7</span><span class="op">:</span><span class="fl">9</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="basic_plots_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" width="75%" height="75%"></p>
+<p><img src="basic_plots_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="" width="75%" height="75%"></p>
 <p>To help with plotting, a variety of commonly use color palettes are
 available:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
