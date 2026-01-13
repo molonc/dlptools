@@ -172,6 +172,65 @@ knitr::include_graphics("imgs/annotations_2_hm.png")
 And with either of these, we can add a tree with the `phylogeny` arguments.
 
 
+## Annotation and Legends
+
+We can also control aspects of the legend and plot title with some options:
+
+```{r}
+dlptools::plot_state_hm(
+  states_df = dplyr::mutate(ex_state_dat, passage = as.factor(passage)),
+  state_col = "state",
+  anno_columns = c("sample_id", "passage"),
+  # file_name = "your_heatmap.png" ## still good idea to drop direct to file
+  # you could control the colors of your annotations with:
+  anno_colors_list = list(passage = c(p1 = "#2872bc", p19 = "#d23e3e")),
+  # can turn off the legend for the heatmap values
+  show_heatmap_legend = FALSE,
+  # can show, or not, the annotation legend
+  show_annotation_legend = TRUE,
+  # can set a title
+  hm_title = "A heatmap showing important Science!",
+  # and aspects of the display sizes for titles and labels
+  annotation_legend_param = list(
+    title_gp = grid::gpar(fontsize = 20, fontface = "bold"),
+    labels_gp = grid::gpar(fontsize = 16),
+    gp = grid::gpar(fontsize = 5)
+  )
+)
+```
+
+
+<br>
+<br>
+
+We can also build a fully custom legend...but takes some work, and you'd probably want a pretty good understanding of `ComplexHeatmap::packLegend`:
+
+```{r}
+dlptools::plot_state_hm(
+  states_df = dplyr::mutate(ex_state_dat, passage = as.factor(passage)),
+  state_col = "state",
+  anno_columns = c("sample_id", "passage"),
+  # file_name = "your_heatmap.png" ## still good idea to drop direct to file
+  # turn off default legends
+  show_heatmap_legend = FALSE,
+  show_annotation_legend = FALSE,
+  anno_colors_list = list(passage = c(p1 = "#2872bc", p19 = "#d23e3e")),
+  # and aspects of the display sizes for titles and labels
+  custom_legend = ComplexHeatmap::packLegend(
+    ComplexHeatmap::Legend(
+      title = "pAsSaGe",
+      labels = unique(ex_state_dat$passage),
+      # would need to match colours above
+      legend_gp = grid::gpar(fill = c(p1 = "#2872bc", p19 = "#d23e3e")),
+      labels_gp = grid::gpar(fontsize = 14, fontface = "bold"),
+      title_gp = grid::gpar(fontsize = 16, fontface = "bold")
+    ),
+  )
+)
+```
+
+<br>
+<br>
 
 ## Clone Information
 
