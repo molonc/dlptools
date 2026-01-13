@@ -224,7 +224,7 @@ dlptools::plot_state_hm(
       legend_gp = grid::gpar(fill = c(p1 = "#2872bc", p19 = "#d23e3e")),
       labels_gp = grid::gpar(fontsize = 14, fontface = "bold"),
       title_gp = grid::gpar(fontsize = 16, fontface = "bold")
-    ),
+    )
   )
 )
 ```
