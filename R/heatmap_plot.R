@@ -87,25 +87,28 @@ create_chromosome_column_fct <- function(states_mat) {
 generate_state_hm <- function(
     states_mat, phylo, labels_fontsize = 8, plot_cols = STATE_COLORS,
     left_annot = NULL, hm_legend_title = NULL, legend_11plus = FALSE,
-    show_heatmap_legend=TRUE, heatmap_legend_param = list()) {
+    show_heatmap_legend = TRUE, heatmap_legend_param = list()) {
   # set up a chromosome factor for column splits in the heatmap
   chroms <- create_chromosome_column_fct(states_mat)
 
-  if (legend_11plus) {
-    # fix for HMMcopy states where 11 is really 11+, so we can reflect that
-    # in the legend
-    legend_params <- list(
-      nrow = 4,
-      title = "state",
-      at = 1:11,
-      labels = c(1:10, "11+"),
-      legend_gp = dlptools::CNV_COLOURS
-    )
-  } else if (!is.null(hm_legend_title)) {
-    legend_params <- list(title = hm_legend_title, nrow = 4)
-  } else {
-    legend_params <- list(
-      nrow = 4)
+  if (length(heatmap_legend_param) == 0) {
+    if (legend_11plus) {
+      # fix for HMMcopy states where 11 is really 11+, so we can reflect that
+      # in the legend
+      heatmap_legend_param <- list(
+        nrow = 4,
+        title = "state",
+        at = 1:11,
+        labels = c(1:10, "11+"),
+        legend_gp = dlptools::CNV_COLOURS
+      )
+    } else if (!is.null(hm_legend_title)) {
+      heatmap_legend_param <- list(title = hm_legend_title, nrow = 4)
+    } else {
+      heatmap_legend_param <- list(
+        nrow = 4
+      )
+    }
   }
 
   states_hm <- ComplexHeatmap::Heatmap(
@@ -124,8 +127,8 @@ generate_state_hm <- function(
     na_col = "white",
     use_raster = TRUE,
     raster_quality = 5,
-    show_heatmap_legend=show_heatmap_legend,
-    heatmap_legend_param=heatmap_legend_param
+    show_heatmap_legend = show_heatmap_legend,
+    heatmap_legend_param = heatmap_legend_param
   )
 
   return(states_hm)
@@ -358,9 +361,8 @@ build_left_annot <- function(
   if (!is.null(anno_df)) {
     anno_df <- as.data.frame(dplyr::select(anno_df, -c(cell_id)))
   }
-  
-  if (!is.null(clones_df) && !is.null(anno_df)) {
 
+  if (!is.null(clones_df) && !is.null(anno_df)) {
     left_annot <- ComplexHeatmap::HeatmapAnnotation(
       clones = factor(clones_df$clone_id),
       clone_label = ComplexHeatmap::anno_mark(
@@ -394,11 +396,9 @@ build_left_annot <- function(
       which = "row",
       col = anno_cols_list,
       show_legend = show_annotation_legend,
-      annotation_name_gp = grid::gpar(fontsize=annotation_name_gp),
-      annotation_legend_param =annotation_legend_param
-    
+      annotation_name_gp = grid::gpar(fontsize = annotation_name_gp),
+      annotation_legend_param = annotation_legend_param
     )
-    
   }
   return(left_annot)
 }
@@ -537,11 +537,11 @@ make_clone_palette <- function(clone_ids) {
 #'  title_gp = grid::gpar(fontsize = 20), #fontsize of title
 #'  labels_gp = grid::gpar(fontsize = 16), # fontsize of labels
 #'  gp = grid::gpar(fontsize = 16) # siez of color bar or whatever legend is showing I think
-#')
+#' )
 #' @param show_heatmap_legend, bool
 #' @param annotation_name_gp Int: Fontsize for label names
 #' @param custom_legend, List(). custom legend for use when annotation and heatmap legends are FALSE
-#' For examples, see 
+#' For examples, see
 #' @export
 plot_state_hm <- function(
     states_df,
@@ -565,17 +565,16 @@ plot_state_hm <- function(
     legend_11plus = FALSE,
     color_tree_clones = FALSE,
     scale_y = FALSE,
-    cell_height = 10, 
+    cell_height = 10,
     default_png_height = 1600,
     annotation_legend_param = list(),
     show_annotation_legend = TRUE,
     annotation_name_gp = 16,
     heatmap_legend_param = list(),
-    show_heatmap_legend=TRUE,
+    show_heatmap_legend = TRUE,
     custom_legend = list(),
     hm_title = NULL,
     ...) {
-
   check_args()
 
   if (color_tree_clones) {
@@ -642,7 +641,7 @@ plot_state_hm <- function(
   left_annot <- build_left_annot(
     anno_df = anno_df,
     anno_cols_list = anno_colors_list,
-    annotation_name_gp  = annotation_name_gp,
+    annotation_name_gp = annotation_name_gp,
     show_annotation_legend = show_annotation_legend,
     annotation_legend_param = annotation_legend_param,
     clones_df = clones_df,
@@ -672,7 +671,7 @@ plot_state_hm <- function(
     left_annot = left_annot,
     hm_legend_title = hm_legend_title,
     legend_11plus = legend_11plus,
-    show_heatmap_legend=show_heatmap_legend,
+    show_heatmap_legend = show_heatmap_legend,
     heatmap_legend_param = heatmap_legend_param
   )
 
@@ -680,7 +679,7 @@ plot_state_hm <- function(
   if (scale_y) {
     message("Scaling Image Size by number of cells")
     ncells <- length(unique(states_df$cell_id))
-    png_height <- 200 + ncells*cell_height
+    png_height <- 200 + ncells * cell_height
   } else {
     png_height <- default_png_height
   }
