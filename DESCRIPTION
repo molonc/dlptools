@@ -1,6 +1,6 @@
 Package: dlptools
 Title: DLPTools: Handling DLP+ Data
-Version: 1.1.4
+Version: 1.2.0
 Authors@R: c(
     person("Ben", "Furman", email = "bfurman@bccrc.ca", role = c("aut", "cre")),
     person("Aparicio Lab Past and Present", role = "aut")
@@ -10,7 +10,6 @@ Description: A collections of functions for basic manipulation and plotting of
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
 biocViews:
 Imports: 
     ape,
@@ -49,3 +48,4 @@ Depends:
     R (>= 2.10)
 URL: https://molonc.github.io/dlptools/, https://github.com/molonc/dlptools
 BugReports: https://github.com/molonc/dlptools/issues
+Config/roxygen2/version: 8.0.0
