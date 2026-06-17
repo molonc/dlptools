@@ -7,6 +7,9 @@
 build_left_annot(
   anno_df = NULL,
   anno_cols_list = list(),
+  annotation_legend_param = list(),
+  annotation_name_gp = 16,
+  show_annotation_legend = TRUE,
   clones_df = NULL,
   only_largest_clone_group = FALSE,
   labels_fontsize = 8,
@@ -19,6 +22,8 @@ each cell id to be added to a heatmap.}
 
 \item{anno_cols_list}{list of named vectors specifying colors for annotations
 example: list(passage=c(\code{1}='#2872bc', \code{19}='#d23e3e'))}
+
+\item{annotation_name_gp}{Int: Fontsize for label names}
 
 \item{clones_df}{dataframe of clone ideas (clone_id) for each cell_id. Both
 columns required.}

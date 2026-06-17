@@ -11,7 +11,9 @@ generate_state_hm(
   plot_cols = STATE_COLORS,
   left_annot = NULL,
   hm_legend_title = NULL,
-  legend_11plus = FALSE
+  legend_11plus = FALSE,
+  show_heatmap_legend = TRUE,
+  heatmap_legend_param = list()
 )
 }
 \description{

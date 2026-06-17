@@ -22,6 +22,7 @@ library(tibble)
 library(phangorn)
 library(ggtree)
 library(dlptools)
+library(ggplot2)
 
 set.seed(666)
 ```
@@ -177,13 +178,20 @@ distance of 1 because there is 1 bin with a diffrence.
 For A, it's a bit more tricky because the whole clade containing B and C (i.e., node `5`) are the sister taxa.
 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, eval=FALSE}
 ggtree::ggtree(toy_tree) +
   ggtree::geom_tiplab() +
   ggtree::geom_nodelab(aes(label = node), hjust = -2, color = "red") +
   ggtree::geom_tiplab(aes(label = node), hjust = -2, color = "red") +
   ggtree::geom_strip("B", "C", offset = 0.1, color = "red", geom = "line", linetype = 2) +
   ggtree::geom_taxalink(taxa1 = "A", taxa2 = 5, linetype = 2, color = "red")
+
+# ggsave("imgs/toy_tree_nodes.png")
+# making package build annoying, so just including saved plot below.
+```
+
+```{r, echo=FALSE, out.width="60%", out.height="50%", fig.align='center'}
+knitr::include_graphics("imgs/toy_tree_nodes.png")
 ```
 
 

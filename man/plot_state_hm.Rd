@@ -25,6 +25,16 @@ plot_state_hm(
   hm_legend_title = NULL,
   legend_11plus = FALSE,
   color_tree_clones = FALSE,
+  scale_y = FALSE,
+  cell_height = 10,
+  default_png_height = 1600,
+  annotation_legend_param = list(),
+  show_annotation_legend = TRUE,
+  annotation_name_gp = 16,
+  heatmap_legend_param = list(),
+  show_heatmap_legend = TRUE,
+  custom_legend = list(),
+  hm_title = NULL,
   ...
 )
 }
@@ -78,10 +88,35 @@ in the heatmap. Will default to the name of the column being plotted.}
 
 \item{legend_11plus}{bool. Default FALSE. For HMMCopy state values,
 state 11 is really 11+, so we replace 11s with 11+ for the plot in the
-legend.}
+#' legend.}
 
 \item{color_tree_clones}{boolean. optional. Whether to color the tree with
 the same colors as the clone labels.}
+
+\item{scale_y}{bool. Default FALSE. Scale the y size of the saved image accoring
+to the number of cells in the heatmap}
+
+\item{cell_height, }{int. Default = 10 Heigh in pixels per cell if scale_y is True}
+
+\item{default_png_height, }{int: Default = 1600. If scale_y not used, height
+of final png}
+
+\item{annotation_legend_param, }{list(). Parameters topass to the annotation legend
+ex: annotation_legend_params <- list(
+Small_inter_few_telo = list(
+title_gp = grid::gpar(fontsize = 20), #fontsize of title
+labels_gp = grid::gpar(fontsize = 16), # fontsize of labels
+gp = grid::gpar(fontsize = 16) # siez of color bar or whatever legend is showing I think
+)}
+
+\item{show_annotation_legend, }{bool.}
+
+\item{annotation_name_gp}{Int: Fontsize for label names}
+
+\item{show_heatmap_legend, }{bool}
+
+\item{custom_legend, }{List(). custom legend for use when annotation and heatmap legends are FALSE
+For examples, see}
 }
 \description{
 Plot a heat map of states across chromosomes. Put annotations next to it, a
