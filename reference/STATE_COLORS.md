@@ -7,7 +7,3 @@ alias of standard colors used in dlp plots
 ``` r
 STATE_COLORS
 ```
-
-## Format
-
-An object of class `character` of length 13.

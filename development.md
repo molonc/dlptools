@@ -26,6 +26,7 @@ metadata stuff and package construction. Steps include:
     cloned this repo
 
 ``` r
+
 setwd("/path/to/dlptools/")
 library(devtools)
 ```
@@ -38,6 +39,7 @@ library(devtools)
     vim R/my_new_module.R
 
 ``` r
+
 # add your function, with documentation in roxygen style! See other funcs for 
 # examples.
 
@@ -60,6 +62,7 @@ my_cool_func <- function(x) {
     it out
 
 ``` r
+
 # will load the whole package including your new function
 devtools::load_all()
 
@@ -70,6 +73,7 @@ my_cool_func(x)
     new function.
 
 ``` r
+
 # searches the R/ directory for new functions and updates the NAMESPACE file.
 # also creates .Rd files based on your function docstring.
 devtools::document()
@@ -82,12 +86,14 @@ already listed in the `Imports:` section of the `DESCRIPTION` file).
 From the R instance:
 
 ``` r
+
 usethis::use_package("purrr") # or whatever package your function needs
 ```
 
 5.  From the R instance, run a check that the package is still good
 
 ``` r
+
 devtools::check()
 ```
 
@@ -97,6 +103,7 @@ Remember, vignettes use the *installed* version, so you can install it
 with:
 
 ``` r
+
 devtools::install()
 ```
 

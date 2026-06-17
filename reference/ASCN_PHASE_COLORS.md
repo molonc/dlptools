@@ -7,7 +7,3 @@ ASCN phase colors
 ``` r
 ASCN_PHASE_COLORS
 ```
-
-## Format
-
-An object of class `character` of length 5.

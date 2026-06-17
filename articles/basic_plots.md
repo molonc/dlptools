@@ -1,6 +1,7 @@
 # Basic Exploratory Plots
 
 ``` r
+
 library(dlptools)
 ```
 
@@ -21,6 +22,7 @@ A good resource of exploring aspects of DLP are these confluence pages:
 The first thing we usually want to check, is how the chip is laid out:
 
 ``` r
+
 # just some example data from a recent run with lots of experimental conditions
 ex_mets <- vroom::vroom(
   "data/ex_metrics.tsv.gz",
@@ -40,6 +42,7 @@ Then often we want to look for spatial effects across the chip.
 Such as, quality:
 
 ``` r
+
 dlptools::plot_dlp_chip(ex_mets, "quality")
 ```
 
@@ -51,6 +54,7 @@ dlptools::plot_dlp_chip(ex_mets, "quality")
 or perhaps total reads:
 
 ``` r
+
 dlptools::plot_dlp_chip(ex_mets, "total_reads")
 ```
 
@@ -66,6 +70,7 @@ cell, to see if the values really fall on integers for CNs, or if maybe
 something seems off about the multiplier HMMcopy chose for the cell.
 
 ``` r
+
 # standard reads table, really anything with GC, modal_curve, multiplier, and
 # cell_id columns should work.
 ex_reads <- vroom::vroom(
@@ -87,6 +92,7 @@ dlptools::plot_gc(
 Or you can just plot one:
 
 ``` r
+
 dlptools::plot_gc(
   ex_reads,
   cellid = "AT21352-A144173A-R03-C32",
@@ -112,6 +118,7 @@ which has lots of features.
 But if you want a quick and dirt dlptools version, you can do:
 
 ``` r
+
 dlptools::plot_cell_cn_profile(
   ex_reads,
   cell_ids = unique(ex_reads$cell_id)[1:2],
@@ -131,6 +138,7 @@ If needed, can also change what the y-axis is to other bin-based
 options:
 
 ``` r
+
 dlptools::plot_cell_cn_profile(
   ex_reads,
   cell_ids = unique(ex_reads$cell_id)[1:2],
@@ -153,6 +161,7 @@ There are no additions, like trees and annotations, but works for a
 variety of quick inspections.
 
 ``` r
+
 dlptools::plot_read_bins_basic(
   # just filtering to make the plot smaller for this demonstration
   dplyr::filter(ex_reads, chr %in% c(7:9))
@@ -165,6 +174,7 @@ To help with plotting, a variety of commonly use color palettes are
 available:
 
 ``` r
+
 # standard state colors
 dlptools::CNV_COLOURS
 #>         0         1         2         3         4         5         6         7 

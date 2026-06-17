@@ -1,6 +1,7 @@
 # Pairwise Differences Between Cells
 
 ``` r
+
 library(dlptools)
 ```
 
@@ -18,6 +19,7 @@ These functions will make that a bit easier.
 First some toy data:
 
 ``` r
+
 reads_df <- vroom::vroom("data/example_reads.tsv.gz", show_col_types = FALSE)
 
 # only using a few cells to demonstrate functions below
@@ -64,6 +66,7 @@ Parallelizing will make your life a bit better. Internally, this
 function uses `furrr`, you just need to set up a plan.
 
 ``` r
+
 # first set up a parallel plan, here with 4 cores being used
 # future::plan(future::multisession, workers = 4)
 
@@ -95,6 +98,7 @@ which is each cell (`index cell`) compared to each other cell
 We can then find the nearest neighbour of each cell:
 
 ``` r
+
 (nn_cells <- dlptools::find_nearest_neighbours(pairwise_diffs))
 #> # A tibble: 40 × 7
 #>    n_diff tot_bins nn_diff index_cell comp_cell max_diff_to_all mean_diff_to_all
@@ -128,6 +132,7 @@ all cells in a pairwise manner.
 This will compare the specified cell or cells against all others:
 
 ``` r
+
 dlptools::pairwise_bin_difference(
   reads_df,
   targ_cells = unique(reads_df$cell_id)[1:2]
@@ -155,6 +160,7 @@ Alternatively, if you want to just compare some set of cells against
 themselves, best to just filter upfront:
 
 ``` r
+
 reads_df |>
   dplyr::filter(cell_id %in% unique(reads_df$cell_id)[1:3]) |>
   dlptools::pairwise_bin_difference()
@@ -178,6 +184,7 @@ find outlier cells by fitting a beta distribution to the latter, and
 finding outlier pairwise comparisons:
 
 ``` r
+
 (outlier_cells <- dlptools::find_outlier_cells(pairwise_diffs, nn_cells))
 #> # A tibble: 3 × 7
 #>   n_diff tot_bins nn_diff outlier_cell  nn_cell max_diff_to_all mean_diff_to_all
@@ -194,6 +201,7 @@ finding outlier pairwise comparisons:
 There is a simple plot that can be made to visualize these distances:
 
 ``` r
+
 dlptools::plot_nnd_outlier_cells(
   pairwise_diffs, nn_cells, outlier_cells
 )
@@ -218,6 +226,7 @@ This dataframe can get big, as it’s now every cell compared to every
 other cell.
 
 ``` r
+
 # first, we need to know all of the cells we want to do this for. It could
 # be all cells, or some subset.
 

@@ -134,6 +134,8 @@
   : resolve who the immediate parent nodes are for each tip.
 - [`get_tips_that_avoid_redundant_comps()`](https://molonc.github.io/dlptools/reference/get_tips_that_avoid_redundant_comps.md)
   : get tips labels that will avoid duplicate sibling comparisons
+- [`get_wgd_states()`](https://molonc.github.io/dlptools/reference/get_wgd_states.md)
+  : Calculate WGD states based on major allele CN
 - [`import_clones()`](https://molonc.github.io/dlptools/reference/import_clones.md)
   : read a clones t(c)sv file
 - [`import_telos_file()`](https://molonc.github.io/dlptools/reference/import_telos_file.md)

@@ -1,6 +1,7 @@
 # Copy Number 'Foreground'
 
 ``` r
+
 library(dlptools)
 ```
 
@@ -23,6 +24,7 @@ apply across DLP libraries.
 Retrieve node labels of immediate parents to tree tips:
 
 ``` r
+
 ex_tree <- ape::read.tree("data/pkg_tree.newick")
 
 tip_parents <- dlptools::get_tip_parents(ex_tree)
@@ -54,6 +56,7 @@ this simple wrapper exists that will add this parent node information to
 the dataframe:
 
 ``` r
+
 states <- vroom::vroom("data/ex_state_dat.tsv.gz", show_col_types = FALSE)
 
 states_w_node_info <- dlptools::add_tip_ancestors_to_df(states, ex_tree)
@@ -95,6 +98,7 @@ Here, we’ll using some example data, which is a reduced set of data from
 a full library. First loading the data:
 
 ``` r
+
 # we can ingest the medicc tree. This is a simple wrapper to drop the diploid
 # branch, which medicc invents and includes
 med_tree <- dlptools::read_medicc_tree("data/ex_med_fg_tree.nwk")
@@ -109,6 +113,7 @@ med_profiles <- dlptools::read_medicc_profiles("data/ex_profiles.tsv.gz")
 and now we can infer the changes between tips and immediate parents:
 
 ``` r
+
 states_df <- dlptools::medicc_profiles_to_foreground(
   med_profiles, med_tree,
   cn_type = "total"
@@ -120,6 +125,7 @@ tips, and added columns of the states of the immediate parent node of
 those tips.
 
 ``` r
+
 states_df |>
   dplyr::select(
     cell_id, chr, start, end, state, parent_state, parent_node,
@@ -150,11 +156,13 @@ differnt features.
 First, as a reference point the raw states:
 
 ``` r
+
 # subsetting chromosomes for plotting purposes
 states_sub <- dplyr::filter(states_df, chr %in% c(3, 4, 7))
 ```
 
 ``` r
+
 dlptools::plot_state_hm(
   states_sub,
   state_col = "state",
@@ -168,6 +176,7 @@ dlptools::plot_state_hm(
 The raw states of the inferred foreground events:
 
 ``` r
+
 dlptools::plot_fg_state_highlight(
   states_df = states_sub,
   phylogeny = med_tree,
@@ -180,6 +189,7 @@ dlptools::plot_fg_state_highlight(
 The raw states of the implied background:
 
 ``` r
+
 dlptools::plot_bg_state_highlight(
   states_df = states_sub,
   phylogeny = med_tree,
@@ -193,6 +203,7 @@ And the states of foreground events themselves, i.e., the change from
 the parent node to tip:
 
 ``` r
+
 dlptools::plot_heatmap_of_tip_changes(
   states_df = states_sub,
   phylogeny = med_tree,

@@ -32,6 +32,7 @@ We’ll work from some example data to show some examples (it’s a trimmed
 output of signals, but just DLP reads output works fine too):
 
 ``` r
+
 ex_state_dat <- vroom::vroom("data/ex_state_dat.tsv.gz")
 
 head(ex_state_dat)
@@ -50,6 +51,7 @@ head(ex_state_dat)
 ### basic heatmap
 
 ``` r
+
 dlptools::plot_state_hm(
   states_df = ex_state_dat,
   state_col = "state",
@@ -67,6 +69,7 @@ dlptools::plot_state_hm(
 Or with a different column:
 
 ``` r
+
 dlptools::plot_state_hm(
   states_df = ex_state_dat,
   state_col = "state_phase",
@@ -95,6 +98,7 @@ Column options include:
 ### Adding a Tree
 
 ``` r
+
 ex_tree <- ape::read.tree("data/pkg_tree.newick")
 
 dlptools::plot_state_hm(
@@ -113,6 +117,7 @@ This can come from a separate data frame with annotations per cell ID,
 or you can point to columns in your state dataframe:
 
 ``` r
+
 dlptools::plot_state_hm(
   states_df = dplyr::mutate(ex_state_dat, passage = as.factor(passage)),
   state_col = "state",
@@ -128,6 +133,7 @@ dlptools::plot_state_hm(
 Or with some pre-made annotation dataframe created by cell id:
 
 ``` r
+
 anno_df <- dplyr::distinct(ex_state_dat, cell_id, sample_id, passage)
 
 
@@ -150,6 +156,7 @@ We can also control aspects of the legend and plot title with some
 options:
 
 ``` r
+
 dlptools::plot_state_hm(
   states_df = dplyr::mutate(ex_state_dat, passage = as.factor(passage)),
   state_col = "state",
@@ -182,6 +189,7 @@ probably want a pretty good understanding of
 [`ComplexHeatmap::packLegend`](https://rdrr.io/pkg/ComplexHeatmap/man/packLegend.html):
 
 ``` r
+
 dlptools::plot_state_hm(
   states_df = dplyr::mutate(ex_state_dat, passage = as.factor(passage)),
   state_col = "state",
@@ -217,6 +225,7 @@ frame with `cell_id` and `clone_id` columns, or just pull the
 information from the states dataframe:
 
 ``` r
+
 # fake some clone data
 ex_state_dat <- ex_state_dat |>
   dplyr::mutate(
@@ -246,6 +255,7 @@ dlptools::plot_state_hm(
 ### Continous Variables
 
 ``` r
+
 dlptools::plot_state_hm(
   states_df = ex_state_dat,
   state_col = "copy",

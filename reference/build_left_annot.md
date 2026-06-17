@@ -8,6 +8,9 @@ builds the left-side annotations of the cells
 build_left_annot(
   anno_df = NULL,
   anno_cols_list = list(),
+  annotation_legend_param = list(),
+  annotation_name_gp = 16,
+  show_annotation_legend = TRUE,
   clones_df = NULL,
   only_largest_clone_group = FALSE,
   labels_fontsize = 8,
@@ -26,6 +29,10 @@ build_left_annot(
 
   list of named vectors specifying colors for annotations example:
   list(passage=c(`1`='#2872bc', `19`='#d23e3e'))
+
+- annotation_name_gp:
+
+  Int: Fontsize for label names
 
 - clones_df:
 

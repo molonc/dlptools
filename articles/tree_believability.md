@@ -59,6 +59,7 @@ scenes.
 Starting with some toy data:
 
 ``` r
+
 # starting with a simple tree
 toy_tree <- ape::read.tree(text = "(A, (B, C));")
 
@@ -81,6 +82,7 @@ class(toy_mat) <- "character"
 Plotting what we are working with:
 
 ``` r
+
 toy_p <- ggtree::ggtree(toy_tree) +
   ggtree::geom_tiplab() +
   ggtree::geom_nodelab(aes(label = node), hjust = -2, color = "red") +
@@ -103,6 +105,7 @@ ggtree::gheatmap(toy_p, toy_mat, colnames = FALSE) +
 These bin states can be represented as a string of states for each cell:
 
 ``` r
+
 toy_state_strings <- dlptools::cell_states_to_strings(toy_states)
 toy_state_strings
 #> # A tibble: 3 × 2
@@ -119,6 +122,7 @@ don’t count as 2 characters.
 i.e.,
 
 ``` r
+
 dlptools::map_states_to_letters(0:11)
 #>   0   1   2   3   4   5   6   7   8   9  10  11 
 #> "A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L"
@@ -130,6 +134,7 @@ dlptools::map_states_to_letters(0:11)
 We can compute the sibling nodes for each of the tips:
 
 ``` r
+
 phangorn::Siblings(toy_tree, node = toy_tree$tip.label)
 #> [[1]]
 #> [1] 5
@@ -152,6 +157,7 @@ So in this tree, taxa B and C are sister taxa, and we can compute their
 distance from each other:
 
 ``` r
+
 # for demonstration, doing "by hand"...will show more automated methods below
 b_string <- toy_state_strings[toy_state_strings$tip_label == "B", ]$states_string
 c_string <- toy_state_strings[toy_state_strings$tip_label == "C", ]$states_string
@@ -170,12 +176,13 @@ distance of 1 because there is 1 bin with a diffrence.
 For A, it’s a bit more tricky because the whole clade containing B and C
 (i.e., node `5`) are the sister taxa.
 
-![](tree_believability_files/figure-html/unnamed-chunk-11-1.png)
+![](imgs/toy_tree_nodes.png)
 
 The approach taken here is to calculate the distance to each and take
 the mean:
 
 ``` r
+
 a_string <- toy_state_strings[toy_state_strings$tip_label == "A", ]$states_string
 
 a_to_bc_dists <- stringdist::stringdist(a_string, c(b_string, c_string))
@@ -188,6 +195,7 @@ And then for the whole tree, we can just take the mean of all the
 sibling distances:
 
 ``` r
+
 mean(c(b_c_dist, mean(a_to_bc_dists)))
 #> [1] 1.5
 ```
@@ -198,6 +206,7 @@ mean(c(b_c_dist, mean(a_to_bc_dists)))
 Of course, that is too much work, so we can just call the function:
 
 ``` r
+
 dlptools::compute_tip_sibling_distances(
   states_df = toy_states, # the long format state data
   tree = toy_tree,
@@ -214,6 +223,7 @@ Returning to the trees at the start of this vignette, we can assess how
 well each did:
 
 ``` r
+
 # loading the data and tree underlying those plots at the top
 ex_tree <- ape::read.tree("data/tree_support.nwk")
 dlp_states <- vroom::vroom("data/tree_support_states.tsv.gz", show_col_types = FALSE)
@@ -229,6 +239,7 @@ The real tree:
 ![](imgs/real_tree.png)
 
 ``` r
+
 dlptools::compute_tip_sibling_distances(
   states_df = dlp_states,
   tree = ex_tree
@@ -241,6 +252,7 @@ The random tree:
 ![](imgs/rand_tree.png)
 
 ``` r
+
 dlptools::compute_tip_sibling_distances(
   states_df = dlp_states,
   tree = rand_tree
@@ -255,6 +267,7 @@ string distance” (that’s a mouthful…how about the “MS3D”?) is higher i
 the random tree.
 
 ``` r
+
 # and for fun, you can call for the same results
 dlptools::check_the_vibe(dlp_states, ex_tree)
 #> [1] 407.7623

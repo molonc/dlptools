@@ -7,7 +7,3 @@ standard colors used in dlp plots
 ``` r
 CNV_COLOURS
 ```
-
-## Format
-
-An object of class `character` of length 13.

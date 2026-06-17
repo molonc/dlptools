@@ -11,7 +11,9 @@ output_hm_image(
   file_name = NULL,
   png_height = 1600,
   png_width = 2800,
-  png_res = 144
+  png_res = 144,
+  custom_legend = list(),
+  hm_title
 )
 ```
 
@@ -20,6 +22,10 @@ output_hm_image(
 - file_name:
 
   optional string of where to save a png image of the heatmap.
+
+- png_height:
+
+  optional height of png file
 
 - total_hm:
 

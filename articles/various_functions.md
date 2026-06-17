@@ -8,6 +8,7 @@ Masking regions that are bad for DLP, mostly the consequence of low
 mappability.
 
 ``` r
+
 # assuming some sort of reads or segments DF with: chr, start, end
 ex_reads <- vroom::vroom("data/example_reads.tsv.gz")
 
@@ -33,6 +34,7 @@ source](https://github.com/molonc/dlptools/tree/dev/inst/extdata) or by
 loading:
 
 ``` r
+
 vroom::vroom(
   system.file("extdata", "blacklist_2023.07.17.txt", package = "dlptools")
 )
@@ -71,6 +73,7 @@ The files loaded to mark centromeres come from
 hg19 and hg38 releases.
 
 ``` r
+
 # easiest way is to just explictly mark whether bins are in centromeres
 dlptools::mark_bins_overlapping_centromeres(
   reads_df = ex_reads,
@@ -94,6 +97,7 @@ dlptools::mark_bins_overlapping_centromeres(
 Alternatively, this can be done in parts:
 
 ``` r
+
 # e.g., just adding the centromere information by chromosome
 dlptools::add_centromere_locations(
   cn_df = ex_reads,
@@ -126,6 +130,7 @@ Also available is telomere marking, but see
 for why this isn’t the most in-depth or accurate thing:
 
 ``` r
+
 dlptools::add_telomere_positions(
   ex_reads
   # version = "hg19" is the default
@@ -156,6 +161,7 @@ This is assuming our standard DLP cell ids, e.g.,
 `AT23998-A138956A-R03-C34`.
 
 ``` r
+
 # single cell id
 dlptools::sample_from_cell("AT23998-A138956A-R03-C34")
 #> [1] "AT23998"
@@ -221,6 +227,7 @@ These functions will help you do that.
 First lets set up some filtered data:
 
 ``` r
+
 raw_reads <- vroom::vroom("data/example_reads.tsv.gz")
 
 filt_reads <- raw_reads |>
@@ -249,6 +256,7 @@ columns except cell_id, chr, start, end, unless otherwise specified.
 Only cell level data should be specified to be carried through.
 
 ``` r
+
 # optional e.g., we can add some other fake cell level meta data to carry
 # through for missing bins
 filt_reads$library <- "fake_library"
@@ -292,6 +300,7 @@ Then we can actually fill in those bins with their neighbours, and
 specify any of the columns you want filled:
 
 ``` r
+
 dlptools::fill_state_from_neighbours(
   filt_with_missing,
   cols_to_fill = c("state", "gc") # default is "state", don't need to specify
@@ -319,6 +328,7 @@ dlptools::fill_state_from_neighbours(
 Of course, it could all be done in a pipe:
 
 ``` r
+
 raw_reads |>
   dlptools::mark_mask_regions() |>
   dlptools::mark_bins_overlapping_centromeres(padding = 3e6) |>
@@ -332,6 +342,7 @@ raw_reads |>
 Functions being used internally include:
 
 ``` r
+
 create_expected_bins(
   version = "hg19", # default, or hg38
   bin_size = 5e5 # default
@@ -350,6 +361,7 @@ create_expected_bins(
 or expanding any integer into bins:
 
 ``` r
+
 dlptools::expand_length_to_bins(10, bin_size = 5)
 #> # A tibble: 2 × 2
 #>   start   end
@@ -361,6 +373,7 @@ dlptools::expand_length_to_bins(10, bin_size = 5)
 And chromosome lengths used are coming from USCS `chromInfo` files:
 
 ``` r
+
 dlptools::load_chrom_info_file(
   version = "hg19" # default, or "hg38"
 ) |>
@@ -384,6 +397,7 @@ Grouping read bins into contiguous segments (e.g. post filtering read
 bins, etc.).
 
 ``` r
+
 ex_segs <- dlptools::reads_to_segs(ex_reads)
 
 # this is now runs of adjacent read bins with identical states collapesed
@@ -410,6 +424,7 @@ dropped bins from your dataframe.
 Split segments back into bins of some size.
 
 ``` r
+
 rebinned_reads <- dlptools::segs_to_reads(
   ex_segs,
   # bin_size = 5e5 # default, but can change
@@ -429,6 +444,7 @@ rebinned_reads[1:4, ]
 And recovers our original reads:
 
 ``` r
+
 nrow(rebinned_reads) == nrow(ex_reads)
 #> [1] TRUE
 ```
@@ -436,6 +452,7 @@ nrow(rebinned_reads) == nrow(ex_reads)
 Useful for things like dropping small segs from data:
 
 ``` r
+
 filt_reads <- ex_reads |>
   dlptools::reads_to_segs() |>
   dplyr::filter(seg_width > 1.5e6) |>
@@ -465,6 +482,7 @@ Please see
 for more information on how this works:
 
 ``` r
+
 seg_locations <- dlptools::mark_segs_chromosome_span(
   ex_segs,
   # version = "hg19" assumed, but hg38 possible too.
@@ -522,6 +540,7 @@ copy numbers of the segments. However, it’s probably a good idea
 This function does that:
 
 ``` r
+
 dlptools::weighted_ploidy(ex_segs) |>
   dplyr::slice_head(n = 5)
 #> # A tibble: 5 × 2
@@ -541,6 +560,7 @@ only be done for evenly sized bins, or the mode wouldn’t make much
 sense.
 
 ``` r
+
 dlptools::mode_ploidy(
   ex_reads,
   sample_col = "cell_id"
@@ -562,6 +582,7 @@ Related, we can also infer if a CN change is a gain or loss, relative to
 ploidy:
 
 ``` r
+
 dlptools::mark_cn_relative_to_ploidy(
   ex_reads, # or can pass segments df
   df_type = "reads" # df_type = "segs"
@@ -593,6 +614,7 @@ long, with cell_ids as rows and chr_start_end as columns, and the states
 as cells.
 
 ``` r
+
 ex_reads_w <- dlptools::convert_long_reads_to_wide(ex_reads)
 
 ex_reads_w[1:4, 1:4]
@@ -615,6 +637,7 @@ Phylogenetic trees made by Stika take some formatting before they can be
 plotted:
 
 ``` r
+
 dlptools::format_sitka_tree()
 ```
 

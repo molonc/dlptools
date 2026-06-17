@@ -1,6 +1,7 @@
 # Feature Extraction for CN Signatures
 
 ``` r
+
 library(ggplot2)
 library(dlptools)
 ```
@@ -63,6 +64,7 @@ liking.
 Perhaps the workflow would look something like this:
 
 ``` r
+
 reads_df <- vroom::vroom("data/example_full_reads.tsv.gz")
 
 segs_df <- reads_df |>
@@ -114,6 +116,7 @@ This is as simple as it sounds, and the function is unnecessary. These
 lengths would need to be subsequently categorized somehow.
 
 ``` r
+
 dlptools::extract_segment_sizes(
   segs_df = segs_df
 ) |>
@@ -140,6 +143,7 @@ pre-defined categories. This is an argument available for all of these
 process based functions.
 
 ``` r
+
 dlptools::extract_segment_sizes(
   segs_df = segs_df,
   return = "counts"
@@ -176,6 +180,7 @@ See
 for an important discussion of the `first_seg_correction` parameter.
 
 ``` r
+
 dlptools::extract_changepoint(
   segs_df = segs_df
   # or returning the counts
@@ -206,6 +211,7 @@ Predefined count categories are changepoint = 1, 2, 3, 4, 5+
 A breakpoint is a change in the copy number.
 
 ``` r
+
 dlptools::extract_breakpoints(
   segs_df = segs_df,
   scope = "arms"
@@ -239,6 +245,7 @@ Predefined count categories are: breakpoint = 0, 1, 2, 3, 4, 5, 6+
 Typically, publications have used 10Mb.
 
 ``` r
+
 dlptools::extract_breakpoints(
   segs_df = segs_df,
   scope = "windows"
@@ -302,6 +309,7 @@ publications using this feature have done so differently, so it’s the
 wild west. Do what feels right.
 
 ``` r
+
 dlptools::extract_oscillations(
   segs_df = segs_df
   # or returning the counts
@@ -334,6 +342,7 @@ Predefined count categories are: Oscillation chains of length: 0, 1-3,
 E.g.,
 
 ``` r
+
 dlptools::extract_oscillations(
   segs_df = segs_df,
   return = "counts"
@@ -363,6 +372,7 @@ You can also play directly with
 on vectors to see how the inernals of this function are working:
 
 ``` r
+
 dlptools::count_oscillations(1:3)
 #> [1] 0
 
@@ -406,6 +416,7 @@ categories of:
 CN = 1, 2, 3, 4, 5, 6+
 
 ``` r
+
 dlptools::extract_cn(
   segs_df,
   return = "counts"
@@ -435,6 +446,7 @@ If you are happy with all of the default categories for counting, you
 can call the wrapper to get them all at once:
 
 ``` r
+
 # if you set up a future::plan(), this will run in parallel. See ?dlptools::count_default_process_feats
 
 # could be something like
@@ -469,6 +481,7 @@ dlptools::count_default_process_feats(
 For extracting Wu et al. features:
 
 ``` r
+
 dlptools::extract_wu_features(
   segs_df = segs_df
 ) |>
@@ -490,6 +503,7 @@ There are other options, like annotating the input dataframe, or
 returning a matrix for subsequent signature extraction:
 
 ``` r
+
 feat_mtx <- dlptools::extract_wu_features(
   segs_df = segs_df,
   return_matrix = TRUE
@@ -525,6 +539,7 @@ route, it would be a good idea to look more at
 itself:
 
 ``` r
+
 sig_feats <- extract_sigminer_wang_features(segs_df)
 
 sig_feats[1:4, 1:4]
@@ -558,6 +573,7 @@ Employs the function dlptools::mode_ploidy() to calculate mode ploidy of
 each sample/cell.
 
 ``` r
+
 dlptools::extract_ploidy_cn_feature(
   segs_df,
   # with option just to annotate the input df
@@ -609,6 +625,7 @@ tweak these definitions, such as:
 We can mark a dataframe with the information:
 
 ``` r
+
 dlptools::mark_segs_chromosome_span(
   segs_df,
   # see ?dlptools::mark_segs_chromosome_span for more args
@@ -643,6 +660,7 @@ them up. This function bascially just calls the one above, with counting
 added:
 
 ``` r
+
 dlptools::extract_segment_position_feature(
   segs_df
   # with option just to annotate the input df
