@@ -42,7 +42,7 @@ Imports:
     vroom
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
     ggtree
 VignetteBuilder: knitr
 Depends: 
