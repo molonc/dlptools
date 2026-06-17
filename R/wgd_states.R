@@ -12,6 +12,8 @@
 #' Functions returns dataframe with "wgd_state" column, along with the fraction
 #' estimates. Also calls on [weighted_ploidy()] and adds those results.
 #'
+#' This function will not use the sex chromosomes for the calculation.
+#'
 #' A potential issue with this approach is that larger chromosomes
 #' disproportionately contribute to the result (e.g., sum of chr 1 and 2 is
 #' more than many of the smaller chromosomes combined). Setting
@@ -35,6 +37,15 @@ get_wgd_states <- function(
   chrom_col = "chr",
   equalize_chromosomes = FALSE
 ) {
+  signals_df <- signals_df |>
+    dplyr::filter(
+      stringr::str_detect(
+        stringr::str_to_lower(.data[[chrom_col]]),
+        "x|y",
+        negate = TRUE
+      )
+    )
+
   w_ploidy <- weighted_ploidy(
     signals_df,
     sample_col = cell_col,
