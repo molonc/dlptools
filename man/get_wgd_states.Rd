@@ -27,21 +27,22 @@ get_wgd_states(
 \item{equalize_chromosomes}{boolean. See description.}
 }
 \value{
-tibble of per-sample ploidy estimates
+tibble of per-sample ploidy estimates, key column being "wgd_state"
 }
 \description{
+#' Requires a \href{https://shahcompbio.github.io/signals/}{signals} input, and is
+based on the paper by
+\href{https://www.nature.com/articles/s41586-025-09240-3}{McPherson et al. 2025}.
 Simple metric. If >50\% of the genome has 2 or more copies of the "major"
 allele ("A"; referred to as "FM2" in the paper), it's at least 1x WGD. If
 there are 3 ("FM3") or more copies of A for >50\% of the genome, then it's at
 least 2x WGD. Otherwise, there is no support for WGD.
 }
 \details{
-Requires a \href{https://shahcompbio.github.io/signals/}{signals} input, and is
-based on the paper by
-\href{https://www.nature.com/articles/s41586-025-09240-3}{McPherson et al. 2025}.
-
 Functions returns dataframe with "wgd_state" column, along with the fraction
 estimates. Also calls on \code{\link[=weighted_ploidy]{weighted_ploidy()}} and adds those results.
+
+This function will not use the sex chromosomes for the calculation.
 
 A potential issue with this approach is that larger chromosomes
 disproportionately contribute to the result (e.g., sum of chr 1 and 2 is

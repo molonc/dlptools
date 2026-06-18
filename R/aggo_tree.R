@@ -42,17 +42,18 @@
 #' @param state_col str. Column to use for the clustering. Default: "state"
 #' @param sample_col str. Column of the sample labels. Default: "cell_id"
 #' @param cut_k int. level to cut the tree at.
-#' @return list. Two elements. $phylo: the tree; $clones: tibble of clone ids
+#' @return list. Two elements. $dendro: the tree; $clones: tibble of clone ids
 #' of tip labels based on tree cutting.
 #' @export
 build_aggo_tree <- function(
-    reads_df,
-    cut_k = 8,
-    state_col = "state",
-    sample_col = "cell_id",
-    chrom_col = "chr",
-    by_ploidy_change = FALSE,
-    by_cn_change = FALSE) {
+  reads_df,
+  cut_k = 8,
+  state_col = "state",
+  sample_col = "cell_id",
+  chrom_col = "chr",
+  by_ploidy_change = FALSE,
+  by_cn_change = FALSE
+) {
   if (by_ploidy_change) {
     reads_df <- reads_df |>
       mark_cn_relative_to_ploidy(
