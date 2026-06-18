@@ -31,7 +31,7 @@ lower ploidy clones.}
 chromosomes.}
 }
 \value{
-list. Two elements. $phylo: the tree; $clones: tibble of clone ids
+list. Two elements. $dendro: the tree; $clones: tibble of clone ids
 of tip labels based on tree cutting.
 }
 \description{

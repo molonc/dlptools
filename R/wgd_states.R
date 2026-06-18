@@ -1,13 +1,12 @@
 #' Calculate WGD states based on major allele CN
 #'
+#' #' Requires a [signals](https://shahcompbio.github.io/signals/) input, and is
+#' based on the paper by
+#' [McPherson et al. 2025](https://www.nature.com/articles/s41586-025-09240-3).
 #' Simple metric. If >50% of the genome has 2 or more copies of the "major"
 #' allele ("A"; referred to as "FM2" in the paper), it's at least 1x WGD. If
 #' there are 3 ("FM3") or more copies of A for >50% of the genome, then it's at
 #' least 2x WGD. Otherwise, there is no support for WGD.
-#'
-#' Requires a [signals](https://shahcompbio.github.io/signals/) input, and is
-#' based on the paper by
-#' [McPherson et al. 2025](https://www.nature.com/articles/s41586-025-09240-3).
 #'
 #' Functions returns dataframe with "wgd_state" column, along with the fraction
 #' estimates. Also calls on [weighted_ploidy()] and adds those results.
@@ -27,7 +26,7 @@
 #' @param end_col string column name identifying end of segments
 #' @param chrom_col string column name for chromosomes
 #' @param equalize_chromosomes boolean. See description.
-#' @return tibble of per-sample ploidy estimates
+#' @return tibble of per-sample ploidy estimates, key column being "wgd_state"
 #' @export
 get_wgd_states <- function(
   signals_df,
