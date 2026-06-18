@@ -18,7 +18,6 @@ knitr::opts_chunk$set(
 
 
 ```{r, warning=FALSE, message=FALSE, echo=FALSE}
-library(vroom)
 library(dlptools)
 ```
 
@@ -306,6 +305,31 @@ filt_reads <- ex_reads |>
 # to carry all columns of information.
 
 c(filt_reads = nrow(filt_reads), input_reads = nrow(ex_reads))
+```
+
+<br>
+<br>
+
+## Aligning Segments
+
+Segments span different intervals for each cell, but some tools need those aligned (i.e., the same spans -- start to end -- must be present for each sample). You could break the segments back into 500 kb bins, but that is generally excessive. Instead, we can break segments into the smallest consistent intervals across all samples.
+
+See the help of `?dlptools::align_segments` for details.
+
+```{r}
+dlptools::align_segments(ex_segs) |>
+  dplyr::arrange(chr, start) |>
+  dplyr::slice_head(n = 5)
+```
+
+Each segment now starts and ends at the same spot. When a long segment is broken, the copy number information is the same for each portion, nothing about the state calls changes. The longer segments are just made shorter based on the smallest segment across cells.
+
+vs what was before:
+
+```{r}
+ex_segs |>
+  dplyr::arrange(chr, start) |>
+  dplyr::slice_head(n = 5)
 ```
 
 <br>
