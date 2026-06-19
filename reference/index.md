@@ -26,8 +26,6 @@
   : see dlptools::extract_wu_features
 - [`add_wu_seg_state_bins()`](https://molonc.github.io/dlptools/reference/add_wu_seg_state_bins.md)
   : see dlptools::extract_wu_features
-- [`align_segments()`](https://molonc.github.io/dlptools/reference/align_segments.md)
-  : cut segments to equal widths across cells/samples.
 - [`bme_vec()`](https://molonc.github.io/dlptools/reference/bme_vec.md)
   : picks beginning, middle, and end of a vector to handle when vectors
   that are too long are passed
@@ -76,6 +74,8 @@
   : find most common element in a vector
 - [`cut_categories_and_count()`](https://molonc.github.io/dlptools/reference/cut_categories_and_count.md)
   : count values that map to given categories
+- [`cut_equal_segments()`](https://molonc.github.io/dlptools/reference/cut_equal_segments.md)
+  : cut segments to equal widths across cells/samples.
 - [`decide_if_oscillation()`](https://molonc.github.io/dlptools/reference/decide_if_oscillation.md)
   : decide if a 3 segment chain counts as an oscillation
 - [`does_palette_cover_plot_vals()`](https://molonc.github.io/dlptools/reference/does_palette_cover_plot_vals.md)

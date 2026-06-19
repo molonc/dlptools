@@ -468,7 +468,7 @@ c(filt_reads = nrow(filt_reads), input_reads = nrow(ex_reads))
   
   
 
-### Aligning Segments
+### Cut Segments
 
 Segments span different intervals for each cell, but some tools need
 those aligned (i.e., the same spans – start to end – must be present for
@@ -477,12 +477,12 @@ that is generally excessive. Instead, we can break segments into the
 smallest consistent intervals across all samples.
 
 See the help of
-[`?dlptools::align_segments`](https://molonc.github.io/dlptools/reference/align_segments.md)
+[`?dlptools::cut_equal_segments`](https://molonc.github.io/dlptools/reference/cut_equal_segments.md)
 for details.
 
 ``` r
 
-dlptools::align_segments(ex_segs) |>
+dlptools::cut_equal_segments(ex_segs) |>
   dplyr::arrange(chr, start) |>
   dplyr::slice_head(n = 5)
 #> # A tibble: 5 × 6

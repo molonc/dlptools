@@ -25,7 +25,6 @@
 <url><loc>https://molonc.github.io/dlptools/reference/add_tip_ancestors_to_df.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/add_wu_change_shape.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/add_wu_seg_state_bins.html</loc></url>
-<url><loc>https://molonc.github.io/dlptools/reference/align_segments.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/bme_vec.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/build_aggo_tree.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/build_left_annot.html</loc></url>
@@ -49,6 +48,7 @@
 <url><loc>https://molonc.github.io/dlptools/reference/create_expected_bins.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/cust_mode.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/cut_categories_and_count.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/cut_equal_segments.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/decide_if_oscillation.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/does_palette_cover_plot_vals.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/expand_length_to_bins.html</loc></url>
