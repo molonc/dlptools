@@ -59,7 +59,7 @@ Warning, this function is *slow*, and the number of pairwise comparisons grows w
 Parallelizing will make your life a bit better. Internally, this function uses `furrr`, you just need to set up a plan.
 
 
-```{r, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE, eval=FALSE}
 # first set up a parallel plan, here with 4 cores being used
 # future::plan(future::multisession, workers = 4)
 
@@ -71,6 +71,13 @@ pairwise_diffs <- dlptools::pairwise_bin_difference(
 
 dplyr::slice_head(pairwise_diffs, n = 5)
 ```
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+pairwise_diffs <- vroom::vroom("data/stored_pairwise_diffs.tsv", show_col_types = FALSE)
+
+dplyr::slice_head(pairwise_diffs, n = 5)
+```
+
 
 
 which is each cell (`index cell`) compared to each other cell (`comp_cell`) and some information on the proportion of bins different (`prop_diff`).
