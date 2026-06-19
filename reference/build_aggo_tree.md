@@ -49,7 +49,7 @@ build_aggo_tree(
 
 ## Value
 
-list. Two elements. \$phylo: the tree; \$clones: tibble of clone ids of
+list. Two elements. \$dendro: the tree; \$clones: tibble of clone ids of
 tip labels based on tree cutting.
 
 ## Details

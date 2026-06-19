@@ -468,6 +468,58 @@ c(filt_reads = nrow(filt_reads), input_reads = nrow(ex_reads))
   
   
 
+### Aligning Segments
+
+Segments span different intervals for each cell, but some tools need
+those aligned (i.e., the same spans – start to end – must be present for
+each sample). You could break the segments back into 500 kb bins, but
+that is generally excessive. Instead, we can break segments into the
+smallest consistent intervals across all samples.
+
+See the help of
+[`?dlptools::align_segments`](https://molonc.github.io/dlptools/reference/align_segments.md)
+for details.
+
+``` r
+
+dlptools::align_segments(ex_segs) |>
+  dplyr::arrange(chr, start) |>
+  dplyr::slice_head(n = 5)
+#> # A tibble: 5 × 6
+#>   cell_id                  chr   start     end state seg_width
+#>   <chr>                    <fct> <int>   <int> <dbl>     <int>
+#> 1 AT23998-A138956A-R03-C34 1         1 2500000     4   2499999
+#> 2 AT23998-A138956A-R04-C58 1         1 2500000     4   2499999
+#> 3 AT23998-A138956A-R05-C42 1         1 2500000     5   2499999
+#> 4 AT23998-A138956A-R05-C64 1         1 2500000     4   2499999
+#> 5 AT23998-A138956A-R06-C31 1         1 2500000     4   2499999
+```
+
+Each segment now starts and ends at the same spot. When a long segment
+is broken, the copy number information is the same for each portion,
+nothing about the state calls changes. The longer segments are just made
+shorter based on the smallest segment across cells.
+
+vs what was before:
+
+``` r
+
+ex_segs |>
+  dplyr::arrange(chr, start) |>
+  dplyr::slice_head(n = 5)
+#> # A tibble: 5 × 6
+#>   cell_id                  chr   start      end state seg_width
+#>   <chr>                    <chr> <dbl>    <dbl> <dbl>     <dbl>
+#> 1 AT23998-A138956A-R03-C34 1         1 41000000     4  40999999
+#> 2 AT23998-A138956A-R04-C58 1         1 44500000     4  44499999
+#> 3 AT23998-A138956A-R05-C42 1         1 43000000     5  42999999
+#> 4 AT23998-A138956A-R05-C64 1         1 33000000     4  32999999
+#> 5 AT23998-A138956A-R06-C31 1         1 23000000     4  22999999
+```
+
+  
+  
+
 ### Where Segments Occur
 
 Useful to know is where segments occur relative to chromosome features
@@ -519,7 +571,7 @@ Visually, this is what we’re doing:
 
 ![Labels of CN segments on chromosomes. Vertical lines indicate
 locations of telomeres and
-centromeres.](various_functions_files/figure-html/unnamed-chunk-21-1.png)
+centromeres.](various_functions_files/figure-html/unnamed-chunk-23-1.png)
 
 Labels of CN segments on chromosomes. Vertical lines indicate locations
 of telomeres and centromeres.

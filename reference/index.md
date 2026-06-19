@@ -26,6 +26,8 @@
   : see dlptools::extract_wu_features
 - [`add_wu_seg_state_bins()`](https://molonc.github.io/dlptools/reference/add_wu_seg_state_bins.md)
   : see dlptools::extract_wu_features
+- [`align_segments()`](https://molonc.github.io/dlptools/reference/align_segments.md)
+  : cut segments to equal widths across cells/samples.
 - [`bme_vec()`](https://molonc.github.io/dlptools/reference/bme_vec.md)
   : picks beginning, middle, and end of a vector to handle when vectors
   that are too long are passed
