@@ -25,7 +25,7 @@
 #'
 #' sgs
 #'
-#' align_segments(sgs)
+#' cut_equal_segments(sgs)
 #'
 #' @param segs_df dataframe. Copy number segments of cells/samples. Need
 #' chromosome, start, end.
@@ -34,7 +34,7 @@
 #' @return tibble of broken down segments with same input columns + seg_width
 #' of the new segments.
 #' @export
-align_segments <- function(
+cut_equal_segments <- function(
   segs_df,
   chrom_col = "chr",
   cell_col = "cell_id"
