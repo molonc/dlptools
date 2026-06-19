@@ -47,7 +47,7 @@ bin breakdown (unless CN data is highly noisy among samples).
 ``` r
 sgs <- tibble::tibble(
   cell_id = c("A", "A", "B", "B"),
-  chrom = rep("chr1", 4),
+  chr = rep("chr1", 4),
   start = c(1, 11, 1, 8),
   end = c(10, 25, 7, 25),
   state = c(2, 4, 3, 8)
@@ -55,7 +55,7 @@ sgs <- tibble::tibble(
 
 sgs
 #> # A tibble: 4 × 5
-#>   cell_id chrom start   end state
+#>   cell_id chr   start   end state
 #>   <chr>   <chr> <dbl> <dbl> <dbl>
 #> 1 A       chr1      1    10     2
 #> 2 A       chr1     11    25     4
@@ -63,5 +63,13 @@ sgs
 #> 4 B       chr1      8    25     8
 
 align_segments(sgs)
-#> Error: object 'chr' not found
+#> # A tibble: 6 × 6
+#>   cell_id chr   start   end state seg_width
+#>   <chr>   <fct> <int> <int> <dbl>     <int>
+#> 1 A       chr1      1     7     2         6
+#> 2 A       chr1      8    10     2         2
+#> 3 A       chr1     11    25     4        14
+#> 4 B       chr1      1     7     3         6
+#> 5 B       chr1      8    10     8         2
+#> 6 B       chr1     11    25     8        14
 ```
