@@ -37,7 +37,7 @@ CN data is highly noisy among samples).
 \examples{
 sgs <- tibble::tibble(
   cell_id = c("A", "A", "B", "B"),
-  chrom = rep("chr1", 4),
+  chr = rep("chr1", 4),
   start = c(1, 11, 1, 8),
   end = c(10, 25, 7, 25),
   state = c(2, 4, 3, 8)
