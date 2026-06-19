@@ -77,15 +77,16 @@ pairwise_diffs <- dlptools::pairwise_bin_difference(
 )
 
 dplyr::slice_head(pairwise_diffs, n = 5)
-#> # A tibble: 5 × 5
-#>   n_diff tot_bins prop_diff index_cell               comp_cell               
-#>    <int>    <int>     <dbl> <chr>                    <chr>                   
-#> 1   2214     6144     0.360 AT23998-A138956A-R03-C34 AT23998-A138956A-R04-C58
-#> 2   2286     6135     0.373 AT23998-A138956A-R03-C34 AT23998-A138956A-R05-C42
-#> 3   2212     6151     0.360 AT23998-A138956A-R03-C34 AT23998-A138956A-R05-C64
-#> 4   1972     6141     0.321 AT23998-A138956A-R03-C34 AT23998-A138956A-R06-C31
-#> 5   2811     6151     0.457 AT23998-A138956A-R03-C34 AT23998-A138956A-R06-C34
 ```
+
+    #> # A tibble: 5 × 5
+    #>   n_diff tot_bins prop_diff index_cell               comp_cell               
+    #>    <dbl>    <dbl>     <dbl> <chr>                    <chr>                   
+    #> 1   2214     6144     0.360 AT23998-A138956A-R03-C34 AT23998-A138956A-R04-C58
+    #> 2   2286     6135     0.373 AT23998-A138956A-R03-C34 AT23998-A138956A-R05-C42
+    #> 3   2212     6151     0.360 AT23998-A138956A-R03-C34 AT23998-A138956A-R05-C64
+    #> 4   1972     6141     0.321 AT23998-A138956A-R03-C34 AT23998-A138956A-R06-C31
+    #> 5   2811     6151     0.457 AT23998-A138956A-R03-C34 AT23998-A138956A-R06-C34
 
 which is each cell (`index cell`) compared to each other cell
 (`comp_cell`) and some information on the proportion of bins different
@@ -102,7 +103,7 @@ We can then find the nearest neighbour of each cell:
 (nn_cells <- dlptools::find_nearest_neighbours(pairwise_diffs))
 #> # A tibble: 40 × 7
 #>    n_diff tot_bins nn_diff index_cell comp_cell max_diff_to_all mean_diff_to_all
-#>     <int>    <int>   <dbl> <chr>      <chr>               <dbl>            <dbl>
+#>     <dbl>    <dbl>   <dbl> <chr>      <chr>               <dbl>            <dbl>
 #>  1   1701     6134   0.277 AT23998-A… AT23998-…           0.899            0.422
 #>  2   1107     6141   0.180 AT23998-A… AT23998-…           0.881            0.361
 #>  3    801     6146   0.130 AT23998-A… AT23998-…           0.851            0.339
@@ -188,7 +189,7 @@ finding outlier pairwise comparisons:
 (outlier_cells <- dlptools::find_outlier_cells(pairwise_diffs, nn_cells))
 #> # A tibble: 3 × 7
 #>   n_diff tot_bins nn_diff outlier_cell  nn_cell max_diff_to_all mean_diff_to_all
-#>    <int>    <int>   <dbl> <chr>         <chr>             <dbl>            <dbl>
+#>    <dbl>    <dbl>   <dbl> <chr>         <chr>             <dbl>            <dbl>
 #> 1   4002     6026   0.664 AT23998-A138… AT2399…           0.902            0.839
 #> 2   4002     6026   0.664 AT23998-A138… AT2399…           0.899            0.832
 #> 3   4216     6155   0.685 AT23998-A138… AT2399…           0.896            0.836
@@ -207,7 +208,7 @@ dlptools::plot_nnd_outlier_cells(
 )
 ```
 
-![](pairwise-differences_files/figure-html/unnamed-chunk-8-1.png)
+![](pairwise-differences_files/figure-html/unnamed-chunk-9-1.png)
 
   
   
@@ -243,7 +244,7 @@ cell_focused_df <- purrr::map_dfr(
 dplyr::slice_head(cell_focused_df, n = 5)
 #> # A tibble: 5 × 5
 #>   n_diff tot_bins prop_diff index_cell               comp_cell               
-#>    <int>    <int>     <dbl> <chr>                    <chr>                   
+#>    <dbl>    <dbl>     <dbl> <chr>                    <chr>                   
 #> 1   2214     6144     0.360 AT23998-A138956A-R03-C34 AT23998-A138956A-R04-C58
 #> 2   2286     6135     0.373 AT23998-A138956A-R03-C34 AT23998-A138956A-R05-C42
 #> 3   2212     6151     0.360 AT23998-A138956A-R03-C34 AT23998-A138956A-R05-C64

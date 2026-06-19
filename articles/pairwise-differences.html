@@ -135,25 +135,25 @@ function uses <code>furrr</code>, you just need to set up a plan.</p>
 <span>  <span class="co"># length of a stretch of matching/unmatching bins to consider.</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span><span class="va">pairwise_diffs</span>, n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 5</span></span></span>
+<span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span><span class="va">pairwise_diffs</span>, n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 5</span></span></span>
 <span><span class="co">#&gt;   n_diff tot_bins prop_diff index_cell               comp_cell               </span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   </span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   <span style="text-decoration: underline;">2</span>214     <span style="text-decoration: underline;">6</span>144     0.360 AT23998-A138956A-R03-C34 AT23998-A138956A-R04-C58</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>   <span style="text-decoration: underline;">2</span>286     <span style="text-decoration: underline;">6</span>135     0.373 AT23998-A138956A-R03-C34 AT23998-A138956A-R05-C42</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   <span style="text-decoration: underline;">2</span>212     <span style="text-decoration: underline;">6</span>151     0.360 AT23998-A138956A-R03-C34 AT23998-A138956A-R05-C64</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>   <span style="text-decoration: underline;">1</span>972     <span style="text-decoration: underline;">6</span>141     0.321 AT23998-A138956A-R03-C34 AT23998-A138956A-R06-C31</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>   <span style="text-decoration: underline;">2</span>811     <span style="text-decoration: underline;">6</span>151     0.457 AT23998-A138956A-R03-C34 AT23998-A138956A-R06-C34</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>   <span style="text-decoration: underline;">2</span>811     <span style="text-decoration: underline;">6</span>151     0.457 AT23998-A138956A-R03-C34 AT23998-A138956A-R06-C34</span></span></code></pre>
 <p>which is each cell (<code>index cell</code>) compared to each other
 cell (<code>comp_cell</code>) and some information on the proportion of
 bins different (<code>prop_diff</code>).</p>
 <p><br><br><br></p>
 <p>We can then find the nearest neighbour of each cell:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">(</span><span class="va">nn_cells</span> <span class="op">&lt;-</span> <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/find_nearest_neighbours.html">find_nearest_neighbours</a></span><span class="op">(</span><span class="va">pairwise_diffs</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 40 × 7</span></span></span>
 <span><span class="co">#&gt;    n_diff tot_bins nn_diff index_cell comp_cell max_diff_to_all mean_diff_to_all</span></span>
-<span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>   <span style="text-decoration: underline;">1</span>701     <span style="text-decoration: underline;">6</span>134   0.277 AT23998-A… AT23998-…           0.899            0.422</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>   <span style="text-decoration: underline;">1</span>107     <span style="text-decoration: underline;">6</span>141   0.180 AT23998-A… AT23998-…           0.881            0.361</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>    801     <span style="text-decoration: underline;">6</span>146   0.130 AT23998-A… AT23998-…           0.851            0.339</span></span>
@@ -172,7 +172,7 @@ bins different (<code>prop_diff</code>).</p>
 <code>targ_cells</code> parameter. Leaving it empty, the default,
 compares all cells in a pairwise manner.</p>
 <p>This will compare the specified cell or cells against all others:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/pairwise_bin_difference.html">pairwise_bin_difference</a></span><span class="op">(</span></span>
 <span>  <span class="va">reads_df</span>,</span>
 <span>  targ_cells <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">reads_df</span><span class="op">$</span><span class="va">cell_id</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span></span>
@@ -194,7 +194,7 @@ compares all cells in a pairwise manner.</p>
 <p><br><br></p>
 <p>Alternatively, if you want to just compare some set of cells against
 themselves, best to just filter upfront:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">reads_df</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">cell_id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">reads_df</span><span class="op">$</span><span class="va">cell_id</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/pairwise_bin_difference.html">pairwise_bin_difference</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -210,22 +210,22 @@ themselves, best to just filter upfront:</p>
 <p>We can then combine the pairwise differences and nearest neighbours
 to find outlier cells by fitting a beta distribution to the latter, and
 finding outlier pairwise comparisons:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">(</span><span class="va">outlier_cells</span> <span class="op">&lt;-</span> <span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/find_outlier_cells.html">find_outlier_cells</a></span><span class="op">(</span><span class="va">pairwise_diffs</span>, <span class="va">nn_cells</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 7</span></span></span>
 <span><span class="co">#&gt;   n_diff tot_bins nn_diff outlier_cell  nn_cell max_diff_to_all mean_diff_to_all</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   <span style="text-decoration: underline;">4</span>002     <span style="text-decoration: underline;">6</span>026   0.664 AT23998-A138… AT2399…           0.902            0.839</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>   <span style="text-decoration: underline;">4</span>002     <span style="text-decoration: underline;">6</span>026   0.664 AT23998-A138… AT2399…           0.899            0.832</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   <span style="text-decoration: underline;">4</span>216     <span style="text-decoration: underline;">6</span>155   0.685 AT23998-A138… AT2399…           0.896            0.836</span></span></code></pre></div>
 <p><br><br><br></p>
 <p>There is a simple plot that can be made to visualize these
 distances:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dlptools</span><span class="fu">::</span><span class="fu"><a href="../reference/plot_nnd_outlier_cells.html">plot_nnd_outlier_cells</a></span><span class="op">(</span></span>
 <span>  <span class="va">pairwise_diffs</span>, <span class="va">nn_cells</span>, <span class="va">outlier_cells</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="pairwise-differences_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="" width="576"></p>
+<p><img src="pairwise-differences_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="" width="576"></p>
 <p><br><br><br></p>
 <p>With a bit of work, we can re-orient the cell distances matrix to
 contain each cell compared against all others. The original function
@@ -236,7 +236,7 @@ though it’s redundant.</p>
 functions.</p>
 <p>This dataframe can get big, as it’s now every cell compared to every
 other cell.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># first, we need to know all of the cells we want to do this for. It could</span></span>
 <span><span class="co"># be all cells, or some subset.</span></span>
 <span></span>
@@ -253,7 +253,7 @@ other cell.</p>
 <span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span><span class="va">cell_focused_df</span>, n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 5</span></span></span>
 <span><span class="co">#&gt;   n_diff tot_bins prop_diff index_cell               comp_cell               </span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   </span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   <span style="text-decoration: underline;">2</span>214     <span style="text-decoration: underline;">6</span>144     0.360 AT23998-A138956A-R03-C34 AT23998-A138956A-R04-C58</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>   <span style="text-decoration: underline;">2</span>286     <span style="text-decoration: underline;">6</span>135     0.373 AT23998-A138956A-R03-C34 AT23998-A138956A-R05-C42</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   <span style="text-decoration: underline;">2</span>212     <span style="text-decoration: underline;">6</span>151     0.360 AT23998-A138956A-R03-C34 AT23998-A138956A-R05-C64</span></span>
