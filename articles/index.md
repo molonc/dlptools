@@ -12,7 +12,5 @@
   Heatmaps](https://molonc.github.io/dlptools/articles/heatmaps.md):
 - [Pairwise Differences Between
   Cells](https://molonc.github.io/dlptools/articles/pairwise-differences.md):
-- [Tree
-  Believability](https://molonc.github.io/dlptools/articles/tree_believability.md):
 - [Various
   Functions](https://molonc.github.io/dlptools/articles/various_functions.md):
