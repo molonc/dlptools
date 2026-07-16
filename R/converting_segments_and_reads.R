@@ -50,27 +50,15 @@ rle_states <- function(states) {
 }
 
 
-#' split segments into bins of a requested size.
+#' original function to split segments back to read bins
 #'
-#' Takes a dataframe with segment start and end columns and returns a dataframe
-#' with those segments split into individual bins. All segment information
-#' applied to the generated bins.
-#'
-#' Warnings issues if requested bin size is bigger than some segments or if
-#' segments can't be split evenly into the bins.
-#'
-#' Bin end will not exceed a segment end. Depending on what is input and
-#' requested, this can lead to one smaller bin at the end of the segment.
-#'
-#' @param segs_df dataframe (or similar) of segment dat
-#' @param bin_size width of bins to split into. Default is standard 500kb
-#' @param seg_start_col name of the column that indicates the start of a segment
-#' @param seg_end_col name of the column that indicates the end of a segment
-#' @importFrom rlang .data
-#' @return input frame split into bins
+#' kept for posterity. This splits into exact 500kb bins, which may extend
+#' beyond end of chromosome, as original DLP did. New function is wildly faster
+#' and more simple.
 #' @export
-segs_to_reads <- function(
-    segs_df, bin_size = 5e5, seg_start_col = "start", seg_end_col = "end") {
+old_segs_to_reads <- function(
+  segs_df, bin_size = 5e5, seg_start_col = "start", seg_end_col = "end"
+) {
   binned_segs <- segs_df |>
     dplyr::mutate(
       seg_width = .data[[seg_end_col]] - .data[[seg_start_col]] + 1,
@@ -112,4 +100,146 @@ segs_to_reads <- function(
   }
 
   return(binned_segs)
+}
+
+#' Chop Genomic Segments into Fixed-Size Genomic Bins
+#'
+#' @description
+#' Splits variable-length copy number segments into fixed-size genomic bins
+#' (windows) of a specified width (e.g., 500 Kb).
+#'
+#' @param segs_df A data.frame or tibble containing genomic segments with
+#'   start, end, and chromosome name columns.
+#' @param bin_size Numeric. The width of the genomic windows in base pairs.
+#'   Defaults to \code{5e5} (500 Kb).
+#' @param genome_version Character. The assembly build to use for creating
+#'   genomic windows. Must be one of \code{"hg19"} or \code{"hg38"}.
+#' @param return_type Character. The format of the returned object. Must be
+#'   one of \code{"granges"} or \code{"tibble"}. Defaults to \code{"tibble"}.
+#' @param seg_start_col Character. The name of the column in \code{segs_df}
+#'   representing segment start coordinates. Defaults to \code{"start"}.
+#' @param seg_end_col Character. The name of the column in \code{segs_df}
+#'   representing segment end coordinates. Defaults to \code{"end"}.
+#' @param sample_id_col Character. The name of the column in \code{segs_df}
+#'   identifying the sample or cell. Defaults to \code{"cell_id"}.
+#' @param state_col Character. The name of the column in \code{segs_df}
+#'   representing the copy number state. Defaults to \code{"state"}.
+#' @param other_meta_cols Character vector. Optional additional metadata column
+#'   names in \code{segs_df} to carry over to the output. Defaults to an empty
+#' vector.
+#' @param chrom_col Character. The name of the column in \code{segs_df}
+#'   representing chromosomes. Defaults to \code{"chr"}.
+#'
+#' @return Depending on \code{return_type}:
+#'   \itemize{
+#'     \item \code{"granges"}: A \code{\link[GenomicRanges]{GRanges}} object
+#'       containing the chopped bins with associated metadata columns.
+#'     \item \code{"tibble"}: A \code{\link[tibble]{tibble}} version of the
+#'       GRanges object, with the chromosome column renamed back to
+#'        \code{chrom_col}.
+#'   }
+#'   In both formats, the output retains the original segment start and end
+#'   positions in the \code{seg_start} and \code{seg_end} metadata columns.
+#'
+#' @export
+segs_to_reads <- function(
+  segs_df,
+  bin_size = 5e5,
+  genome_version = c("hg19", "hg38"),
+  return_type = c("tibble", "granges"),
+  seg_start_col = "start",
+  seg_end_col = "end",
+  sample_id_col = "cell_id",
+  state_col = "state",
+  other_meta_cols = c(),
+  chrom_col = "chr"
+) {
+  return_type <- match.arg(return_type)
+
+  bins_tile <- create_chrom_window_intervals(
+    window_size = bin_size,
+    genome_version = genome_version,
+    return_type = "granges"
+  )
+
+  segs_grs <- cap_dlp_to_chrom_lengths(
+    segs_df,
+    chrom_col = chrom_col,
+    genome_version = genome_version
+  ) |>
+    GenomicRanges::GRanges()
+
+  hits <- GenomicRanges::findOverlaps(bins_tile, segs_grs)
+
+  chopped_segments <- GenomicRanges::pintersect(
+    bins_tile[S4Vectors::queryHits(hits)],
+    segs_grs[S4Vectors::subjectHits(hits)]
+  )
+  S4Vectors::mcols(chopped_segments)$hit <- NULL
+
+  # update with meta data
+  purrr::walk(
+    c(state_col, sample_id_col, other_meta_cols),
+    \(targ_col) {
+      (
+        S4Vectors::mcols(chopped_segments)[[targ_col]] <<-
+          S4Vectors::mcols(segs_grs)[[targ_col]][S4Vectors::subjectHits(hits)]
+      )
+    }
+  )
+
+  # re-insert segment info
+  S4Vectors::mcols(chopped_segments)$seg_start <-
+    S4Vectors::start(segs_grs)[S4Vectors::subjectHits(hits)]
+  S4Vectors::mcols(chopped_segments)$seg_end <-
+    S4Vectors::end(segs_grs)[S4Vectors::subjectHits(hits)]
+
+  if (return_type == "granges") {
+    chopped_segments
+  } else {
+    tibble::as_tibble(chopped_segments) |>
+      dplyr::rename(!!chrom_col := seqnames) |>
+      dplyr::relocate(
+        dplyr::all_of(c(sample_id_col, chrom_col)),
+        start, end
+      )
+  }
+}
+
+
+#' cap DLP data at the lengths of chromosomes
+#'
+#' DLP can output bins/segments longer than the actual chromosomes as it chops
+#' to 500kb bins. This function sets the \code{end} column to be no longer than
+#' the chromosome it occurs on.
+#'
+#' @param rs_df tibble/dataframe. Reads or segments dataframe
+#' @param chrom_col string. Name of chromosome column
+#' @param genome_version string. Name of genome version to use. Default: hg19
+#'
+#' @return input dataframe with final bins/segments not exceeding total
+#' chromosome lengths
+#' @export
+cap_dlp_to_chrom_lengths <- function(
+  rs_df,
+  chrom_col = "chr",
+  genome_version = c("hg19", "hg38")
+) {
+  chr_info <- suppressWarnings(load_chrom_info_file(version = genome_version))
+
+  if (class(rs_df[[chrom_col]]) != "character") {
+    rs_df[[chrom_col]] <- as.character(rs_df[[chrom_col]])
+  }
+
+  # DLP can output bins longer than the chromosome to maintain it's 500Kb
+  # bin size
+  rs_df_cap <- dplyr::left_join(
+    rs_df, chr_info,
+    by = setNames(chrom_col, "chr")
+  ) |>
+    dplyr::mutate(
+      end = dplyr::if_else(end > total_length, total_length, end)
+    )
+
+  rs_df_cap
 }

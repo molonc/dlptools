@@ -600,21 +600,11 @@ extract_breakpoints <- function(
 
   confirm_cols_present(c("start", "end", "state"), segs_df)
 
-  chr_info <- suppressWarnings(load_chrom_info_file(version = genome_version))
-
-  if (class(segs_df$chr) != "character") {
-    segs_df[[chrom_col]] <- as.character(segs_df[[chrom_col]])
-  }
-
-  # DLP can output bins longer than the chromosome to maintain it's 500Kb
-  # bin size
-  segs_grs <- dplyr::left_join(
-    segs_df, chr_info,
-    by = setNames(chrom_col, "chr")
+  segs_grs <- cap_dlp_to_chrom_lengths(
+    segs_df,
+    chrom_col = chrom_col,
+    genome_version = genome_version
   ) |>
-    dplyr::mutate(
-      end = dplyr::if_else(end > total_length, total_length, end)
-    ) |>
     GenomicRanges::GRanges()
 
   if (scope == "windows") {
