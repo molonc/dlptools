@@ -73,7 +73,10 @@ dplyr::slice_head(pairwise_diffs, n = 5)
 ```
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
-pairwise_diffs <- vroom::vroom("data/stored_pairwise_diffs.tsv", show_col_types = FALSE)
+pairwise_diffs <- vroom::vroom(
+  "data/stored_pairwise_diffs.tsv",
+  show_col_types = FALSE
+)
 
 dplyr::slice_head(pairwise_diffs, n = 5)
 ```

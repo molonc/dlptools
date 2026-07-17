@@ -141,7 +141,8 @@ add_wu_change_shape <- function(segs_df, change_split_val = 1) {
 #' see dlptools::extract_wu_features
 #' @return tibble
 add_wu_seg_state_bins <- function(
-    segs_df, state_bin_max = 5, bin_breaks = c(5e6, 10e6 + 1)) {
+  segs_df, state_bin_max = 5, bin_breaks = c(5e6, 10e6 + 1)
+) {
   # names of segment bins, "S": small, L: large, M#: medium and depends on
   # number of intermediate categories
   bin_names <- c(
@@ -232,10 +233,11 @@ extract_sigminer_wang_features <- function(segs_df) {
 #' @return tibble/dataframe of counts
 #' @export
 extract_ploidy_cn_feature <- function(
-    segs_df = NA,
-    sample_col = "cell_id",
-    annotate_input = FALSE,
-    return_matrix = FALSE) {
+  segs_df = NA,
+  sample_col = "cell_id",
+  annotate_input = FALSE,
+  return_matrix = FALSE
+) {
   segs_df <- mark_cn_relative_to_ploidy(
     in_df = segs_df,
     df_type = "segs",
@@ -278,11 +280,12 @@ extract_ploidy_cn_feature <- function(
 #' @return tibble/dataframe of counts
 #' @export
 extract_segment_position_feature <- function(
-    segs_df,
-    sample_col = "cell_id",
-    annotate_input = FALSE,
-    return_matrix = FALSE,
-    ...) {
+  segs_df,
+  sample_col = "cell_id",
+  annotate_input = FALSE,
+  return_matrix = FALSE,
+  ...
+) {
   segs_df <- mark_segs_chromosome_span(segs_df, ...)
 
   if (annotate_input) {
@@ -328,9 +331,10 @@ extract_segment_position_feature <- function(
 #' @return dataframe. sample ids and all observed segment sizes.
 #' @export
 extract_segment_sizes <- function(
-    segs_df,
-    sample_col = "cell_id",
-    return = c("values", "counts")) {
+  segs_df,
+  sample_col = "cell_id",
+  return = c("values", "counts")
+) {
   return_type <- match.arg(return)
 
   confirm_cols_present(c("start", "end"), segs_df)
@@ -378,10 +382,11 @@ extract_segment_sizes <- function(
 #' pre-determined categories.
 #' @export
 extract_cn <- function(
-    segs_df,
-    sample_col = "cell_id",
-    state_col = "state",
-    return = c("values", "counts")) {
+  segs_df,
+  sample_col = "cell_id",
+  state_col = "state",
+  return = c("values", "counts")
+) {
   return_type <- match.arg(return)
 
   cn_values <- dplyr::select(segs_df, .data[[sample_col]], .data[[state_col]])
@@ -439,13 +444,14 @@ extract_cn <- function(
 #' @return dataframe. Sample IDs and the observed breakpoint counts per scope.
 #' @export
 extract_changepoint <- function(
-    segs_df,
-    first_seg_correction = c("ignore", "cn_mode", "diploid"),
-    sample_col = "cell_id",
-    chrom_col = "chr",
-    cn_col = "state",
-    return = c("values", "counts"),
-    ...) {
+  segs_df,
+  first_seg_correction = c("ignore", "cn_mode", "diploid"),
+  sample_col = "cell_id",
+  chrom_col = "chr",
+  cn_col = "state",
+  return = c("values", "counts"),
+  ...
+) {
   first_seg_correction <- match.arg(first_seg_correction)
   return_type <- match.arg(return)
 
@@ -513,12 +519,13 @@ extract_changepoint <- function(
 #' the specified window size.
 #' @export
 extract_bp_per_window <- function(
-    segs_df,
-    window_size = 10e6, # 10Mb is standard for most of these papers
-    sample_col = "cell_id",
-    chrom_col = "chr",
-    genome_version = c("hg19", "hg38"),
-    return = c("values", "counts")) {
+  segs_df,
+  window_size = 10e6, # 10Mb is standard for most of these papers
+  sample_col = "cell_id",
+  chrom_col = "chr",
+  genome_version = c("hg19", "hg38"),
+  return = c("values", "counts")
+) {
   extract_breakpoints(
     segs_df = segs_df,
     scope = "windows",
@@ -538,11 +545,12 @@ extract_bp_per_window <- function(
 #' chromosome arms.
 #' @export
 extract_bp_per_arm <- function(
-    segs_df,
-    sample_col = "cell_id",
-    chrom_col = "chr",
-    genome_version = c("hg19", "hg38"),
-    return = c("values", "counts")) {
+  segs_df,
+  sample_col = "cell_id",
+  chrom_col = "chr",
+  genome_version = c("hg19", "hg38"),
+  return = c("values", "counts")
+) {
   extract_breakpoints(
     segs_df = segs_df,
     scope = "arms",
@@ -578,66 +586,83 @@ extract_bp_per_arm <- function(
 #' @return dataframe. Sample IDs and the observed breakpoint counts per scope.
 #' @export
 extract_breakpoints <- function(
-    segs_df,
-    scope = c("windows", "arms"),
-    genome_version = c("hg19", "hg38"),
-    window_size = 10e6, # 10Mb is standard for most of these papers
-    sample_col = "cell_id",
-    chrom_col = "chr",
-    return = c("values", "counts")) {
+  segs_df,
+  scope = c("windows", "arms"),
+  genome_version = c("hg19", "hg38"),
+  window_size = 10e6, # 10Mb is standard for most of these papers
+  sample_col = "cell_id",
+  chrom_col = "chr",
+  return = c("values", "counts")
+) {
   scope <- match.arg(scope)
   return_type <- match.arg(return)
   genome_version <- match.arg(genome_version)
 
-  confirm_cols_present("end", segs_df)
+  confirm_cols_present(c("start", "end", "state"), segs_df)
 
-  chr_info <- suppressWarnings(load_chrom_info_file(version = genome_version))
-
-  # DLP can output bins longer than the chromosome to maintain it's 500Kb
-  # bin size
-  segs_df_p <- dplyr::left_join(
-    segs_df, chr_info,
-    by = setNames(chrom_col, "chr")
+  segs_grs <- cap_dlp_to_chrom_lengths(
+    segs_df,
+    chrom_col = chrom_col,
+    genome_version = genome_version
   ) |>
-    dplyr::mutate(
-      end = dplyr::if_else(end > total_length, total_length, end)
-    )
+    GenomicRanges::GRanges()
 
-  # set up chromosome intervals, could then generalize to arms?
   if (scope == "windows") {
     intervals <- create_chrom_window_intervals(
       window_size = window_size,
-      genome_version = genome_version
+      genome_version = genome_version,
+      return_type = "granges"
     )
+    meta_col <- "window_name"
   } else if (scope == "arms") {
-    intervals <- create_chrom_arm_intervals(
-      genome_version = genome_version
+    intervals <- load_chromosome_arms_info(
+      genome_version = genome_version,
+      return_type = "granges"
     )
+    meta_col <- "arm"
   }
 
-  bp_counts <- segs_df %>%
-    split(.[[sample_col]]) |>
-    purrr::map(
-      .x = _, \(x) split(x[["end"]], x[[chrom_col]])
-    ) |>
-    purrr::imap_dfr(\(samp, samp_name) {
-      bps <- purrr::imap(samp, \(chrom_ends, chrom_name) {
-        counts <- cut(chrom_ends, breaks = intervals[[chrom_name]]) |>
-          table() |>
-          as.vector()
+  hits <- GenomicRanges::findOverlaps(segs_grs, intervals)
 
-        unname(counts)
-      }) |>
-        purrr::list_c()
+  q_hits <- S4Vectors::queryHits(hits)
+  s_hits <- S4Vectors::subjectHits(hits)
 
-      tibble::tibble(
-        !!sample_col := samp_name,
-        breakpoints = bps
-      )
-    })
+  seg_locations <- tibble::tibble(
+    cell_id = S4Vectors::mcols(segs_grs)$cell_id[q_hits],
+    state = S4Vectors::mcols(segs_grs)$state[q_hits],
+    chr = as.character(GenomicRanges::seqnames(segs_grs)[q_hits]),
+    start = GenomicRanges::start(segs_grs)[q_hits],
+    end = GenomicRanges::end(segs_grs)[q_hits],
+
+    # depends on window
+    !!meta_col := S4Vectors::mcols(intervals)[[meta_col]][s_hits]
+  )
+  # could be functioned out as independent to label positions
+
+  bp_values <- seg_locations |>
+    dplyr::arrange(cell_id, chr, .data[[meta_col]], start) |>
+    dplyr::group_by(cell_id, chr, .data[[meta_col]]) |>
+    dplyr::summarise(
+      n_bps = sum(state != dplyr::lag(state), na.rm = TRUE),
+      .groups = "drop"
+    )
 
   if (return_type == "values") {
-    return(bp_counts)
+    if (scope == "windows") {
+      # add back some useful information
+      dplyr::left_join(
+        bp_values,
+        tibble::as_tibble(intervals) |>
+          dplyr::select(
+            window_name,
+            !!chrom_col := seqnames,
+            start, end
+          ),
+        by = c("window_name", chrom_col)
+      )
+    } else {
+      bp_values
+    }
   } else if (return_type == "counts") {
     count_cats <- list(
       windows = list(
@@ -651,8 +676,8 @@ extract_breakpoints <- function(
     )
 
     bp_cts <- cut_categories_and_count(
-      df = bp_counts,
-      targ_col = "breakpoints",
+      df = bp_values,
+      targ_col = "n_bps",
       sample_col = sample_col,
       breaks = purrr::pluck(count_cats, scope, "breaks"),
       labels = purrr::pluck(count_cats, scope, "labels")
@@ -661,6 +686,7 @@ extract_breakpoints <- function(
     return(bp_cts)
   }
 }
+
 
 #' extract the legths of chains of osscilating copy number segments
 #'
@@ -718,13 +744,14 @@ extract_breakpoints <- function(
 #' @return dataframe. sample IDs and observed chain lengths.
 #' @export
 extract_oscillations <- function(
-    segs_df,
-    middle_bound = 2,
-    ends_bound = 0,
-    sample_col = "cell_id",
-    chrom_col = "chr",
-    cn_col = "state",
-    return = c("values", "counts")) {
+  segs_df,
+  middle_bound = 2,
+  ends_bound = 0,
+  sample_col = "cell_id",
+  chrom_col = "chr",
+  cn_col = "state",
+  return = c("values", "counts")
+) {
   return_type <- match.arg(return)
 
   # TODO: this is pretty gross. Is it really better that filtering,

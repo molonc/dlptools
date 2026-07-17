@@ -2,36 +2,66 @@
 % Please edit documentation in R/converting_segments_and_reads.R
 \name{segs_to_reads}
 \alias{segs_to_reads}
-\title{split segments into bins of a requested size.}
+\title{Chop Genomic Segments into Fixed-Size Genomic Bins}
 \usage{
 segs_to_reads(
   segs_df,
   bin_size = 5e+05,
+  genome_version = c("hg19", "hg38"),
+  return_type = c("tibble", "granges"),
   seg_start_col = "start",
-  seg_end_col = "end"
+  seg_end_col = "end",
+  sample_id_col = "cell_id",
+  state_col = "state",
+  other_meta_cols = c(),
+  chrom_col = "chr"
 )
 }
 \arguments{
-\item{segs_df}{dataframe (or similar) of segment dat}
+\item{segs_df}{A data.frame or tibble containing genomic segments with
+start, end, and chromosome name columns.}
 
-\item{bin_size}{width of bins to split into. Default is standard 500kb}
+\item{bin_size}{Numeric. The width of the genomic windows in base pairs.
+Defaults to \code{5e5} (500 Kb).}
 
-\item{seg_start_col}{name of the column that indicates the start of a segment}
+\item{genome_version}{Character. The assembly build to use for creating
+genomic windows. Must be one of \code{"hg19"} or \code{"hg38"}.}
 
-\item{seg_end_col}{name of the column that indicates the end of a segment}
+\item{return_type}{Character. The format of the returned object. Must be
+one of \code{"granges"} or \code{"tibble"}. Defaults to \code{"tibble"}.}
+
+\item{seg_start_col}{Character. The name of the column in \code{segs_df}
+representing segment start coordinates. Defaults to \code{"start"}.}
+
+\item{seg_end_col}{Character. The name of the column in \code{segs_df}
+representing segment end coordinates. Defaults to \code{"end"}.}
+
+\item{sample_id_col}{Character. The name of the column in \code{segs_df}
+identifying the sample or cell. Defaults to \code{"cell_id"}.}
+
+\item{state_col}{Character. The name of the column in \code{segs_df}
+representing the copy number state. Defaults to \code{"state"}.}
+
+\item{other_meta_cols}{Character vector. Optional additional metadata column
+names in \code{segs_df} to carry over to the output. Defaults to an empty
+vector.}
+
+\item{chrom_col}{Character. The name of the column in \code{segs_df}
+representing chromosomes. Defaults to \code{"chr"}.}
 }
 \value{
-input frame split into bins
+Depending on \code{return_type}:
+\itemize{
+\item \code{"granges"}: A \code{\link[GenomicRanges]{GRanges}} object
+containing the chopped bins with associated metadata columns.
+\item \code{"tibble"}: A \code{\link[tibble]{tibble}} version of the
+GRanges object, with the chromosome column renamed back to
+\code{chrom_col}.
+}
+In both formats, the output retains the original segment start and end
+positions in the \code{seg_start} and \code{seg_end} metadata columns.
 }
 \description{
-Takes a dataframe with segment start and end columns and returns a dataframe
-with those segments split into individual bins. All segment information
-applied to the generated bins.
-}
-\details{
-Warnings issues if requested bin size is bigger than some segments or if
-segments can't be split evenly into the bins.
-
-Bin end will not exceed a segment end. Depending on what is input and
-requested, this can lead to one smaller bin at the end of the segment.
+Splits variable-length copy number segments into fixed-size genomic bins
+(windows) of a specified width (e.g., 500 Kb).
 }

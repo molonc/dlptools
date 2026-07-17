@@ -32,10 +32,11 @@
 #' @return tibble of cell pairs and metrics about their differences.
 #' @export
 pairwise_bin_difference <- function(
-    bin_df,
-    targ_cells = c(),
-    min_seg_length = 2.5e6,
-    return_pairs_matrix = FALSE) {
+  bin_df,
+  targ_cells = c(),
+  min_seg_length = 2.5e6,
+  return_pairs_matrix = FALSE
+) {
   required_cols <- c("cell_id", "chr", "start", "end", "state")
   if (!all(required_cols %in% colnames(bin_df))) {
     stop(paste(
@@ -165,7 +166,15 @@ compare_two_cells <- function(cell_1_df, cell_2_df, min_seg_length) {
     dplyr::filter(
       span >= min_seg_length
     ) |>
-    segs_to_reads() |>
+    dplyr::mutate(
+      fake_cell_col = "placeholder"
+    ) |>
+    segs_to_reads(
+      sample_id_col = "fake_cell_col",
+      other_meta_cols = c("match"),
+      bin_size = 5e5
+    ) |>
+    dplyr::select(-fake_cell_col) |>
     dplyr::summarise(
       n_diff = sum(match == FALSE),
       tot_bins = dplyr::n(),
@@ -233,9 +242,10 @@ find_nearest_neighbours <- function(pairwise_diffs) {
 #' @return NA or tibble of information on cells considered outliers. NA if no outliers found.
 #' @export
 find_outlier_cells <- function(
-    pairwise_diffs,
-    nn_cells,
-    outlier_percentile = 0.99) {
+  pairwise_diffs,
+  nn_cells,
+  outlier_percentile = 0.99
+) {
   diff_beta_dist <- fitdistrplus::fitdist(nn_cells$nn_diff, "beta")
 
   min_diff <- qbeta(
@@ -267,9 +277,10 @@ find_outlier_cells <- function(
 #' @return ggplot object
 #' @export
 plot_nnd_outlier_cells <- function(
-    pairwise_diffs,
-    nn_cells,
-    outlier_cells) {
+  pairwise_diffs,
+  nn_cells,
+  outlier_cells
+) {
   nn_p_dat <- dplyr::mutate(
     nn_cells,
     `outlier cell` = index_cell %in% outlier_cells$outlier_cell

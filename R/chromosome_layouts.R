@@ -62,7 +62,8 @@ add_chromosome_length <- function(cn_df, version = c("hg19", "hg38"), chrom_col 
 #' @return input table with centromere information added by chromosome
 #' @export
 add_centromere_locations <- function(
-    cn_df, centro_file = NULL, version = c("hg19", "hg38")) {
+  cn_df, centro_file = NULL, version = c("hg19", "hg38")
+) {
   version_choice <- match.arg(version)
 
   centros <- load_ucsc_centromeres(
@@ -97,11 +98,12 @@ add_centromere_locations <- function(
 #' potentially other centromere information columns, if needed)
 #' @export
 mark_bins_overlapping_centromeres <- function(
-    reads_df,
-    padding = 0,
-    bin_start_col = "start",
-    bin_end_col = "end",
-    version = c("hg19", "hg38")) {
+  reads_df,
+  padding = 0,
+  bin_start_col = "start",
+  bin_end_col = "end",
+  version = c("hg19", "hg38")
+) {
   version_choice <- match.arg(version)
   columns_check <- all(c("centro_start", "centro_end") %in% colnames(reads_df))
 
@@ -146,8 +148,9 @@ mark_bins_overlapping_centromeres <- function(
 #' @return tibble of parsed centromere spans
 #' @export
 load_ucsc_centromeres <- function(
-    version = c("hg19", "hg38"),
-    centro_file = NULL) {
+  version = c("hg19", "hg38"),
+  centro_file = NULL
+) {
   version_choice <- match.arg(version)
 
   if (is.null(centro_file)) {
@@ -338,12 +341,13 @@ add_telomere_positions <- function(cn_df, version = c("hg19", "hg38")) {
 #' column of interest being seg_span_event.
 #' @export
 mark_segs_chromosome_span <- function(
-    segs_df,
-    min_bound_distance = 5e5, # given scale of DLP, this should probably be 1 bin width, at least
-    min_span_of_chrom = 0.9,
-    min_span_of_arm = 0.9,
-    version = c("hg19", "hg38"),
-    acro_fix_whole_chrom = FALSE) {
+  segs_df,
+  min_bound_distance = 5e5, # given scale of DLP, this should probably be 1 bin width, at least
+  min_span_of_chrom = 0.9,
+  min_span_of_arm = 0.9,
+  version = c("hg19", "hg38"),
+  acro_fix_whole_chrom = FALSE
+) {
   event_labels <- c(
     arm = "arm", whole = "whole-chrom", telo = "telo-bound",
     centro = "centro-bound", inter = "inter"
@@ -446,21 +450,41 @@ mark_segs_chromosome_span <- function(
 #' @return list. Named by chromosome, vectors of window starts.
 #' @export
 create_chrom_window_intervals <- function(
-    window_size,
-    genome_version = c("hg19", "hg38")) {
+  window_size = 1e7,
+  genome_version = c("hg19", "hg38"),
+  return_type = c("granges", "tibble")
+) {
   genome_version <- match.arg(genome_version)
 
-  chr_info <- suppressWarnings(
+  suppressWarnings(
     chr_info <- load_chrom_info_file(version = genome_version)
   )
-  intervals <- purrr::map(chr_info$total_length, \(total_length) {
-    max_end <- total_length + window_size
-    intervals <- seq(1, max_end, window_size)
-    intervals
-  })
-  names(intervals) <- chr_info$chr
-  return(intervals)
+
+  chr_lens <- chr_info$total_length
+  names(chr_lens) <- chr_info$chr
+
+  genome_tiles <- GenomicRanges::tileGenome(
+    seqlengths = chr_lens,
+    tilewidth = window_size,
+    cut.last.tile.in.chrom = TRUE
+  )
+
+  genome_tiles$window_name <- paste0("w", seq(1, length(genome_tiles)))
+
+  if (return_type == "granges") {
+    genome_tiles
+  } else {
+    tibble::as_tibble(genome_tiles)
+  }
+  # intervals <- purrr::map(chr_info$total_length, \(total_length) {
+  #   max_end <- total_length + window_size
+  #   intervals <- seq(1, max_end, window_size)
+  #   intervals
+  # })
+  # names(intervals) <- chr_info$chr
+  # return(intervals)
 }
+
 
 #' create a list of intervals spanning chromosome arms
 #'
@@ -498,4 +522,36 @@ create_chrom_arm_intervals <- function(genome_version = c("hg19", "hg38")) {
   names(intervals) <- chrom_info$chr
 
   return(intervals)
+}
+
+load_chromosome_arms_info <- function(
+  genome_version = c("hg19", "hg38"),
+  return_type = c("granges", "tibble")
+) {
+  centros <- suppressWarnings(
+    load_ucsc_centromeres(version = genome_version)
+  )
+  total_lens <- suppressWarnings(
+    load_chrom_info_file(version = genome_version)
+  )
+
+  p_arms <- dplyr::select(centros, chrom, end = centro_start) |>
+    dplyr::mutate(
+      start = 1, arm = "p"
+    )
+
+  q_arms <- dplyr::select(centros, chrom, start = centro_end) |>
+    dplyr::left_join(total_lens, by = dplyr::join_by(chrom == chr)) |>
+    dplyr::mutate(arm = "q") |>
+    dplyr::rename(end = total_length)
+
+  all_arms <- dplyr::bind_rows(p_arms, q_arms) |>
+    dplyr::arrange(chrom) |>
+    dplyr::relocate(chrom, start, end, arm)
+
+  if (return_type == "granges") {
+    GenomicRanges::GRanges(all_arms)
+  } else {
+    all_arms
+  }
 }
