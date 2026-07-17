@@ -202,7 +202,8 @@ segs_to_reads <- function(
       dplyr::relocate(
         dplyr::all_of(c(sample_id_col, chrom_col)),
         start, end
-      )
+      ) |>
+      dplyr::select(-strand)
   }
 }
 
