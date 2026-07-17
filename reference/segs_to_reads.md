@@ -1,8 +1,7 @@
-# split segments into bins of a requested size.
+# Chop Genomic Segments into Fixed-Size Genomic Bins
 
-Takes a dataframe with segment start and end columns and returns a
-dataframe with those segments split into individual bins. All segment
-information applied to the generated bins.
+Splits variable-length copy number segments into fixed-size genomic bins
+(windows) of a specified width (e.g., 500 Kb).
 
 ## Usage
 
@@ -10,8 +9,14 @@ information applied to the generated bins.
 segs_to_reads(
   segs_df,
   bin_size = 5e+05,
+  genome_version = c("hg19", "hg38"),
+  return_type = c("tibble", "granges"),
   seg_start_col = "start",
-  seg_end_col = "end"
+  seg_end_col = "end",
+  sample_id_col = "cell_id",
+  state_col = "state",
+  other_meta_cols = c(),
+  chrom_col = "chr"
 )
 ```
 
@@ -19,28 +24,66 @@ segs_to_reads(
 
 - segs_df:
 
-  dataframe (or similar) of segment dat
+  A data.frame or tibble containing genomic segments with start, end,
+  and chromosome name columns.
 
 - bin_size:
 
-  width of bins to split into. Default is standard 500kb
+  Numeric. The width of the genomic windows in base pairs. Defaults to
+  `5e5` (500 Kb).
+
+- genome_version:
+
+  Character. The assembly build to use for creating genomic windows.
+  Must be one of `"hg19"` or `"hg38"`.
+
+- return_type:
+
+  Character. The format of the returned object. Must be one of
+  `"granges"` or `"tibble"`. Defaults to `"tibble"`.
 
 - seg_start_col:
 
-  name of the column that indicates the start of a segment
+  Character. The name of the column in `segs_df` representing segment
+  start coordinates. Defaults to `"start"`.
 
 - seg_end_col:
 
-  name of the column that indicates the end of a segment
+  Character. The name of the column in `segs_df` representing segment
+  end coordinates. Defaults to `"end"`.
+
+- sample_id_col:
+
+  Character. The name of the column in `segs_df` identifying the sample
+  or cell. Defaults to `"cell_id"`.
+
+- state_col:
+
+  Character. The name of the column in `segs_df` representing the copy
+  number state. Defaults to `"state"`.
+
+- other_meta_cols:
+
+  Character vector. Optional additional metadata column names in
+  `segs_df` to carry over to the output. Defaults to an empty vector.
+
+- chrom_col:
+
+  Character. The name of the column in `segs_df` representing
+  chromosomes. Defaults to `"chr"`.
 
 ## Value
 
-input frame split into bins
+Depending on `return_type`:
 
-## Details
+- `"granges"`: A
+  [`GRanges`](https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html)
+  object containing the chopped bins with associated metadata columns.
 
-Warnings issues if requested bin size is bigger than some segments or if
-segments can't be split evenly into the bins.
+- `"tibble"`: A
+  [`tibble`](https://tibble.tidyverse.org/reference/tibble.html) version
+  of the GRanges object, with the chromosome column renamed back to
+  `chrom_col`.
 
-Bin end will not exceed a segment end. Depending on what is input and
-requested, this can lead to one smaller bin at the end of the segment.
+In both formats, the output retains the original segment start and end
+positions in the `seg_start` and `seg_end` metadata columns.

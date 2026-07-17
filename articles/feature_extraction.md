@@ -219,19 +219,19 @@ dlptools::extract_breakpoints(
   # return = 'counts'
 ) |>
   dplyr::slice_head(n = 10)
-#> # A tibble: 10 × 2
-#>    cell_id                  breakpoints
-#>    <chr>                          <int>
-#>  1 AT21352-A144173A-R03-C12          10
-#>  2 AT21352-A144173A-R03-C12           5
-#>  3 AT21352-A144173A-R03-C12           2
-#>  4 AT21352-A144173A-R03-C12           1
-#>  5 AT21352-A144173A-R03-C12           0
-#>  6 AT21352-A144173A-R03-C12           4
-#>  7 AT21352-A144173A-R03-C12           3
-#>  8 AT21352-A144173A-R03-C12           2
-#>  9 AT21352-A144173A-R03-C12           0
-#> 10 AT21352-A144173A-R03-C12           1
+#> # A tibble: 10 × 4
+#>    cell_id                  chr   arm   n_bps
+#>    <chr>                    <chr> <chr> <int>
+#>  1 AT21352-A144173A-R03-C12 1     p        10
+#>  2 AT21352-A144173A-R03-C12 1     q         5
+#>  3 AT21352-A144173A-R03-C12 10    p         2
+#>  4 AT21352-A144173A-R03-C12 10    q         1
+#>  5 AT21352-A144173A-R03-C12 11    p         0
+#>  6 AT21352-A144173A-R03-C12 11    q         4
+#>  7 AT21352-A144173A-R03-C12 12    p         3
+#>  8 AT21352-A144173A-R03-C12 12    q         2
+#>  9 AT21352-A144173A-R03-C12 13    p         0
+#> 10 AT21352-A144173A-R03-C12 13    q         1
 
 # there is an alias of: dlptools::extract_bp_per_arm()
 ```
@@ -254,19 +254,19 @@ dlptools::extract_breakpoints(
   # return = 'counts'
 ) |>
   dplyr::slice_head(n = 10)
-#> # A tibble: 10 × 2
-#>    cell_id                  breakpoints
-#>    <chr>                          <int>
-#>  1 AT21352-A144173A-R03-C12           1
-#>  2 AT21352-A144173A-R03-C12           0
-#>  3 AT21352-A144173A-R03-C12           1
-#>  4 AT21352-A144173A-R03-C12           1
-#>  5 AT21352-A144173A-R03-C12           1
-#>  6 AT21352-A144173A-R03-C12           1
-#>  7 AT21352-A144173A-R03-C12           0
-#>  8 AT21352-A144173A-R03-C12           2
-#>  9 AT21352-A144173A-R03-C12           1
-#> 10 AT21352-A144173A-R03-C12           1
+#> # A tibble: 10 × 6
+#>    cell_id                  chr   window_name n_bps     start       end
+#>    <chr>                    <chr> <chr>       <int>     <int>     <int>
+#>  1 AT21352-A144173A-R03-C12 1     w1              0         1  10000000
+#>  2 AT21352-A144173A-R03-C12 1     w10             1  90000001 100000000
+#>  3 AT21352-A144173A-R03-C12 1     w11             1 100000001 110000000
+#>  4 AT21352-A144173A-R03-C12 1     w12             0 110000001 120000000
+#>  5 AT21352-A144173A-R03-C12 1     w13             0 120000001 130000000
+#>  6 AT21352-A144173A-R03-C12 1     w14             0 130000001 140000000
+#>  7 AT21352-A144173A-R03-C12 1     w15             0 140000001 150000000
+#>  8 AT21352-A144173A-R03-C12 1     w16             0 150000001 160000000
+#>  9 AT21352-A144173A-R03-C12 1     w17             0 160000001 170000000
+#> 10 AT21352-A144173A-R03-C12 1     w18             1 170000001 180000000
 
 # there is an alias of: dlptools::extract_bp_per_window()
 ```

@@ -33,6 +33,8 @@
   : build tree with AGNES clustering
 - [`build_left_annot()`](https://molonc.github.io/dlptools/reference/build_left_annot.md)
   : builds the left-side annotations of the cells
+- [`cap_dlp_to_chrom_lengths()`](https://molonc.github.io/dlptools/reference/cap_dlp_to_chrom_lengths.md)
+  : cap DLP data at the lengths of chromosomes
 - [`cell_states_to_strings()`](https://molonc.github.io/dlptools/reference/cell_states_to_strings.md)
   : collapse cell states to strings
 - [`characterize_foreground_allele_state_changes()`](https://molonc.github.io/dlptools/reference/characterize_foreground_allele_state_changes.md)
@@ -176,6 +178,8 @@
   : medicc profiles files to foreground assessment
 - [`mode_ploidy()`](https://molonc.github.io/dlptools/reference/mode_ploidy.md)
   : find the mode CN per chromosome, then mode across the chromosomes
+- [`old_segs_to_reads()`](https://molonc.github.io/dlptools/reference/old_segs_to_reads.md)
+  : original function to split segments back to read bins
 - [`output_hm_image()`](https://molonc.github.io/dlptools/reference/output_hm_image.md)
   : generate a ComplexHeatmap::Heatmap image, either to console or file.
 - [`pairwise_bin_difference()`](https://molonc.github.io/dlptools/reference/pairwise_bin_difference.md)
@@ -215,7 +219,7 @@
 - [`sample_from_cell()`](https://molonc.github.io/dlptools/reference/sample_from_cell.md)
   : extract sample ID from the typically formatted cell_ids
 - [`segs_to_reads()`](https://molonc.github.io/dlptools/reference/segs_to_reads.md)
-  : split segments into bins of a requested size.
+  : Chop Genomic Segments into Fixed-Size Genomic Bins
 - [`sort_df_by_cell_order()`](https://molonc.github.io/dlptools/reference/sort_df_by_cell_order.md)
   : sort a table given a vector of cell_ids
 - [`weighted_ploidy()`](https://molonc.github.io/dlptools/reference/weighted_ploidy.md)

@@ -27,6 +27,7 @@
 <url><loc>https://molonc.github.io/dlptools/reference/bme_vec.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/build_aggo_tree.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/build_left_annot.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/cap_dlp_to_chrom_lengths.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/cell_states_to_strings.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/characterize_foreground_allele_state_changes.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/characterize_foreground_total_state_changes.html</loc></url>
@@ -98,6 +99,7 @@
 <url><loc>https://molonc.github.io/dlptools/reference/mark_segs_chromosome_span.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/medicc_profiles_to_foreground.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/mode_ploidy.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/old_segs_to_reads.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/output_hm_image.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/pairwise_bin_difference.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/pipe.html</loc></url>

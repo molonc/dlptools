@@ -5,7 +5,11 @@ break a chromosome up into intervals of a defined window size
 ## Usage
 
 ``` r
-create_chrom_window_intervals(window_size, genome_version = c("hg19", "hg38"))
+create_chrom_window_intervals(
+  window_size = 1e+07,
+  genome_version = c("hg19", "hg38"),
+  return_type = c("granges", "tibble")
+)
 ```
 
 ## Arguments
