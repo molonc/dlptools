@@ -11,16 +11,26 @@
 #' @param fg_change the column to plot with the changes between parent and tips.
 #' @export
 plot_heatmap_of_tip_changes <- function(
-    states_df, phylogeny, file_name, changes_col = "fg_change") {
+  states_df, phylogeny, file_name, changes_col = "fg_change"
+) {
   min_state <- min(states_df[[changes_col]], na.rm = TRUE)
   max_state <- max(states_df[[changes_col]], na.rm = TRUE)
 
   # temp until I get more colors going...should probably have up to 11 change
   # colors in both directions
   if (min_state < -8 || max_state > 8) {
-    warning("Found state changes beyond 8 in one direction. Don't have colors for that. Will cap values at 8+ and -8+")
-    states_df[[changes_col]][states_df[[changes_col]] >= 8] <- "8+"
-    states_df[[changes_col]][states_df[[changes_col]] <= -8] <- "-8+"
+    warning(paste0(
+      "Found state changes beyond 8 in one direction. Don't have colors for",
+      " that. Will cap values at 8+ and -8+"
+    ))
+    states_df <- states_df |>
+      dplyr::mutate(
+        !!changes_col := dplyr::case_when(
+          .data[[changes_col]] >= 8 ~ "8+",
+          .data[[changes_col]] <= -8 ~ "-8+",
+          .default = as.character(.data[[changes_col]])
+        )
+      )
   }
 
   loss_colors <- c(
