@@ -29,10 +29,14 @@
 - [`bme_vec()`](https://molonc.github.io/dlptools/reference/bme_vec.md)
   : picks beginning, middle, and end of a vector to handle when vectors
   that are too long are passed
+- [`breakpoint_sharing()`](https://molonc.github.io/dlptools/reference/breakpoint_sharing.md)
+  : summarize pairwise breakpoint sharing across cells
 - [`build_aggo_tree()`](https://molonc.github.io/dlptools/reference/build_aggo_tree.md)
   : build tree with AGNES clustering
 - [`build_left_annot()`](https://molonc.github.io/dlptools/reference/build_left_annot.md)
   : builds the left-side annotations of the cells
+- [`calc_jaccard_similarity()`](https://molonc.github.io/dlptools/reference/calc_jaccard_similarity.md)
+  : calculate jaccard similarity using breakpoint matrices
 - [`cap_dlp_to_chrom_lengths()`](https://molonc.github.io/dlptools/reference/cap_dlp_to_chrom_lengths.md)
   : cap DLP data at the lengths of chromosomes
 - [`cell_states_to_strings()`](https://molonc.github.io/dlptools/reference/cell_states_to_strings.md)
@@ -60,6 +64,8 @@
   : confirm if columns exist in dataframe
 - [`convert_long_reads_to_wide()`](https://molonc.github.io/dlptools/reference/convert_long_reads_to_wide.md)
   : convert long format reads to wide format
+- [`convert_to_mtx()`](https://molonc.github.io/dlptools/reference/convert_to_mtx.md)
+  : convert a dataframe to a wide matrix of bin states
 - [`count_default_process_feats()`](https://molonc.github.io/dlptools/reference/count_default_process_feats.md)
   : wrapper around classic process based features
 - [`count_oscillations()`](https://molonc.github.io/dlptools/reference/count_oscillations.md)
@@ -150,6 +156,10 @@
   : detect if chromosomes labels include "chr"
 - [`is_not_numeric_lacks_order()`](https://molonc.github.io/dlptools/reference/is_not_numeric_lacks_order.md)
   : confirms a vector is not numeric and is unorderd
+- [`joint_seg_chromosome()`](https://molonc.github.io/dlptools/reference/joint_seg_chromosome.md)
+  : Perform joint segmentation on a single chromosome
+- [`joint_seg_reads()`](https://molonc.github.io/dlptools/reference/joint_seg_reads.md)
+  : Perform joint segmentation of read state calls
 - [`library_from_cell()`](https://molonc.github.io/dlptools/reference/library_from_cell.md)
   : extract library ID from the typically formatted cell_ids
 - [`load_chrom_info_file()`](https://molonc.github.io/dlptools/reference/load_chrom_info_file.md)
@@ -220,6 +230,8 @@
   : extract sample ID from the typically formatted cell_ids
 - [`segs_to_reads()`](https://molonc.github.io/dlptools/reference/segs_to_reads.md)
   : Chop Genomic Segments into Fixed-Size Genomic Bins
+- [`snap_segs_to_new_breakpoints()`](https://molonc.github.io/dlptools/reference/snap_segs_to_new_breakpoints.md)
+  : alter existing segments to fit new breakpoints
 - [`sort_df_by_cell_order()`](https://molonc.github.io/dlptools/reference/sort_df_by_cell_order.md)
   : sort a table given a vector of cell_ids
 - [`weighted_ploidy()`](https://molonc.github.io/dlptools/reference/weighted_ploidy.md)

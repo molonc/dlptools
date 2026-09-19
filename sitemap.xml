@@ -25,8 +25,10 @@
 <url><loc>https://molonc.github.io/dlptools/reference/add_wu_change_shape.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/add_wu_seg_state_bins.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/bme_vec.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/breakpoint_sharing.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/build_aggo_tree.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/build_left_annot.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/calc_jaccard_similarity.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/cap_dlp_to_chrom_lengths.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/cell_states_to_strings.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/characterize_foreground_allele_state_changes.html</loc></url>
@@ -40,6 +42,7 @@
 <url><loc>https://molonc.github.io/dlptools/reference/compute_tip_sibling_distances.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/confirm_cols_present.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/convert_long_reads_to_wide.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/convert_to_mtx.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/count_default_process_feats.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/count_oscillations.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/create_chrom_arm_intervals.html</loc></url>
@@ -85,6 +88,8 @@
 <url><loc>https://molonc.github.io/dlptools/reference/index.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/is_chr_used_in_chroms.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/is_not_numeric_lacks_order.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/joint_seg_chromosome.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/joint_seg_reads.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/library_from_cell.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/load_chrom_info_file.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/load_mask_file.html</loc></url>
@@ -120,6 +125,7 @@
 <url><loc>https://molonc.github.io/dlptools/reference/rle_states.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/sample_from_cell.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/segs_to_reads.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/snap_segs_to_new_breakpoints.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/sort_df_by_cell_order.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/weighted_ploidy.html</loc></url>
 </urlset>
