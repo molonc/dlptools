@@ -8,7 +8,7 @@ generate_state_hm(
   states_mat,
   phylo,
   labels_fontsize = 8,
-  plot_cols = STATE_COLORS,
+  plot_cols = STATE_COLOURS,
   left_annot = NULL,
   hm_legend_title = NULL,
   legend_11plus = FALSE,

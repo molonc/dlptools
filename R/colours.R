@@ -11,21 +11,37 @@ CNV_COLOURS <- structure(
 
 #' alias of standard colors used in dlp plots
 #' @export
-STATE_COLORS <- CNV_COLOURS
+STATE_COLOURS <- CNV_COLOURS
+
+
+# expanded CN palette
+EXPANDED_STATE_COLOURS <- circlize::colorRamp2(
+  breaks = c(0, 1, 2, 3:8, 10, 20, 50),
+  colors = c(
+    CNV_COLOURS[1],
+    CNV_COLOURS[2],
+    CNV_COLOURS[3],
+    CNV_COLOURS[4:9],
+    CNV_COLOURS[10],
+    CNV_COLOURS[12],
+    # dlptools::CNV_COLOURS[12]
+    "#ffffff"
+  )
+)
 
 #' min, median, max for a continuous color range
 #' @export
-DEFAULT_CONTINUOUS_COLOR_RANGE <- c(
+DEFAULT_CONTINUOUS_COLOUR_RANGE <- c(
   "#3182BD",
   "#CCCCCC",
   "#FDCC8A"
 )
 
-CONTINUOUS_COLOR_RANGE_ALT <- c("#000000", "#ffffff", "#5F9EA0")
+CONTINUOUS_COLOUR_RANGE_ALT <- c("#000000", "#ffffff", "#5F9EA0")
 
 #' colors for signals results of allele balances
 #' @export
-ASCN_COLORS <- c(
+ASCN_COLOURS <- c(
   `0|0` = "#3182BD",
   `1|0` = "#9ECAE1",
   `1|1` = "#CCCCCC",
@@ -48,7 +64,7 @@ ASCN_COLORS <- c(
 
 #' ASCN phase colors
 #' @export
-ASCN_PHASE_COLORS <- c(
+ASCN_PHASE_COLOURS <- c(
   `A-Hom` = "#56941E",
   `B-Hom` = "#471871",
   `A-Gained` = "#94C773",
@@ -57,17 +73,17 @@ ASCN_PHASE_COLORS <- c(
 )
 
 #' @export
-BAF_COLORS <- circlize::colorRamp2(
+BAF_COLOURS <- circlize::colorRamp2(
   c(0, 0.5, 1),
   c(
-    ASCN_PHASE_COLORS["A-Hom"],
-    ASCN_PHASE_COLORS["Balanced"],
-    ASCN_PHASE_COLORS["B-Hom"]
+    ASCN_PHASE_COLOURS["A-Hom"],
+    ASCN_PHASE_COLOURS["Balanced"],
+    ASCN_PHASE_COLOURS["B-Hom"]
   )
 )
 
 #' @export
-RAW_COPY_COLORS <- circlize::colorRamp2(
+RAW_COPY_COLOURS <- circlize::colorRamp2(
   seq(0, 11, 1),
   CNV_COLOURS[1:(length(CNV_COLOURS) - 1)]
 )
@@ -84,7 +100,7 @@ GEN_PLOT_COLS <- c(
 BASE_PLOT_THEME <- list(
   ggplot2::theme_minimal() +
     ggplot2::theme(
-      plot.background = ggplot2::element_rect(color = "white"),
+      plot.background = ggplot2::element_rect(colour = "white"),
       panel.border = ggplot2::element_rect(fill = NA)
     )
 )
@@ -108,10 +124,11 @@ bme_vec <- function(vec, vec_name) {
 
 #' internal function for setting up heatmap continuous range colors
 #' chooses defaults, unless overwritten by user.
-fetch_continuous_color_ramp <- function(
-    plotting_values,
-    custom_continuous_colors = NULL,
-    custom_continuous_range = NULL) {
+fetch_continuous_colour_ramp <- function(
+  plotting_values,
+  custom_continuous_colors = NULL,
+  custom_continuous_range = NULL
+) {
   if (is.null(custom_continuous_range)) {
     metrics <- get_column_metrics(plotting_values)
   } else {

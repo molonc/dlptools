@@ -31,7 +31,8 @@ import_clones <- function(clones_f) {
 #' @export
 #' @importFrom rlang .data
 format_states_for_hm <- function(
-    states_df, state_col, continuous = FALSE) {
+  states_df, state_col, continuous = FALSE
+) {
   states_w <- states_df |>
     dplyr::select(cell_id, chr, start, end, state_col) |>
     convert_long_reads_to_wide(state_col = state_col)
@@ -85,9 +86,10 @@ create_chromosome_column_fct <- function(states_mat) {
 #'
 #' See [dlptools::plot_state_hm()] for arguments description.
 generate_state_hm <- function(
-    states_mat, phylo, labels_fontsize = 8, plot_cols = STATE_COLORS,
-    left_annot = NULL, hm_legend_title = NULL, legend_11plus = FALSE,
-    show_heatmap_legend = TRUE, heatmap_legend_param = list()) {
+  states_mat, phylo, labels_fontsize = 8, plot_cols = STATE_COLOURS,
+  left_annot = NULL, hm_legend_title = NULL, legend_11plus = FALSE,
+  show_heatmap_legend = TRUE, heatmap_legend_param = list()
+) {
   # set up a chromosome factor for column splits in the heatmap
   chroms <- create_chromosome_column_fct(states_mat)
 
@@ -145,9 +147,10 @@ generate_state_hm <- function(
 #' @return ComplexHeatmap::draw or nothing if a file is written.
 #' @export
 output_hm_image <- function(
-    hm, file_name = NULL,
-    png_height = 1600, png_width = 2800, png_res = 144,
-    custom_legend = list(), hm_title) {
+  hm, file_name = NULL,
+  png_height = 1600, png_width = 2800, png_res = 144,
+  custom_legend = list(), hm_title
+) {
   if (!is.null(file_name)) {
     # open a file to dump it to
     grDevices::png(
@@ -177,27 +180,40 @@ output_hm_image <- function(
 #' Standard colors used by Signals and other people from the DLP world.
 #' @export
 fetch_heatmap_color_palette <- function(
-    state_col, states_df,
-    continuous = FALSE,
-    max_colors = 20,
-    custom_continuous_colors = NULL,
-    custom_continuous_range = NULL,
-    discrete_colors = NULL) {
+  state_col, states_df,
+  continuous = FALSE,
+  max_colors = 20,
+  custom_continuous_colors = NULL,
+  custom_continuous_range = NULL,
+  discrete_colors = NULL
+) {
   # TODO: this function is getting a bit ridiculous. Refactor or think about how
   # to better handle special cases.
 
   color_choices <- list(
-    "state" = STATE_COLORS,
-    "A" = STATE_COLORS,
-    "B" = STATE_COLORS,
-    "BAF" = BAF_COLORS,
-    "copy" = RAW_COPY_COLORS,
-    "state_phase" = ASCN_PHASE_COLORS,
-    "state_AS_phased" = ASCN_COLORS,
-    "state_AS" = ASCN_COLORS
+    "state" = STATE_COLOURS,
+    "A" = STATE_COLOURS,
+    "B" = STATE_COLOURS,
+    "BAF" = BAF_COLOURS,
+    "copy" = RAW_COPY_COLOURS,
+    "state_phase" = ASCN_PHASE_COLOURS,
+    "state_AS_phased" = ASCN_COLOURS,
+    "state_AS" = ASCN_COLOURS
   )
 
   # common special cases
+  if (state_col == "state") {
+    max_state <- max(states_df[state_col])
+    if (max_state > 50) {
+      stop("I didn't account for CNs higher than 50, you'll have to modify the code or cap CN -- BenF.")
+    }
+    if (max_state > 11) {
+      color_chosen <- EXPANDED_STATE_COLOURS
+    } else {
+      color_chosen <- STATE_COLOURS
+    }
+    return(color_chosen)
+  }
   if (state_col %in% c("BAF", "copy")) {
     color_chosen <- purrr::pluck(color_choices, state_col)
     return(color_chosen)
@@ -229,7 +245,7 @@ fetch_heatmap_color_palette <- function(
 
   color_chosen <- purrr::pluck(
     color_choices, state_col,
-    .default = STATE_COLORS
+    .default = STATE_COLOURS
   )
 
   # check if the choice was ok
@@ -288,7 +304,8 @@ fetch_heatmap_color_palette <- function(
 #' @export
 #' @importFrom rlang .data
 get_clone_id_label_positions <- function(
-    clones, only_largest_clone_group = TRUE) {
+  clones, only_largest_clone_group = TRUE
+) {
   # make a running number of identifying which clade groups for each clone ID
   # based on plotted row adjacency.
   clone_groups <- clones |>
@@ -336,15 +353,16 @@ get_clone_id_label_positions <- function(
 #' @param clone_palette named vector of colors to give to clones. E.g., c(
 #' A='#12345', B='#67890'). See dlptools::make_clone_palette()
 build_left_annot <- function(
-    anno_df = NULL,
-    anno_cols_list = list(),
-    annotation_legend_param = list(),
-    annotation_name_gp = 16,
-    show_annotation_legend = TRUE,
-    clones_df = NULL,
-    only_largest_clone_group = FALSE,
-    labels_fontsize = 8,
-    clone_palette = NULL) {
+  anno_df = NULL,
+  anno_cols_list = list(),
+  annotation_legend_param = list(),
+  annotation_name_gp = 16,
+  show_annotation_legend = TRUE,
+  clones_df = NULL,
+  only_largest_clone_group = FALSE,
+  labels_fontsize = 8,
+  clone_palette = NULL
+) {
   left_annot <- NULL
 
   if (!is.null(clones_df)) {
@@ -544,37 +562,38 @@ make_clone_palette <- function(clone_ids) {
 #' For examples, see
 #' @export
 plot_state_hm <- function(
-    states_df,
-    state_col,
-    phylogeny = NULL,
-    file_name = NULL,
-    anno_df = NULL, # optional, can also specify columns in the dataframe
-    anno_colors_list = list(), # for custom colors of annotations. Can also specify custom breaks in the cmap
-    anno_columns = NULL,
-    clone_column = NULL,
-    clones_df = NULL, # optional, can also specify columns in the dataframe
-    clone_palette = NULL,
-    only_largest_clone_group = TRUE,
-    labels_fontsize = 8,
-    is_continuous = FALSE,
-    continuous_hm_colours = FALSE,
-    custom_continuous_colors = NULL,
-    custom_continuous_range = NULL,
-    hm_discrete_colors = NULL,
-    hm_legend_title = NULL,
-    legend_11plus = FALSE,
-    color_tree_clones = FALSE,
-    scale_y = FALSE,
-    cell_height = 10,
-    default_png_height = 1600,
-    annotation_legend_param = list(),
-    show_annotation_legend = TRUE,
-    annotation_name_gp = 16,
-    heatmap_legend_param = list(),
-    show_heatmap_legend = TRUE,
-    custom_legend = list(),
-    hm_title = NULL,
-    ...) {
+  states_df,
+  state_col,
+  phylogeny = NULL,
+  file_name = NULL,
+  anno_df = NULL, # optional, can also specify columns in the dataframe
+  anno_colors_list = list(), # for custom colors of annotations. Can also specify custom breaks in the cmap
+  anno_columns = NULL,
+  clone_column = NULL,
+  clones_df = NULL, # optional, can also specify columns in the dataframe
+  clone_palette = NULL,
+  only_largest_clone_group = TRUE,
+  labels_fontsize = 8,
+  is_continuous = FALSE,
+  continuous_hm_colours = FALSE,
+  custom_continuous_colors = NULL,
+  custom_continuous_range = NULL,
+  hm_discrete_colors = NULL,
+  hm_legend_title = NULL,
+  legend_11plus = FALSE,
+  color_tree_clones = FALSE,
+  scale_y = FALSE,
+  cell_height = 10,
+  default_png_height = 1600,
+  annotation_legend_param = list(),
+  show_annotation_legend = TRUE,
+  annotation_name_gp = 16,
+  heatmap_legend_param = list(),
+  show_heatmap_legend = TRUE,
+  custom_legend = list(),
+  hm_title = NULL,
+  ...
+) {
   check_args()
 
   if (color_tree_clones) {
