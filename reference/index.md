@@ -2,15 +2,15 @@
 
 ## All functions
 
-- [`ASCN_COLORS`](https://molonc.github.io/dlptools/reference/ASCN_COLORS.md)
+- [`ASCN_COLOURS`](https://molonc.github.io/dlptools/reference/ASCN_COLOURS.md)
   : colors for signals results of allele balances
-- [`ASCN_PHASE_COLORS`](https://molonc.github.io/dlptools/reference/ASCN_PHASE_COLORS.md)
+- [`ASCN_PHASE_COLOURS`](https://molonc.github.io/dlptools/reference/ASCN_PHASE_COLOURS.md)
   : ASCN phase colors
 - [`CNV_COLOURS`](https://molonc.github.io/dlptools/reference/CNV_COLOURS.md)
   : standard colors used in dlp plots
-- [`DEFAULT_CONTINUOUS_COLOR_RANGE`](https://molonc.github.io/dlptools/reference/DEFAULT_CONTINUOUS_COLOR_RANGE.md)
+- [`DEFAULT_CONTINUOUS_COLOUR_RANGE`](https://molonc.github.io/dlptools/reference/DEFAULT_CONTINUOUS_COLOUR_RANGE.md)
   : min, median, max for a continuous color range
-- [`STATE_COLORS`](https://molonc.github.io/dlptools/reference/STATE_COLORS.md)
+- [`STATE_COLOURS`](https://molonc.github.io/dlptools/reference/STATE_COLOURS.md)
   : alias of standard colors used in dlp plots
 - [`add_centromere_locations()`](https://molonc.github.io/dlptools/reference/add_centromere_locations.md)
   : add centromere information to reads by chromosome
@@ -114,7 +114,7 @@
   : Extract CN features following Wu et al
 - [`factor_column_mixedsort()`](https://molonc.github.io/dlptools/reference/factor_column_mixedsort.md)
   : naturally sort a column from a dataframe.
-- [`fetch_continuous_color_ramp()`](https://molonc.github.io/dlptools/reference/fetch_continuous_color_ramp.md)
+- [`fetch_continuous_colour_ramp()`](https://molonc.github.io/dlptools/reference/fetch_continuous_colour_ramp.md)
   : internal function for setting up heatmap continuous range colors
   chooses defaults, unless overwritten by user.
 - [`fetch_heatmap_color_palette()`](https://molonc.github.io/dlptools/reference/fetch_heatmap_color_palette.md)

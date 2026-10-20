@@ -12,11 +12,11 @@
 <url><loc>https://molonc.github.io/dlptools/authors.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/development.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/index.html</loc></url>
-<url><loc>https://molonc.github.io/dlptools/reference/ASCN_COLORS.html</loc></url>
-<url><loc>https://molonc.github.io/dlptools/reference/ASCN_PHASE_COLORS.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/ASCN_COLOURS.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/ASCN_PHASE_COLOURS.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/CNV_COLOURS.html</loc></url>
-<url><loc>https://molonc.github.io/dlptools/reference/DEFAULT_CONTINUOUS_COLOR_RANGE.html</loc></url>
-<url><loc>https://molonc.github.io/dlptools/reference/STATE_COLORS.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/DEFAULT_CONTINUOUS_COLOUR_RANGE.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/STATE_COLOURS.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/add_centromere_locations.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/add_chromosome_length.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/add_missing_bins_for_cells.html</loc></url>
@@ -67,7 +67,7 @@
 <url><loc>https://molonc.github.io/dlptools/reference/extract_sigminer_wang_features.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/extract_wu_features.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/factor_column_mixedsort.html</loc></url>
-<url><loc>https://molonc.github.io/dlptools/reference/fetch_continuous_color_ramp.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/fetch_continuous_colour_ramp.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/fetch_heatmap_color_palette.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/fill_state_from_neighbours.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/find_nearest_neighbours.html</loc></url>

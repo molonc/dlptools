@@ -177,24 +177,12 @@ available:
 
 # standard state colors
 dlptools::CNV_COLOURS
-#>         0         1         2         3         4         5         6         7 
-#> "#3182BD" "#9ECAE1" "#CCCCCC" "#FDCC8A" "#FC8D59" "#E34A33" "#B30000" "#980043" 
-#>         8         9        10       11+        11 
-#> "#DD1C77" "#DF65B0" "#C994C7" "#D4B9DA" "#D4B9DA"
 
 # typically used allele specific colors
-dlptools::ASCN_COLORS
-#>       0|0       1|0       1|1       2|0       2|1       3|0       2|2       3|1 
-#> "#3182BD" "#9ECAE1" "#CCCCCC" "#666666" "#FDCC8A" "#FEE2BC" "#FC8D59" "#FDC1A4" 
-#>       4|0         5         6         7         8         9        10        11 
-#> "#FB590E" "#E34A33" "#B30000" "#980043" "#DD1C77" "#DF65B0" "#C994C7" "#D4B9DA" 
-#>       11+ 
-#> "#D4B9DA"
+dlptools::ASCN_COLOURS
 
 # typically used phase colors
-dlptools::ASCN_PHASE_COLORS
-#>     A-Hom     B-Hom  A-Gained  B-Gained  Balanced 
-#> "#56941E" "#471871" "#94C773" "#7B52AE" "#d5d5d4"
+dlptools::ASCN_PHASE_COLOURS
 
 # typically BAF scale is a circlize::colorRamp2 spanning
 # standard green-grey-purple used for ASCN colors
