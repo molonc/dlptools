@@ -156,15 +156,15 @@ dlptools::plot_read_bins_basic(
 
 To help with plotting, a variety of commonly use color palettes are available:
 
-```{r}
+```{r, eval=FALSE}
 # standard state colors
 dlptools::CNV_COLOURS
 
 # typically used allele specific colors
-dlptools::ASCN_COLORS
+dlptools::ASCN_COLOURS
 
 # typically used phase colors
-dlptools::ASCN_PHASE_COLORS
+dlptools::ASCN_PHASE_COLOURS
 
 # typically BAF scale is a circlize::colorRamp2 spanning
 # standard green-grey-purple used for ASCN colors
