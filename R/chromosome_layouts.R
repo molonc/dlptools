@@ -447,14 +447,19 @@ mark_segs_chromosome_span <- function(
 #'
 #' @param window_size integer. The size of window to split the chromosome into.
 #' @param genome_version string. "hg19" (default) or "hg38"
+#' @param cap_at_chromosome_lengths bool. TRUE will make sure the last bin on a
+#' chromsome ends at the real lenght of a chromosome, and not exceed it.
+#' Default is FALSE to produce evenly sized bins.
 #' @return list. Named by chromosome, vectors of window starts.
 #' @export
 create_chrom_window_intervals <- function(
-  window_size = 1e7,
+  window_size = 5e5,
   genome_version = c("hg19", "hg38"),
-  return_type = c("granges", "tibble")
+  return_type = c("granges", "tibble"),
+  cap_at_chromosome_lengths = FALSE
 ) {
   genome_version <- match.arg(genome_version)
+  return_type <- match.arg(return_type)
 
   suppressWarnings(
     chr_info <- load_chrom_info_file(version = genome_version)
@@ -468,6 +473,16 @@ create_chrom_window_intervals <- function(
     tilewidth = window_size,
     cut.last.tile.in.chrom = TRUE
   )
+
+  if (!cap_at_chromosome_lengths) {
+    # otherwise, last bin on a chromosome is shorther than others at they are
+    # capped at chromosome lengths
+    Seqinfo::seqlengths(genome_tiles) <- NA
+    # modify ends to match bins and not chromosome lengths
+    GenomicRanges::end(genome_tiles) <- (
+      ceiling(GenomicRanges::end(genome_tiles) / window_size) * window_size
+    )
+  }
 
   genome_tiles$window_name <- paste0("w", seq(1, length(genome_tiles)))
 

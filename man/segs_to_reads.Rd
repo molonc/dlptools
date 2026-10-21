@@ -14,7 +14,8 @@ segs_to_reads(
   sample_id_col = "cell_id",
   state_col = "state",
   other_meta_cols = c(),
-  chrom_col = "chr"
+  chrom_col = "chr",
+  cap_at_chromosome_lengths = FALSE
 )
 }
 \arguments{
@@ -48,6 +49,10 @@ vector.}
 
 \item{chrom_col}{Character. The name of the column in \code{segs_df}
 representing chromosomes. Defaults to \code{"chr"}.}
+
+\item{cap_at_chromosome_lengths}{bool. TRUE will make sure the last bin on a
+chromsome ends at the real lenght of a chromosome, and not exceed it.
+Default is FALSE to produce evenly sized bins.}
 }
 \value{
 Depending on \code{return_type}:

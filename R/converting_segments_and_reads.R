@@ -129,6 +129,9 @@ old_segs_to_reads <- function(
 #' vector.
 #' @param chrom_col Character. The name of the column in \code{segs_df}
 #'   representing chromosomes. Defaults to \code{"chr"}.
+#' @param cap_at_chromosome_lengths bool. TRUE will make sure the last bin on a
+#' chromsome ends at the real lenght of a chromosome, and not exceed it.
+#' Default is FALSE to produce evenly sized bins.
 #'
 #' @return Depending on \code{return_type}:
 #'   \itemize{
@@ -152,22 +155,28 @@ segs_to_reads <- function(
   sample_id_col = "cell_id",
   state_col = "state",
   other_meta_cols = c(),
-  chrom_col = "chr"
+  chrom_col = "chr",
+  cap_at_chromosome_lengths = FALSE
 ) {
   return_type <- match.arg(return_type)
 
   bins_tile <- create_chrom_window_intervals(
     window_size = bin_size,
     genome_version = genome_version,
-    return_type = "granges"
+    return_type = "granges",
+    cap_at_chromosome_lengths = cap_at_chromosome_lengths
   )
 
-  segs_grs <- cap_dlp_to_chrom_lengths(
-    segs_df,
-    chrom_col = chrom_col,
-    genome_version = genome_version
-  ) |>
-    GenomicRanges::GRanges()
+  if (cap_at_chromosome_lengths) {
+    segs_grs <- cap_dlp_to_chrom_lengths(
+      segs_df,
+      chrom_col = chrom_col,
+      genome_version = genome_version
+    ) |>
+      GenomicRanges::GRanges()
+  }
+
+  segs_grs <- GenomicRanges::GRanges(segs_df)
 
   hits <- GenomicRanges::findOverlaps(bins_tile, segs_grs)
 
