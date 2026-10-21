@@ -203,7 +203,7 @@ fetch_heatmap_color_palette <- function(
 
   # common special cases
   if (state_col == "state") {
-    max_state <- max(states_df[state_col])
+    max_state <- max(states_df[state_col], na.rm = TRUE)
     if (max_state > 50) {
       stop("I didn't account for CNs higher than 50, you'll have to modify the code or cap CN -- BenF.")
     }
