@@ -451,6 +451,7 @@ mark_segs_chromosome_span <- function(
 #' chromsome ends at the real lenght of a chromosome, and not exceed it.
 #' Default is FALSE to produce evenly sized bins.
 #' @return list. Named by chromosome, vectors of window starts.
+#' @importFrom GenomicRanges seqlengths<-
 #' @export
 create_chrom_window_intervals <- function(
   window_size = 5e5,
@@ -477,7 +478,7 @@ create_chrom_window_intervals <- function(
   if (!cap_at_chromosome_lengths) {
     # otherwise, last bin on a chromosome is shorther than others at they are
     # capped at chromosome lengths
-    Seqinfo::seqlengths(genome_tiles) <- NA
+    GenomeInfoDb::seqlengths(genome_tiles) <- NA
     # modify ends to match bins and not chromosome lengths
     GenomicRanges::end(genome_tiles) <- (
       ceiling(GenomicRanges::end(genome_tiles) / window_size) * window_size
