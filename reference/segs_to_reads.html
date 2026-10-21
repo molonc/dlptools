@@ -9,7 +9,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">dlptools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,7 +60,8 @@
 <span>  sample_id_col <span class="op">=</span> <span class="st">"cell_id"</span>,</span>
 <span>  state_col <span class="op">=</span> <span class="st">"state"</span>,</span>
 <span>  other_meta_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  chrom_col <span class="op">=</span> <span class="st">"chr"</span></span>
+<span>  chrom_col <span class="op">=</span> <span class="st">"chr"</span>,</span>
+<span>  cap_at_chromosome_lengths <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -117,6 +118,12 @@ vector.</p></dd>
 <dt id="arg-chrom-col">chrom_col<a class="anchor" aria-label="anchor" href="#arg-chrom-col"></a></dt>
 <dd><p>Character. The name of the column in <code>segs_df</code>
 representing chromosomes. Defaults to <code>"chr"</code>.</p></dd>
+
+
+<dt id="arg-cap-at-chromosome-lengths">cap_at_chromosome_lengths<a class="anchor" aria-label="anchor" href="#arg-cap-at-chromosome-lengths"></a></dt>
+<dd><p>bool. TRUE will make sure the last bin on a
+chromsome ends at the real lenght of a chromosome, and not exceed it.
+Default is FALSE to produce evenly sized bins.</p></dd>
 
 </dl></div>
     <div class="section level2">
