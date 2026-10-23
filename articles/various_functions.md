@@ -432,12 +432,12 @@ rebinned_reads <- dlptools::segs_to_reads(
 
 rebinned_reads[1:4, ]
 #> # A tibble: 4 × 9
-#>   cell_id            chr   start   end width window_name state seg_start seg_end
-#>   <chr>              <fct> <int> <int> <int> <chr>       <dbl>     <int>   <int>
-#> 1 AT23998-A138956A-… 1         1   5e5   5e5 w1              4         1  4.1 e7
-#> 2 AT23998-A138956A-… 1         1   5e5   5e5 w1              4         1  4.45e7
-#> 3 AT23998-A138956A-… 1         1   5e5   5e5 w1              5         1  4.30e7
-#> 4 AT23998-A138956A-… 1         1   5e5   5e5 w1              4         1  3.30e7
+#>   cell_id           chr    start   end width window_name state seg_start seg_end
+#>   <chr>             <fct>  <int> <int> <int> <chr>       <dbl>     <int>   <int>
+#> 1 AT23998-A138956A… 1     1   e0 5  e5   5e5 w1              4         1   4.1e7
+#> 2 AT23998-A138956A… 1     5.00e5 1  e6   5e5 w2              4         1   4.1e7
+#> 3 AT23998-A138956A… 1     1.00e6 1.5e6   5e5 w3              4         1   4.1e7
+#> 4 AT23998-A138956A… 1     1.50e6 2  e6   5e5 w4              4         1   4.1e7
 ```
 
 And recovers our original reads:
