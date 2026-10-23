@@ -212,7 +212,12 @@ segs_to_reads <- function(
         dplyr::all_of(c(sample_id_col, chrom_col)),
         start, end
       ) |>
-      dplyr::select(-strand)
+      dplyr::select(-strand) |>
+      dplyr::arrange(
+        .data[[sample_id_col]],
+        .data[[chrom_col]],
+        .data[[seg_start_col]]
+      )
   }
 }
 
