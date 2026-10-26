@@ -604,7 +604,9 @@ plot_state_hm <- function(
     phylo_arg <- FALSE
   } else {
     if (class(phylogeny) == "phylo") {
-      phylo_arg <- phylogram::as.dendrogram.phylo(phylogeny)
+      phylo_arg <- phylogeny |>
+        ape::ladderize() |>
+        phylogram::as.dendrogram.phylo()
       # can I rely on this actually being the order?
       tip_ord <- phylogeny$tip.label
     } else if (class(phylogeny) == "dendrogram") {
