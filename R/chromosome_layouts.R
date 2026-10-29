@@ -20,7 +20,8 @@ load_chrom_info_file <- function(version = c("hg19", "hg38")) {
       stringr::str_detect(chr, "_|M", negate = TRUE)
     ) |>
     dplyr::mutate(
-      chr = stringr::str_replace(chr, "chr", "")
+      chr = stringr::str_replace(chr, "chr", ""),
+      acro = chr %in% ACRO_CHROMS
     ) |>
     dplyr::select(-misc)
 
@@ -172,8 +173,9 @@ load_ucsc_centromeres <- function(
   ) |>
     dplyr::filter(feat == "acen") |>
     dplyr::mutate(
-      # removes the 'chr' from the chromosome name, e.g., chr1 -> 1
-      chrom = stringr::str_extract(chrom, "([A-Z]|[0-9]+)")
+      chrom = stringr::str_extract(chrom, "([A-Z]|[0-9]+)"),
+      chr = stringr::str_replace(chr, "chr", ""),
+      acro = chr %in% ACRO_CHROMS
     )
   centros <- centros |>
     dplyr::group_by(chrom) |>
@@ -544,6 +546,7 @@ load_chromosome_arms_info <- function(
   genome_version = c("hg19", "hg38"),
   return_type = c("granges", "tibble")
 ) {
+  return_type <- match.arg(return_type)
   centros <- suppressWarnings(
     load_ucsc_centromeres(version = genome_version)
   )

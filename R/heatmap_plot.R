@@ -204,10 +204,13 @@ fetch_heatmap_color_palette <- function(
   # common special cases
   if (state_col == "state") {
     max_state <- max(states_df[state_col], na.rm = TRUE)
-    if (max_state > 50) {
-      stop("I didn't account for CNs higher than 50, you'll have to modify the code or cap CN -- BenF.")
-    }
     if (max_state > 11) {
+      warning(paste0(
+        "seeing states > 11, using expanded colour palette. CNs colour breaks",
+        " are roughly 0 -> 8 (each a distinct colour), 10, 20, 50.",
+        " Lower CNs are distinctly represented, above 10 is mostly a smear of",
+        " violet."
+      ))
       color_chosen <- EXPANDED_STATE_COLOURS
     } else {
       color_chosen <- STATE_COLOURS

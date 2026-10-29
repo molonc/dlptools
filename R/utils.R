@@ -1,3 +1,6 @@
+#' @export
+ACRO_CHROMS <- c(13:15, 21, 22)
+
 #' naturally sort a column from a dataframe.
 #'
 #' Common plotting issue, used mixed sort so things like, e.g., chromosomes
@@ -117,7 +120,8 @@ library_from_cell <- function(cell_id) {
 #' @return vector of requested information
 #' @export
 pull_info_from_cell_id <- function(
-    cell_id, info = c(NA, "sample", "library")) {
+  cell_id, info = c(NA, "sample", "library")
+) {
   info <- match.arg(info)
   info_indexes <- c(sample = 1, library = 2)
 
@@ -272,7 +276,8 @@ confirm_cols_present <- function(cols, df) {
 #' @param labels vector of strings. What to call the categories.
 #' @return tibble
 cut_categories_and_count <- function(
-    df, targ_col, sample_col, breaks, labels) {
+  df, targ_col, sample_col, breaks, labels
+) {
   if (length(breaks) - 1 != length(labels)) {
     stop("breaks and labels must be the same length.")
   }
