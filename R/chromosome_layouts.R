@@ -152,7 +152,7 @@ load_ucsc_centromeres <- function(
   version = c("hg19", "hg38"),
   centro_file = NULL
 ) {
-  version_choice <- match.arg(version)
+  version <- match.arg(version)
 
   if (is.null(centro_file)) {
     default_centro_files <- c(
@@ -162,7 +162,7 @@ load_ucsc_centromeres <- function(
       hg38 = "hg38_cytoBand.txt.gz"
     )
 
-    centro_file <- get_package_file_path(default_centro_files[version_choice])
+    centro_file <- get_package_file_path(default_centro_files[version])
   }
 
   # import file and filter to features of interest
@@ -174,22 +174,25 @@ load_ucsc_centromeres <- function(
     dplyr::filter(feat == "acen") |>
     dplyr::mutate(
       chrom = stringr::str_extract(chrom, "([A-Z]|[0-9]+)"),
-      chr = stringr::str_replace(chrom, "chr", ""),
-      acro = chr %in% ACRO_CHROMS
+      chr = chrom,
     )
+
   centros <- centros |>
-    dplyr::group_by(chrom) |>
+    dplyr::group_by(chrom, chr) |>
     dplyr::mutate(
       centro_start = min(start),
       centro_end = max(end),
       centro_span = centro_end - centro_start,
       arm = stringr::str_extract(arm_full_name, "[a-z]")
-    )
+    ) |>
+    dplyr::ungroup()
 
   # pivot out to one line per chromosome of centromere measurements
   centros <- centros |>
     dplyr::select(-c(arm_full_name, feat)) |>
-    tidyr::pivot_wider(names_from = arm, values_from = c(start, end))
+    tidyr::pivot_wider(names_from = arm, values_from = c(start, end)) |>
+    dplyr::mutate(acro = chr %in% ACRO_CHROMS) |>
+    dplyr::relocate(acro, .after = chr)
 
   return(centros)
 }
