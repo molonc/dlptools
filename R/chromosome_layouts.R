@@ -174,7 +174,7 @@ load_ucsc_centromeres <- function(
     dplyr::filter(feat == "acen") |>
     dplyr::mutate(
       chrom = stringr::str_extract(chrom, "([A-Z]|[0-9]+)"),
-      chr = stringr::str_replace(chr, "chr", ""),
+      chr = stringr::str_replace(chrom, "chr", ""),
       acro = chr %in% ACRO_CHROMS
     )
   centros <- centros |>
