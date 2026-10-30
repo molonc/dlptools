@@ -456,7 +456,6 @@ mark_segs_chromosome_span <- function(
 #' chromsome ends at the real lenght of a chromosome, and not exceed it.
 #' Default is FALSE to produce evenly sized bins.
 #' @return list. Named by chromosome, vectors of window starts.
-#' @importFrom GenomicRanges seqlengths<-
 #' @export
 create_chrom_window_intervals <- function(
   window_size = 5e5,
@@ -497,13 +496,6 @@ create_chrom_window_intervals <- function(
   } else {
     tibble::as_tibble(genome_tiles)
   }
-  # intervals <- purrr::map(chr_info$total_length, \(total_length) {
-  #   max_end <- total_length + window_size
-  #   intervals <- seq(1, max_end, window_size)
-  #   intervals
-  # })
-  # names(intervals) <- chr_info$chr
-  # return(intervals)
 }
 
 
