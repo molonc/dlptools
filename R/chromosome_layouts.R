@@ -70,7 +70,7 @@ add_centromere_locations <- function(
   cn_df <- dplyr::left_join(
     cn_df,
     centros,
-    by = dplyr::join_by(chr == chrom)
+    by = "chr"
   )
 
   return(cn_df)
