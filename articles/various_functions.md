@@ -126,7 +126,7 @@ dlptools::add_centromere_locations(
 ```
 
 Also available is telomere marking, but see
-[`?dlptools::import_telos_file`](https://molonc.github.io/dlptools/reference/import_telos_file.md)
+[`?dlptools::load_ucsc_telomeres`](https://molonc.github.io/dlptools/reference/load_ucsc_telomeres.md)
 for why this isn’t the most in-depth or accurate thing:
 
 ``` r
@@ -143,11 +143,11 @@ dlptools::add_telomere_positions(
 #> # A tibble: 5 × 16
 #>   telostart_p teloend_p telostart_q teloend_q cell_id   chr    start   end state
 #>         <dbl>     <dbl>       <dbl>     <dbl> <chr>     <chr>  <dbl> <dbl> <dbl>
-#> 1           0     10000   249240621 249250621 AT23998-… 1     1   e0 5  e5     4
-#> 2           0     10000   249240621 249250621 AT23998-… 1     5.00e5 1  e6     4
-#> 3           0     10000   249240621 249250621 AT23998-… 1     1.00e6 1.5e6     4
-#> 4           0     10000   249240621 249250621 AT23998-… 1     1.50e6 2  e6     4
-#> 5           0     10000   249240621 249250621 AT23998-… 1     2.00e6 2.5e6     4
+#> 1           1     10000   249240622 249250621 AT23998-… 1     1   e0 5  e5     4
+#> 2           1     10000   249240622 249250621 AT23998-… 1     5.00e5 1  e6     4
+#> 3           1     10000   249240622 249250621 AT23998-… 1     1.00e6 1.5e6     4
+#> 4           1     10000   249240622 249250621 AT23998-… 1     1.50e6 2  e6     4
+#> 5           1     10000   249240622 249250621 AT23998-… 1     2.00e6 2.5e6     4
 #> # ℹ 7 more variables: gc <dbl>, ideal <lgl>, map <dbl>, reads <dbl>,
 #> #   valid <lgl>, is_low_mappability <lgl>, mask <lgl>
 ```
@@ -272,7 +272,7 @@ filt_with_missing <- dlptools::add_missing_bins_for_cells(
 filt_with_missing |>
   dplyr::relocate(library, cell_id) |>
   dplyr::slice_head(n = 10)
-#> # A tibble: 10 × 22
+#> # A tibble: 10 × 24
 #>    library     cell_id chr    start    end state     gc ideal    map reads valid
 #>    <chr>       <chr>   <chr>  <dbl>  <dbl> <dbl>  <dbl> <lgl>  <dbl> <dbl> <lgl>
 #>  1 fake_libra… AT2399… 1     1   e0 5   e5    NA NA     NA    NA        NA NA   
@@ -285,10 +285,10 @@ filt_with_missing |>
 #>  8 fake_libra… AT2399… 1     3.50e6 4   e6    NA NA     NA    NA        NA NA   
 #>  9 fake_libra… AT2399… 1     4.00e6 4.50e6     4  0.483 TRUE   0.996   397 TRUE 
 #> 10 fake_libra… AT2399… 1     4.50e6 5   e6     4  0.482 TRUE   0.999   280 TRUE 
-#> # ℹ 11 more variables: is_low_mappability <lgl>, mask <lgl>,
-#> #   centro_start <dbl>, centro_end <dbl>, centro_span <dbl>, start_p <dbl>,
-#> #   start_q <dbl>, end_p <dbl>, end_q <dbl>, centromere_padding <dbl>,
-#> #   overlaps_centro <lgl>
+#> # ℹ 13 more variables: is_low_mappability <lgl>, mask <lgl>, chrom <chr>,
+#> #   acro <lgl>, centro_start <dbl>, centro_end <dbl>, centro_span <dbl>,
+#> #   start_p <dbl>, start_q <dbl>, end_p <dbl>, end_q <dbl>,
+#> #   centromere_padding <dbl>, overlaps_centro <lgl>
 ```
 
 NAs are inserted for missing bins.
@@ -306,7 +306,7 @@ dlptools::fill_state_from_neighbours(
   cols_to_fill = c("state", "gc") # default is "state", don't need to specify
 ) |>
   dplyr::slice_head(n = 10)
-#> # A tibble: 10 × 22
+#> # A tibble: 10 × 24
 #>    cell_id              chr    start    end state    gc ideal    map reads valid
 #>    <chr>                <chr>  <dbl>  <dbl> <dbl> <dbl> <lgl>  <dbl> <dbl> <lgl>
 #>  1 AT23998-A138956A-R0… 1     1   e0 5   e5     4 0.595 NA    NA        NA NA   
@@ -319,10 +319,10 @@ dlptools::fill_state_from_neighbours(
 #>  8 AT23998-A138956A-R0… 1     3.50e6 4   e6     4 0.585 NA    NA        NA NA   
 #>  9 AT23998-A138956A-R0… 1     4.00e6 4.50e6     4 0.483 TRUE   0.996   397 TRUE 
 #> 10 AT23998-A138956A-R0… 1     4.50e6 5   e6     4 0.482 TRUE   0.999   280 TRUE 
-#> # ℹ 12 more variables: is_low_mappability <lgl>, mask <lgl>,
-#> #   centro_start <dbl>, centro_end <dbl>, centro_span <dbl>, start_p <dbl>,
-#> #   start_q <dbl>, end_p <dbl>, end_q <dbl>, centromere_padding <dbl>,
-#> #   overlaps_centro <lgl>, library <chr>
+#> # ℹ 14 more variables: is_low_mappability <lgl>, mask <lgl>, chrom <chr>,
+#> #   acro <lgl>, centro_start <dbl>, centro_end <dbl>, centro_span <dbl>,
+#> #   start_p <dbl>, start_q <dbl>, end_p <dbl>, end_q <dbl>,
+#> #   centromere_padding <dbl>, overlaps_centro <lgl>, library <chr>
 ```
 
 Of course, it could all be done in a pipe:
@@ -378,14 +378,14 @@ dlptools::load_chrom_info_file(
   version = "hg19" # default, or "hg38"
 ) |>
   dplyr::slice_head(n = 5)
-#> # A tibble: 5 × 2
-#>   chr   total_length
-#>   <chr>        <dbl>
-#> 1 1        249250621
-#> 2 2        243199373
-#> 3 3        198022430
-#> 4 4        191154276
-#> 5 5        180915260
+#> # A tibble: 5 × 3
+#>   chr   total_length acro 
+#>   <chr>        <dbl> <lgl>
+#> 1 1        249250621 FALSE
+#> 2 2        243199373 FALSE
+#> 3 3        198022430 FALSE
+#> 4 4        191154276 FALSE
+#> 5 5        180915260 FALSE
 ```
 
   
@@ -544,7 +544,7 @@ dplyr::relocate(
   # key added columns, more present too
   seg_span_event, telo_bound, centro_bound, spans_chrom, spans_arm
 )
-#> # A tibble: 12,151 × 32
+#> # A tibble: 12,151 × 35
 #>    seg_span_event telo_bound centro_bound spans_chrom spans_arm cell_id    chr  
 #>    <fct>          <lgl>      <lgl>        <lgl>       <lgl>     <chr>      <chr>
 #>  1 telo-bound     TRUE       FALSE        FALSE       FALSE     AT23998-A… 1    
@@ -558,12 +558,12 @@ dplyr::relocate(
 #>  9 inter          FALSE      FALSE        FALSE       FALSE     AT23998-A… 1    
 #> 10 inter          FALSE      FALSE        FALSE       FALSE     AT23998-A… 1    
 #> # ℹ 12,141 more rows
-#> # ℹ 25 more variables: start <dbl>, end <dbl>, state <dbl>, seg_width <dbl>,
-#> #   total_length <dbl>, centro_start <dbl>, centro_end <dbl>,
-#> #   centro_span <dbl>, start_p <dbl>, start_q <dbl>, end_p <dbl>, end_q <dbl>,
-#> #   telostart_p <dbl>, teloend_p <dbl>, telostart_q <dbl>, teloend_q <dbl>,
-#> #   telo_p_dist <dbl>, telo_q_dist <dbl>, telo_dist <dbl>, centro_p_dist <dbl>,
-#> #   centro_q_dist <dbl>, centro_dist <dbl>, spans_centro <lgl>, …
+#> # ℹ 28 more variables: start <dbl>, end <dbl>, state <dbl>, seg_width <dbl>,
+#> #   total_length <dbl>, acro.x <lgl>, chrom <chr>, acro.y <lgl>,
+#> #   centro_start <dbl>, centro_end <dbl>, centro_span <dbl>, start_p <dbl>,
+#> #   start_q <dbl>, end_p <dbl>, end_q <dbl>, telostart_p <dbl>,
+#> #   teloend_p <dbl>, telostart_q <dbl>, teloend_q <dbl>, telo_p_dist <dbl>,
+#> #   telo_q_dist <dbl>, telo_dist <dbl>, centro_p_dist <dbl>, …
 ```
 
 Visually, this is what we’re doing:

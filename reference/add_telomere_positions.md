@@ -1,7 +1,7 @@
 # add telomere positions to a CN df
 
 See
-[`import_telos_file()`](https://molonc.github.io/dlptools/reference/import_telos_file.md)
+[`load_ucsc_telomeres()`](https://molonc.github.io/dlptools/reference/load_ucsc_telomeres.md)
 but really just a convenience function. Telomere positions in the UCSC
 gap file are all just 10Kb, except chr17, which I set to 3Kb and 5Kb,
 again see linked function for details.

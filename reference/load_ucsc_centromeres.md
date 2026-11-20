@@ -1,37 +1,27 @@
 # load and prep default centromerefiles from UCSC
 
-Cytoband files originally obtained from UCSC golden path genomes and
-parsed to collect the total centromere spans.
+load and prep default centromerefiles from UCSC
 
 ## Usage
 
 ``` r
-load_ucsc_centromeres(version = c("hg19", "hg38"), centro_file = NULL)
+load_ucsc_centromeres(
+  version = c("hg19", "hg38"),
+  source = c("cytoband", "gap")
+)
 ```
 
 ## Arguments
 
-- centro_file:
+- version:
 
-  NULL or string to the path if you download yourself
+  string. genome version hg19 or hg38. Default: hg19
 
-- hg19:
+- source:
 
-  boolean to target hg19 for loading
-
-- hg38:
-
-  boolean to target hg38 for loading
+  string. cytoband or gap. Where do you want the centromere information
+  to come from, UCSC cytband or gap tables?
 
 ## Value
 
 tibble of parsed centromere spans
-
-## Details
-
-hg19:
-https://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/cytoBand.txt.gz
-hg38:
-https://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/cytoBand.txt.gz
-
-TODO: can I stash the file if it's already loaded once?

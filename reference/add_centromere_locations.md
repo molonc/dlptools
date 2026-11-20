@@ -6,11 +6,7 @@ origins.
 ## Usage
 
 ``` r
-add_centromere_locations(
-  cn_df,
-  centro_file = NULL,
-  version = c("hg19", "hg38")
-)
+add_centromere_locations(cn_df, version = c("hg19", "hg38"))
 ```
 
 ## Arguments
@@ -19,17 +15,9 @@ add_centromere_locations(
 
   dataframe of cn states for read bins or segments
 
-- centro_file:
+- version:
 
-  NULL or string to the path if you download yourself
-
-- hg19:
-
-  boolean to target hg19 for loading
-
-- hg38:
-
-  boolean to target hg38 for loading
+  string. base centromeres on genome hg19 or hg38. Default: hg19
 
 ## Value
 

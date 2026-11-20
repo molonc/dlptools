@@ -635,7 +635,7 @@ dlptools::mark_segs_chromosome_span(
     seg_span_event, telo_bound, centro_bound, spans_chrom, spans_arm
   ) |>
   dplyr::slice_head(n = 5)
-#> # A tibble: 5 × 32
+#> # A tibble: 5 × 35
 #>   seg_span_event telo_bound centro_bound spans_chrom spans_arm cell_id     chr  
 #>   <fct>          <lgl>      <lgl>        <lgl>       <lgl>     <chr>       <chr>
 #> 1 telo-bound     TRUE       FALSE        FALSE       FALSE     AT21352-A1… 1    
@@ -643,13 +643,13 @@ dlptools::mark_segs_chromosome_span(
 #> 3 inter          FALSE      FALSE        FALSE       FALSE     AT21352-A1… 1    
 #> 4 inter          FALSE      FALSE        FALSE       FALSE     AT21352-A1… 1    
 #> 5 inter          FALSE      FALSE        FALSE       FALSE     AT21352-A1… 1    
-#> # ℹ 25 more variables: start <dbl>, end <dbl>, state <dbl>, seg_width <dbl>,
-#> #   total_length <dbl>, centro_start <dbl>, centro_end <dbl>,
-#> #   centro_span <dbl>, start_p <dbl>, start_q <dbl>, end_p <dbl>, end_q <dbl>,
-#> #   telostart_p <dbl>, teloend_p <dbl>, telostart_q <dbl>, teloend_q <dbl>,
-#> #   telo_p_dist <dbl>, telo_q_dist <dbl>, telo_dist <dbl>, centro_p_dist <dbl>,
-#> #   centro_q_dist <dbl>, centro_dist <dbl>, spans_centro <lgl>,
-#> #   p_arm_length <dbl>, q_arm_length <dbl>
+#> # ℹ 28 more variables: start <dbl>, end <dbl>, state <dbl>, seg_width <dbl>,
+#> #   total_length <dbl>, acro.x <lgl>, chrom <chr>, acro.y <lgl>,
+#> #   centro_start <dbl>, centro_end <dbl>, centro_span <dbl>, start_p <dbl>,
+#> #   start_q <dbl>, end_p <dbl>, end_q <dbl>, telostart_p <dbl>,
+#> #   teloend_p <dbl>, telostart_q <dbl>, teloend_q <dbl>, telo_p_dist <dbl>,
+#> #   telo_q_dist <dbl>, telo_dist <dbl>, centro_p_dist <dbl>,
+#> #   centro_q_dist <dbl>, centro_dist <dbl>, spans_centro <lgl>, …
 ```
 
   

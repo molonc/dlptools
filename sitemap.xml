@@ -31,6 +31,8 @@
 <url><loc>https://molonc.github.io/dlptools/reference/calc_jaccard_similarity.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/cap_dlp_to_chrom_lengths.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/cell_states_to_strings.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/centros_from_cytoband.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/centros_from_gap.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/characterize_foreground_allele_state_changes.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/characterize_foreground_total_state_changes.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/check_args.html</loc></url>
@@ -94,6 +96,9 @@
 <url><loc>https://molonc.github.io/dlptools/reference/load_chrom_info_file.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/load_mask_file.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/load_ucsc_centromeres.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/load_ucsc_cytoband.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/load_ucsc_gap.html</loc></url>
+<url><loc>https://molonc.github.io/dlptools/reference/load_ucsc_telomeres.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/make_cell_focused_matrix.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/make_cellid_matrix.html</loc></url>
 <url><loc>https://molonc.github.io/dlptools/reference/make_clone_palette.html</loc></url>
