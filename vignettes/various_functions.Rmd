@@ -91,7 +91,7 @@ dlptools::add_centromere_locations(
 ```
 
 
-Also available is telomere marking, but see `?dlptools::import_telos_file` for why this isn't the most in-depth or accurate thing:
+Also available is telomere marking, but see `?dlptools::load_ucsc_telomeres` for why this isn't the most in-depth or accurate thing:
 
 ```{r}
 dlptools::add_telomere_positions(
@@ -362,12 +362,9 @@ Visually, this is what we're doing:
 ```{r, echo = FALSE, fig.width=8, fig.height=6, fig.cap="Labels of CN segments on chromosomes. Vertical lines indicate locations of telomeres and centromeres."}
 chr_attrs <- dplyr::left_join(
   dlptools::load_ucsc_centromeres(),
-  dlptools::import_telos_file(),
+  dlptools::load_ucsc_telomeres(),
   by = dplyr::join_by(chrom == chr)
 ) |>
-  dplyr::rename(
-    chr = chrom
-  ) |>
   dplyr::select(chr, centro_start, centro_end, dplyr::contains("telo")) |>
   tidyr::pivot_longer(cols = -chr) |>
   dplyr::mutate(

@@ -4,20 +4,12 @@
 \alias{add_centromere_locations}
 \title{add centromere information to reads by chromosome}
 \usage{
-add_centromere_locations(
-  cn_df,
-  centro_file = NULL,
-  version = c("hg19", "hg38")
-)
+add_centromere_locations(cn_df, version = c("hg19", "hg38"))
 }
 \arguments{
 \item{cn_df}{dataframe of cn states for read bins or segments}
 
-\item{centro_file}{NULL or string to the path if you download yourself}
-
-\item{hg19}{boolean to target hg19 for loading}
-
-\item{hg38}{boolean to target hg38 for loading}
+\item{version}{string. base centromeres on genome hg19 or hg38. Default: hg19}
 }
 \value{
 input table with centromere information added by chromosome
