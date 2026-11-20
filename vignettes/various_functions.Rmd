@@ -362,7 +362,7 @@ Visually, this is what we're doing:
 ```{r, echo = FALSE, fig.width=8, fig.height=6, fig.cap="Labels of CN segments on chromosomes. Vertical lines indicate locations of telomeres and centromeres."}
 chr_attrs <- dplyr::left_join(
   dlptools::load_ucsc_centromeres(),
-  dlptools::load_uscs_telomeres(),
+  dlptools::load_ucsc_telomeres(),
   by = dplyr::join_by(chrom == chr)
 ) |>
   dplyr::rename(
