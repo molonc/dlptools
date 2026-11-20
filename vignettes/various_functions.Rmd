@@ -365,9 +365,6 @@ chr_attrs <- dplyr::left_join(
   dlptools::load_ucsc_telomeres(),
   by = dplyr::join_by(chrom == chr)
 ) |>
-  dplyr::rename(
-    chr = chrom
-  ) |>
   dplyr::select(chr, centro_start, centro_end, dplyr::contains("telo")) |>
   tidyr::pivot_longer(cols = -chr) |>
   dplyr::mutate(
