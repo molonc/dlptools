@@ -57,18 +57,14 @@ add_chromosome_length <- function(cn_df, version = c("hg19", "hg38"), chrom_col 
 #' See dlptools::read_and_prep_ucsg_cenrtomeres() for details of file origins.
 #'
 #' @param cn_df dataframe of cn states for read bins or segments
-#' @param centro_file NULL or string to the path if you download yourself
-#' @param hg19 boolean to target hg19 for loading
-#' @param hg38 boolean to target hg38 for loading
+#' @param version string. base centromeres on genome hg19 or hg38. Default: hg19
 #' @return input table with centromere information added by chromosome
 #' @export
 add_centromere_locations <- function(
-  cn_df, centro_file = NULL, version = c("hg19", "hg38")
+  cn_df, version = c("hg19", "hg38")
 ) {
-  version_choice <- match.arg(version)
-
   centros <- load_ucsc_centromeres(
-    centro_file = centro_file, version = version_choice
+    version = version
   )
 
   cn_df <- dplyr::left_join(
@@ -133,45 +129,36 @@ mark_bins_overlapping_centromeres <- function(
 
 #' load and prep default centromerefiles from UCSC
 #'
-#' Cytoband files originally obtained from UCSC golden path genomes and parsed
-#' to collect the total centromere spans.
-#'
-#' hg19:
-#' https://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/cytoBand.txt.gz
-#' hg38:
-#' https://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/cytoBand.txt.gz
-#'
-#' TODO: can I stash the file if it's already loaded once?
-#'
-#' @param centro_file NULL or string to the path if you download yourself
-#' @param hg19 boolean to target hg19 for loading
-#' @param hg38 boolean to target hg38 for loading
+#' @param version string. genome version hg19 or hg38. Default: hg19
+#' @param source string. cytoband or gap. Where do you want the centromere
+#' information to come from, UCSC cytband or gap tables?
 #' @return tibble of parsed centromere spans
 #' @export
 load_ucsc_centromeres <- function(
   version = c("hg19", "hg38"),
-  centro_file = NULL
+  source = c("cytoband", "gap")
 ) {
   version <- match.arg(version)
+  source <- match.arg(source)
 
-  if (is.null(centro_file)) {
-    default_centro_files <- c(
-      # https://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/cytoBand.txt.gz
-      hg19 = "hg19_cytoBand.txt.gz",
-      # https://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/cytoBand.txt.gz
-      hg38 = "hg38_cytoBand.txt.gz"
-    )
+  loader_funcs <- list(
+    cytoband = centros_from_cytoband,
+    gap = centros_from_gap
+  )
 
-    centro_file <- get_package_file_path(default_centro_files[version])
-  }
+  centros <- loader_funcs[[source]](version)
 
-  # import file and filter to features of interest
-  centros <- vroom::vroom(
-    centro_file,
-    col_names = c("chrom", "start", "end", "arm_full_name", "feat"),
-    show_col_types = FALSE
-  ) |>
-    dplyr::filter(feat == "acen") |>
+  centros |>
+    dplyr::mutate(acro = chr %in% ACRO_CHROMS) |>
+    dplyr::relocate(acro, .after = chr)
+}
+
+#' load and prep centromere info from cytoband file
+centros_from_cytoband <- function(version) {
+  cytob <- load_ucsc_cytoband(version)
+
+  centros <- cytob |>
+    dplyr::filter(feature == "acen") |>
     dplyr::mutate(
       chrom = stringr::str_extract(chrom, "([A-Z]|[0-9]+)"),
       chr = chrom,
@@ -189,14 +176,101 @@ load_ucsc_centromeres <- function(
 
   # pivot out to one line per chromosome of centromere measurements
   centros <- centros |>
-    dplyr::select(-c(arm_full_name, feat)) |>
-    tidyr::pivot_wider(names_from = arm, values_from = c(start, end)) |>
-    dplyr::mutate(acro = chr %in% ACRO_CHROMS) |>
-    dplyr::relocate(acro, .after = chr)
+    dplyr::select(-c(arm_full_name, feature)) |>
+    tidyr::pivot_wider(names_from = arm, values_from = c(start, end))
 
   return(centros)
 }
 
+#' load and prep centromere info from gap file
+centros_from_gap <- function(version) {
+  gap_df <- load_ucsc_gap(version)
+
+  gap_df |>
+    dplyr::filter(feature == "centromere") |>
+    dplyr::select(
+      chrom, chr,
+      centro_start = start,
+      centro_end = end,
+      centro_span = size
+    )
+}
+
+#' load cytoband file
+#'
+#' file loader for other functions. Targets USCS cytoband files.
+#' Cytoband files originally obtained from UCSC golden path genomes and parsed
+#' to collect the total centromere spans.
+#'
+#' hg19:
+#' https://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/cytoBand.txt.gz
+#' hg38:
+#' https://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/cytoBand.txt.gz
+#'
+#' @param version str. hg19 or hg38. Default: hg19
+#' @return tibble
+#' @export
+load_ucsc_cytoband <- function(version = c("hg19", "hg38")) {
+  version <- match.arg(version)
+
+  cytoband_files <- c(
+    # https://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/cytoBand.txt.gz
+    hg19 = "hg19_cytoBand.txt.gz",
+    # https://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/cytoBand.txt.gz
+    hg38 = "hg38_cytoBand.txt.gz"
+  )
+
+  cytoband_file <- get_package_file_path(cytoband_files[version])
+
+  vroom::vroom(
+    cytoband_file,
+    col_names = c("chrom", "start", "end", "arm_full_name", "feature"),
+    show_col_types = FALSE
+  )
+}
+
+
+#' load gap file
+#'
+#' file loader for other functions
+#' @param version str. hg19 or hg38. Default: hg19
+#' @return tibble
+#' @export
+load_ucsc_gap <- function(version = c("hg19", "hg38")) {
+  version <- match.arg(version)
+
+  gap_files <- c(
+    # https://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/gap.txt.gz
+    hg19 = "hg19_gap.txt.gz",
+    # https://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/gap.txt.gz
+    hg38 = "hg38_gap.txt.gz"
+  )
+
+  gap_file <- get_package_file_path(gap_files[version])
+
+  # col names by inspection and checking against here by looking up gap table
+  # data format description
+  # https://genome.ucsc.edu/cgi-bin/hgTables?hgsid=2018561924_ZAtdZC9CFEJw8BKiYeUjd2ImvhS7&clade=mammal&org=Human&db=hg19&hgta_group=allTables&hgta_track=hg19&hgta_table=gap&hgta_regionType=genome&position=chr7%3A155%2C592%2C223-155%2C605%2C565&hgta_outputType=primaryTable&hgta_outFileName=
+  vroom::vroom(
+    gap_file,
+    col_names = c(
+      "bin", "chrom", "start", "end", "ix", "n", "size", "feature", "bridge"
+    ),
+    show_col_types = FALSE
+  ) |>
+    dplyr::mutate(
+      chr = stringr::str_replace(chrom, "chr", "")
+    )
+}
+
+#' old function, use [dlptools::load_ucsc_telomeres()]
+#' @export
+import_telos_file <- function(version = c("hg19", "hg38")) {
+  lifecycle::deprecate_warn(
+    "1.6.0", "import_telos_file()", "load_ucsc_telomeres()"
+  )
+  load_ucsc_telomeres(version)
+}
 
 #' load UCSC gap files for telomeres
 #'
@@ -215,29 +289,12 @@ load_ucsc_centromeres <- function(
 #' @param version string. hg19 (default) or hg38
 #' @return tibble of telomere information
 #' @export
-import_telos_file <- function(version = c("hg19", "hg38")) {
-  version_choice <- match.arg(version)
+load_ucsc_telomeres <- function(version = c("hg19", "hg38")) {
+  version <- match.arg(version)
+  gaps <- load_ucsc_gap(version)
 
-  default_telo_files <- c(
-    # https://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/gap.txt.gz
-    hg19 = "hg19_gap.txt.gz",
-    # https://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/gap.txt.gz
-    hg38 = "hg38_gap.txt.gz"
-  )
-
-  telos_file <- get_package_file_path(default_telo_files[version_choice])
-
-
-  # col names by inspection and checking against here by looking up gap table
-  # data format description
-  # https://genome.ucsc.edu/cgi-bin/hgTables?hgsid=2018561924_ZAtdZC9CFEJw8BKiYeUjd2ImvhS7&clade=mammal&org=Human&db=hg19&hgta_group=allTables&hgta_track=hg19&hgta_table=gap&hgta_regionType=genome&position=chr7%3A155%2C592%2C223-155%2C605%2C565&hgta_outputType=primaryTable&hgta_outFileName=
-  telos <- vroom::vroom(
-    telos_file,
-    col_names = c(
-      "bin", "chrom", "telostart", "teloend", "ix", "n", "size", "feat_type", "bridge"
-    )
-  ) |>
-    dplyr::filter(feat_type == "telomere") |>
+  telos <- gaps |>
+    dplyr::filter(feature == "telomere") |>
     dplyr::mutate(
       chrom = dplyr::if_else(
         # removes the 'chr' from the chromosome name, e.g., chr1 -> 1
@@ -247,12 +304,14 @@ import_telos_file <- function(version = c("hg19", "hg38")) {
         stringr::str_extract(chrom, "[A-Z]"),
         stringr::str_extract(chrom, "[0-9]+")
       )
-    )
+    ) |>
+    dplyr::rename(telostart = start, teloend = end)
 
   # now mark p and q telos
   telos <- telos |>
     dplyr::mutate(
-      arm = dplyr::if_else(telostart == 0, "p", "q")
+      arm = dplyr::if_else(telostart == 0, "p", "q"),
+      telostart = telostart + 1, # make it 1 based
     ) |>
     dplyr::select(arm, chr = chrom, telostart, teloend) |>
     tidyr::pivot_wider(names_from = arm, values_from = c(telostart, teloend))
@@ -262,27 +321,29 @@ import_telos_file <- function(version = c("hg19", "hg38")) {
   # telomere data.
   # marking p as 3000 and q as 5000 following:
   # https://www.nature.com/articles/s41467-024-48917-7
-  chr17_total_len <- load_chrom_info_file() |>
-    dplyr::filter(chr == 17) |>
-    dplyr::pull(total_length)
+  if (version == "hg19") {
+    chr17_total_len <- load_chrom_info_file() |>
+      dplyr::filter(chr == 17) |>
+      dplyr::pull(total_length)
 
-  chr17_telo <- data.frame(
-    chr = "17",
-    telostart_p = 0,
-    teloend_p = 3000,
-    telostart_q = chr17_total_len - 5000,
-    teloend_q = chr17_total_len
-  )
+    chr17_telo <- data.frame(
+      chr = "17",
+      telostart_p = 1,
+      teloend_p = 3000,
+      telostart_q = chr17_total_len - 5000,
+      teloend_q = chr17_total_len
+    )
 
-  telos <- dplyr::bind_rows(telos, chr17_telo) |>
-    dplyr::relocate(chr, telostart_p, teloend_p)
+    telos <- dplyr::bind_rows(telos, chr17_telo) |>
+      dplyr::relocate(chr, telostart_p, teloend_p)
+  }
 
   return(telos)
 }
 
 #' add telomere positions to a CN df
 #'
-#' See [dlptools::import_telos_file()] but really just a convenience function.
+#' See [dlptools::load_ucsc_telomeres()] but really just a convenience function.
 #' Telomere positions in the UCSC gap file are all just 10Kb, except chr17,
 #' which I set to 3Kb and 5Kb, again see linked function for details.
 #'
@@ -293,7 +354,7 @@ import_telos_file <- function(version = c("hg19", "hg38")) {
 #' @return input dataframe with new columns of telomere information
 #' @export
 add_telomere_positions <- function(cn_df, version = c("hg19", "hg38")) {
-  telos <- import_telos_file(version = version)
+  telos <- load_ucsc_telomeres(version = version)
 
   cn_df <- dplyr::left_join(cn_df, telos, by = "chr")
 

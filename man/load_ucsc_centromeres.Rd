@@ -4,27 +4,20 @@
 \alias{load_ucsc_centromeres}
 \title{load and prep default centromerefiles from UCSC}
 \usage{
-load_ucsc_centromeres(version = c("hg19", "hg38"), centro_file = NULL)
+load_ucsc_centromeres(
+  version = c("hg19", "hg38"),
+  source = c("cytoband", "gap")
+)
 }
 \arguments{
-\item{centro_file}{NULL or string to the path if you download yourself}
+\item{version}{string. genome version hg19 or hg38. Default: hg19}
 
-\item{hg19}{boolean to target hg19 for loading}
-
-\item{hg38}{boolean to target hg38 for loading}
+\item{source}{string. cytoband or gap. Where do you want the centromere
+information to come from, UCSC cytband or gap tables?}
 }
 \value{
 tibble of parsed centromere spans
 }
 \description{
-Cytoband files originally obtained from UCSC golden path genomes and parsed
-to collect the total centromere spans.
-}
-\details{
-hg19:
-https://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/cytoBand.txt.gz
-hg38:
-https://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/cytoBand.txt.gz
-
-TODO: can I stash the file if it's already loaded once?
+load and prep default centromerefiles from UCSC
 }

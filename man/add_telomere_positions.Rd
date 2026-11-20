@@ -17,7 +17,7 @@ difference.}
 input dataframe with new columns of telomere information
 }
 \description{
-See \code{\link[=import_telos_file]{import_telos_file()}} but really just a convenience function.
+See \code{\link[=load_ucsc_telomeres]{load_ucsc_telomeres()}} but really just a convenience function.
 Telomere positions in the UCSC gap file are all just 10Kb, except chr17,
 which I set to 3Kb and 5Kb, again see linked function for details.
 }
